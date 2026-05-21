@@ -15,6 +15,7 @@ export function LibraryPage() {
     editGame,
     setEditGame,
     loading,
+    isAuthenticated,
     handleStatusChange,
     handleEdit,
     handleDelete,
@@ -52,9 +53,9 @@ export function LibraryPage() {
             <GameCard
               key={game.id}
               game={game}
-              onEdit={setEditGame}
-              onDelete={handleDelete}
-              onStatusChange={handleStatusChange}
+              onEdit={isAuthenticated ? setEditGame : undefined}
+              onDelete={isAuthenticated ? handleDelete : undefined}
+              onStatusChange={isAuthenticated ? handleStatusChange : undefined}
             />
           ))}
         </div>

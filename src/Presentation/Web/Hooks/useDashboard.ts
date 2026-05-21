@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { GameDto } from "@/src/Application/DTOs/GameDto";
 import { MoodDto } from "@/src/Application/DTOs/MoodDto";
+import { useAuth } from "@/src/Presentation/Web/Context/AuthContext";
 
 interface Stats {
   backlog: number;
@@ -13,6 +14,9 @@ interface Stats {
 }
 
 export function useDashboard() {
+  const { session } = useAuth();
+  const isAuthenticated = session !== null;
+
   const [stats, setStats] = useState<Stats>({
     backlog: 0,
     playing: 0,
@@ -34,7 +38,7 @@ export function useDashboard() {
         fetch("/api/games"),
         fetch("/api/moods"),
       ]);
-      console.log(gamesRes);
+
       const games: GameDto[] = await gamesRes.json();
       const moodsData: MoodDto[] = await moodsRes.json();
       setMoods(moodsData);
@@ -73,10 +77,15 @@ export function useDashboard() {
     fetchData();
   }, [fetchData]);
 
+  const authHeaders = (): Record<string, string> =>
+    session?.access_token
+      ? { Authorization: `Bearer ${session.access_token}` }
+      : {};
+
   const handleAdd = async (data: object) => {
     await fetch("/api/games", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify(data),
     });
     fetchData();
@@ -87,7 +96,7 @@ export function useDashboard() {
     if (status === "playing") updates.last_played_at = new Date().toISOString();
     await fetch(`/api/games/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify(updates),
     });
     fetchData();
@@ -103,6 +112,7 @@ export function useDashboard() {
     showPicker,
     setShowPicker,
     loading,
+    isAuthenticated,
     handleAdd,
     handleStatusChange,
   };

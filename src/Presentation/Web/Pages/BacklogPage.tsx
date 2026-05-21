@@ -19,6 +19,7 @@ export function BacklogPage() {
     editGame,
     setEditGame,
     loading,
+    isAuthenticated,
     handleAdd,
     handleEdit,
     handleDelete,
@@ -38,20 +39,22 @@ export function BacklogPage() {
             {moodFilter ? ` · ${moodFilter}` : ''}
           </p>
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={() => setShowPicker(true)}
-            className="bg-gradient-to-r from-purple-700 to-blue-700 hover:from-purple-600 hover:to-blue-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all"
-          >
-            🎲 Random
-          </button>
-          <button
-            onClick={() => setShowAdd(true)}
-            className="bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-          >
-            + Add Game
-          </button>
-        </div>
+        {isAuthenticated && (
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowPicker(true)}
+              className="bg-linear-to-r from-purple-700 to-blue-700 hover:from-purple-600 hover:to-blue-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all"
+            >
+              🎲 Random
+            </button>
+            <button
+              onClick={() => setShowAdd(true)}
+              className="bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            >
+              + Add Game
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-2 mb-5 flex-wrap">
@@ -84,12 +87,14 @@ export function BacklogPage() {
           <p className="text-gray-600 text-sm mb-4">
             {moodFilter ? 'Try another filter or add a new game.' : 'Add games you want to play.'}
           </p>
-          <button
-            onClick={() => setShowAdd(true)}
-            className="bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-          >
-            + Add Game
-          </button>
+          {isAuthenticated && (
+            <button
+              onClick={() => setShowAdd(true)}
+              className="bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            >
+              + Add Game
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
@@ -101,10 +106,10 @@ export function BacklogPage() {
               <div className="flex-1">
                 <GameCard
                   game={game}
-                  onEdit={setEditGame}
-                  onDelete={handleDelete}
-                  onStatusChange={handleStatusChange}
-                  onPriorityChange={handlePriorityChange}
+                  onEdit={isAuthenticated ? setEditGame : undefined}
+                  onDelete={isAuthenticated ? handleDelete : undefined}
+                  onStatusChange={isAuthenticated ? handleStatusChange : undefined}
+                  onPriorityChange={isAuthenticated ? handlePriorityChange : undefined}
                   showPriority
                 />
               </div>

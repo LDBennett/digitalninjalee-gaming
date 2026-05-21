@@ -1,7 +1,7 @@
 -- Run this in your Supabase project: Dashboard > SQL Editor > New Query
 
 -- Enum types
-CREATE TYPE platform_type AS ENUM ('steam', 'xbox', 'playstation', 'other');
+CREATE TYPE platform_type AS ENUM ('pc', 'xbox', 'playstation', 'switch', 'other');
 CREATE TYPE game_status AS ENUM ('backlog', 'playing', 'completed', 'dropped');
 
 -- Games table
@@ -63,3 +63,14 @@ ALTER TABLE game_moods ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_games"     ON games     FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 CREATE POLICY "public_moods"     ON moods     FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 CREATE POLICY "public_game_moods" ON game_moods FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+
+-- GRANTs are required when tables are created via SQL (not the Supabase Table Editor GUI)
+-- anon: read-only
+GRANT SELECT ON TABLE games      TO anon;
+GRANT SELECT ON TABLE moods      TO anon;
+GRANT SELECT ON TABLE game_moods TO anon;
+
+-- authenticated: full write access (RLS policies further restrict per-row)
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE games      TO authenticated;
+GRANT SELECT                         ON TABLE moods      TO authenticated;
+GRANT SELECT, INSERT, DELETE         ON TABLE game_moods TO authenticated;

@@ -9,6 +9,10 @@ import * as UpdateGame from '@/src/Application/UseCases/UpdateGame';
 import * as DeleteGame from '@/src/Application/UseCases/DeleteGame';
 import * as PickRandomGame from '@/src/Application/UseCases/PickRandomGame';
 
+function getToken(request: NextRequest): string | null {
+  return request.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
+}
+
 export async function getGames(request: NextRequest): Promise<NextResponse> {
   const status = new URL(request.url).searchParams.get('status') ?? undefined;
   const client = createServerClient();
@@ -19,7 +23,7 @@ export async function getGames(request: NextRequest): Promise<NextResponse> {
 
 export async function createGameHandler(request: NextRequest): Promise<NextResponse> {
   const body = await request.json();
-  const client = createServerClient();
+  const client = createServerClient(getToken(request));
   const result = await CreateGame.execute(
     createSupabaseGameRepository(client),
     createSupabaseMoodRepository(client),
@@ -51,7 +55,7 @@ export async function updateGame(
   params: { id: string },
 ): Promise<NextResponse> {
   const body = await request.json();
-  const client = createServerClient();
+  const client = createServerClient(getToken(request));
   const result = await UpdateGame.execute(
     createSupabaseGameRepository(client),
     createSupabaseMoodRepository(client),
@@ -62,10 +66,10 @@ export async function updateGame(
 }
 
 export async function deleteGame(
-  _request: NextRequest,
+  request: NextRequest,
   params: { id: string },
 ): Promise<NextResponse> {
-  const client = createServerClient();
+  const client = createServerClient(getToken(request));
   const result = await DeleteGame.execute(createSupabaseGameRepository(client), { id: params.id });
   if (!result.success) return NextResponse.json({ error: result.error.message }, { status: 500 });
   return NextResponse.json(result.value);

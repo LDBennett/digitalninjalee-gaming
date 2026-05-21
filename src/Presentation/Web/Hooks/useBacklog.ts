@@ -3,8 +3,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { GameDto } from '@/src/Application/DTOs/GameDto';
 import { MoodDto } from '@/src/Application/DTOs/MoodDto';
+import { useAuth } from '@/src/Presentation/Web/Context/AuthContext';
 
 export function useBacklog() {
+  const { session } = useAuth();
+  const isAuthenticated = session !== null;
+
   const [games, setGames] = useState<GameDto[]>([]);
   const [moods, setMoods] = useState<MoodDto[]>([]);
   const [moodFilter, setMoodFilter] = useState<string | null>(null);
@@ -33,10 +37,13 @@ export function useBacklog() {
     ? games.filter((g) => g.moods?.some((m) => m.name === moodFilter))
     : games;
 
+  const authHeaders = (): Record<string, string> =>
+    session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+
   const handleAdd = async (data: object) => {
     await fetch('/api/games', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ ...data, status: 'backlog' }),
     });
     fetchData();
@@ -46,7 +53,7 @@ export function useBacklog() {
     if (!editGame) return;
     await fetch(`/api/games/${editGame.id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(data),
     });
     setEditGame(null);
@@ -55,7 +62,10 @@ export function useBacklog() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Remove this game from your backlog?')) return;
-    await fetch(`/api/games/${id}`, { method: 'DELETE' });
+    await fetch(`/api/games/${id}`, {
+      method: 'DELETE',
+      headers: authHeaders(),
+    });
     fetchData();
   };
 
@@ -64,7 +74,7 @@ export function useBacklog() {
     if (status === 'playing') updates.last_played_at = new Date().toISOString();
     await fetch(`/api/games/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify(updates),
     });
     fetchData();
@@ -76,7 +86,7 @@ export function useBacklog() {
     const newScore = Math.min(100, Math.max(1, game.priority_score + delta));
     await fetch(`/api/games/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ priority_score: newScore }),
     });
     setGames((prev) =>
@@ -98,6 +108,7 @@ export function useBacklog() {
     editGame,
     setEditGame,
     loading,
+    isAuthenticated,
     handleAdd,
     handleEdit,
     handleDelete,

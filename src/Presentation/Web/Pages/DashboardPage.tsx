@@ -23,6 +23,7 @@ export function DashboardPage() {
     showPicker,
     setShowPicker,
     loading,
+    isAuthenticated,
     handleAdd,
     handleStatusChange,
   } = useDashboard();
@@ -49,20 +50,22 @@ export function DashboardPage() {
           <h1 className="text-2xl font-bold text-white">Dashboard</h1>
           <p className="text-gray-500 text-sm mt-0.5">{stats.total} games tracked</p>
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={() => setShowPicker(true)}
-            className="bg-gradient-to-r from-purple-700 to-blue-700 hover:from-purple-600 hover:to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg"
-          >
-            🎲 Pick a Game
-          </button>
-          <button
-            onClick={() => setShowAdd(true)}
-            className="bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
-          >
-            + Add Game
-          </button>
-        </div>
+        {isAuthenticated && (
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowPicker(true)}
+              className="bg-linear-to-r from-purple-700 to-blue-700 hover:from-purple-600 hover:to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg"
+            >
+              🎲 Pick a Game
+            </button>
+            <button
+              onClick={() => setShowAdd(true)}
+              className="bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+            >
+              + Add Game
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-8">
@@ -80,14 +83,21 @@ export function DashboardPage() {
           {topPriority.length === 0 ? (
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center">
               <p className="text-gray-600 text-sm mb-3">Your backlog is empty</p>
-              <button onClick={() => setShowAdd(true)} className="text-purple-400 hover:text-purple-300 text-sm transition-colors">
-                Add your first game →
-              </button>
+              {isAuthenticated && (
+                <button onClick={() => setShowAdd(true)} className="text-purple-400 hover:text-purple-300 text-sm transition-colors">
+                  Add your first game →
+                </button>
+              )}
             </div>
           ) : (
             <div className="space-y-3">
               {topPriority.map((game) => (
-                <GameCard key={game.id} game={game} showPriority onStatusChange={handleStatusChange} />
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  showPriority
+                  onStatusChange={isAuthenticated ? handleStatusChange : undefined}
+                />
               ))}
             </div>
           )}

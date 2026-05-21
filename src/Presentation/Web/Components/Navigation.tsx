@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { AuthButton } from '@/src/Presentation/Web/Components/AuthButton';
 
 const NAV_ITEMS = [
   { href: '/',           label: 'Dashboard', icon: '⚡' },
@@ -40,16 +41,8 @@ export function Navigation() {
         })}
       </div>
 
-      <div className="border-t border-gray-800 pt-4 px-2">
-        <p className="text-xs text-gray-600 mb-2">Platform sync</p>
-        <div className="flex gap-1.5 flex-wrap">
-          {['Steam', 'Xbox', 'PSN'].map((p) => (
-            <span key={p} className="text-xs text-gray-700 bg-gray-900 rounded px-2 py-0.5 border border-gray-800">
-              {p}
-            </span>
-          ))}
-        </div>
-        <p className="text-xs text-gray-700 mt-1.5">Coming soon</p>
+      <div className="border-t border-gray-800 pt-4">
+        <AuthButton />
       </div>
     </nav>
   );
