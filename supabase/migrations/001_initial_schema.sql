@@ -2,7 +2,9 @@
 
 -- Enum types
 CREATE TYPE platform_type AS ENUM ('pc', 'xbox', 'playstation', 'switch', 'other');
-CREATE TYPE game_status AS ENUM ('backlog', 'playing', 'completed', 'dropped');
+-- Library statuses (owned): backlog, playing, completed, main-complete, ongoing, dropped
+-- Wishlist statuses (not purchased): interested, pre-ordered, keep-an-eye-on
+CREATE TYPE game_status AS ENUM ('backlog', 'playing', 'completed', 'dropped', 'main-complete', 'ongoing', 'interested', 'pre-ordered', 'keep-an-eye-on');
 
 -- Games table
 CREATE TABLE games (
