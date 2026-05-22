@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
   devIndicators: {
-    position: "bottom-right", // Options: 'bottom-left', 'bottom-right', 'top-left', 'top-right'
+    position: "top-right", // Options: 'bottom-left', 'bottom-right', 'top-left', 'top-right'
   },
 };
 

@@ -28,31 +28,30 @@ export function AuthButton() {
   if (user) {
     return (
       <div className="flex justify-center items-center px-2">
-        <img
-          src="https://images-eds-ssl.xboxlive.com/image?url=wHwbXKif8cus8csoZ03RW_ES.ojiJijNBGRVUbTnZKsoCCCkjlsEJrrMqDkYqs3MSJhlEBWRNuWCxTi.JiW.1ZWH7Om3GGt1Uv_TzNngw8ZpADcNfCT0vVQYRHG56GKGWP1IzAm.2WGw16Y6RZVdZeZYYAI4OL6yr8yuLn5WfTA-&format=jpg&w=200&h=200"
-          alt="DigitalNinjaLee Online Avatar"
-          className="rounded-full w-5 h-5"
-        />
         <button
           onClick={signOut}
-          className="ml-2 text-gray-600 hover:text-red-400 text-xs transition-colors shrink-0"
+          className="me-2 ml-2 text-gray-600 hover:text-red-400 text-xs transition-colors cursor-pointer shrink-0"
         >
-          Sign out
+          <img
+            src="/logos/dnl-logo--green.png"
+            alt="DigitalNinjaLee Online Avatar - Signed In"
+            className="rounded-full w-8 h-6"
+          />
         </button>
       </div>
     );
   }
 
   return (
-    <>
+    <div className="flex justify-center items-center px-2">
       <button
         onClick={() => setShowModal(true)}
-        className="flex items-center gap-3 hover:bg-gray-800 px-3 py-2.5 rounded-lg w-full font-medium text-gray-400 hover:text-white text-sm transition-all"
+        className="me-2 ml-2 text-gray-600 hover:text-red-400 text-xs transition-colors cursor-pointer shrink-0"
       >
         <img
-          src="https://images-eds-ssl.xboxlive.com/image?url=wHwbXKif8cus8csoZ03RW_ES.ojiJijNBGRVUbTnZKsoCCCkjlsEJrrMqDkYqs3MSJhlEBWRNuWCxTi.JiW.1ZWH7Om3GGt1Uv_TzNngw8ZpADcNfCT0vVQYRHG56GKGWP1IzAm.2WGw16Y6RZVdZeZYYAI4OL6yr8yuLn5WfTA-&format=jpg&w=200&h=200"
-          alt="DigitalNinjaLee Online Avatar"
-          className="rounded-full w-5 h-5"
+          src="/logos/dnl-logo--white.png"
+          alt="DigitalNinjaLee Online Avatar - Signed Out"
+          className="rounded-full w-8 h-6"
         />
       </button>
 
@@ -97,6 +96,6 @@ export function AuthButton() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

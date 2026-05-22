@@ -1,42 +1,38 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { GameDto, GameStatus } from '@/src/domains/backlog/models/game.types';
 import { MoodDto } from '@/src/domains/backlog/models/mood.types';
 import { useAuth } from '@/src/domains/shared/auth/AuthContext';
+import { gameKeys, moodKeys } from './queryKeys';
 
 export function useBacklog() {
   const { session, authLoading } = useAuth();
   const isAuthenticated = session !== null;
+  const queryClient = useQueryClient();
 
   const PAGE_SIZE = 20;
 
-  const [games, setGames] = useState<GameDto[]>([]);
-  const [moods, setMoods] = useState<MoodDto[]>([]);
   const [moodFilter, setMoodFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [showAdd, setShowAdd] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
-  const [dataLoading, setDataLoading] = useState(true);
-  const loading = authLoading || dataLoading;
 
-  const fetchData = useCallback(async () => {
-    setDataLoading(true);
-    try {
-      const [gamesRes, moodsRes] = await Promise.all([
-        fetch('/api/games?status=backlog'),
-        fetch('/api/moods'),
-      ]);
-      setGames(await gamesRes.json());
-      setMoods(await moodsRes.json());
-    } finally {
-      setDataLoading(false);
-    }
-  }, []);
+  const { data: games = [], isPending: gamesLoading } = useQuery<GameDto[]>({
+    queryKey: gameKeys.byStatus('backlog'),
+    queryFn: () => fetch('/api/games?status=backlog').then((r) => r.json()),
+  });
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  const { data: moods = [], isPending: moodsLoading } = useQuery<MoodDto[]>({
+    queryKey: moodKeys.all,
+    queryFn: () => fetch('/api/moods').then((r) => r.json()),
+    staleTime: Infinity,
+  });
+
+  const loading = authLoading || gamesLoading || moodsLoading;
 
   const moodFiltered = moodFilter
     ? games.filter((g) => g.moods?.some((m) => m.name === moodFilter))
@@ -55,56 +51,87 @@ export function useBacklog() {
   const authHeaders = (): Record<string, string> =>
     session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
 
-  const handleAdd = async (data: object) => {
-    await fetch('/api/games', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
-      body: JSON.stringify({ ...data, status: 'backlog' }),
-    });
-    fetchData();
-  };
+  const invalidateGames = () =>
+    queryClient.invalidateQueries({ queryKey: gameKeys.byStatus('backlog') });
 
-  const handleEdit = async (data: object) => {
+  const addMutation = useMutation({
+    mutationFn: (data: object) =>
+      fetch('/api/games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ ...data, status: 'backlog' }),
+      }),
+    onSuccess: invalidateGames,
+  });
+
+  const editMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: object }) =>
+      fetch(`/api/games/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      setEditGame(null);
+      invalidateGames();
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      fetch(`/api/games/${id}`, { method: 'DELETE', headers: authHeaders() }),
+    onSuccess: invalidateGames,
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: GameStatus }) => {
+      const updates: Record<string, unknown> = { status };
+      if (status === 'playing') updates.last_played_at = new Date().toISOString();
+      return fetch(`/api/games/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify(updates),
+      });
+    },
+    onSuccess: invalidateGames,
+  });
+
+  const priorityMutation = useMutation({
+    mutationFn: ({ id, newScore }: { id: string; newScore: number }) =>
+      fetch(`/api/games/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ priority_score: newScore }),
+      }),
+    onMutate: ({ id, newScore }) => {
+      queryClient.setQueryData<GameDto[]>(gameKeys.byStatus('backlog'), (prev = []) =>
+        prev
+          .map((g) => (g.id === id ? { ...g, priority_score: newScore } : g))
+          .sort((a, b) => b.priority_score - a.priority_score),
+      );
+    },
+  });
+
+  const handleAdd = (data: object) => addMutation.mutate(data);
+
+  const handleEdit = (data: object) => {
     if (!editGame) return;
-    await fetch(`/api/games/${editGame.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
-      body: JSON.stringify(data),
-    });
-    setEditGame(null);
-    fetchData();
+    editMutation.mutate({ id: editGame.id, data });
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('Remove this game from your backlog?')) return;
-    await fetch(`/api/games/${id}`, { method: 'DELETE', headers: authHeaders() });
-    fetchData();
+    deleteMutation.mutate(id);
   };
 
-  const handleStatusChange = async (id: string, status: GameStatus) => {
-    const updates: Record<string, unknown> = { status };
-    if (status === 'playing') updates.last_played_at = new Date().toISOString();
-    await fetch(`/api/games/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
-      body: JSON.stringify(updates),
-    });
-    fetchData();
-  };
+  const handleStatusChange = (id: string, status: GameStatus) =>
+    statusMutation.mutate({ id, status });
 
-  const handlePriorityChange = async (id: string, delta: number) => {
+  const handlePriorityChange = (id: string, delta: number) => {
     const game = games.find((g) => g.id === id);
     if (!game) return;
     const newScore = Math.min(100, Math.max(1, game.priority_score + delta));
-    await fetch(`/api/games/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
-      body: JSON.stringify({ priority_score: newScore }),
-    });
-    setGames((prev) =>
-      prev.map((g) => g.id === id ? { ...g, priority_score: newScore } : g)
-        .sort((a, b) => b.priority_score - a.priority_score),
-    );
+    priorityMutation.mutate({ id, newScore });
   };
 
   return {

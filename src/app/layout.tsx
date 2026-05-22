@@ -3,13 +3,20 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClientLayout } from "./ClientLayout";
 import { Navigation } from "@/src/components/ui/Navigation";
-import { AuthButton } from "@/src/domains/shared/auth/AuthButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Game Vault",
-  description: "Personal gaming backlog tracker",
+  title: {
+    default: "Backlog Bunker - DigitalNinjaLee",
+    template: "%s | Backlog Bunker",
+  },
+  description:
+    "Personal gaming dashboard for tracking and logging games played",
+  icons: {
+    icon: "/logos/dnl-logo--white.png",
+    apple: "/logos/dnl-logo--white.png",
+  },
 };
 
 export default function RootLayout({
@@ -28,9 +35,6 @@ export default function RootLayout({
             <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8 overflow-auto">
               {children}
             </main>
-            <div className="top-3 right-1 md:right-3 absolute">
-              <AuthButton />
-            </div>
           </div>
         </ClientLayout>
       </body>

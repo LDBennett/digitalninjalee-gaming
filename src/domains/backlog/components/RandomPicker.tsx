@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { GameDto } from '@/src/domains/backlog/models/game.types';
 import { MoodDto } from '@/src/domains/backlog/models/mood.types';
 import { MoodBadge } from '@/src/domains/backlog/components/MoodBadge';
@@ -16,7 +17,20 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [pickedGame, setPickedGame] = useState<GameDto | null>(null);
   const [noGamesMsg, setNoGamesMsg] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const { mutate: executePick, isPending: loading } = useMutation({
+    mutationFn: async (moods: string[]) => {
+      const params = new URLSearchParams({ status: 'backlog' });
+      if (moods.length) params.set('moods', moods.join(','));
+      await new Promise((r) => setTimeout(r, 900));
+      const res = await fetch(`/api/games/random?${params}`);
+      return res.json() as Promise<{ game?: GameDto; message?: string }>;
+    },
+    onSuccess: (data) => {
+      if (data.game) setPickedGame(data.game);
+      else setNoGamesMsg(data.message ?? 'No games found');
+    },
+  });
 
   const toggleMood = (name: string) => {
     setSelectedMoods((prev) => (prev.includes(name) ? prev.filter((m) => m !== name) : [...prev, name]));
@@ -24,22 +38,10 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
     setNoGamesMsg('');
   };
 
-  const pick = async () => {
-    setLoading(true);
+  const pick = () => {
     setPickedGame(null);
     setNoGamesMsg('');
-
-    const params = new URLSearchParams({ status: 'backlog' });
-    if (selectedMoods.length) params.set('moods', selectedMoods.join(','));
-
-    await new Promise((r) => setTimeout(r, 900));
-
-    const res = await fetch(`/api/games/random?${params}`);
-    const data = await res.json();
-    setLoading(false);
-
-    if (data.game) setPickedGame(data.game);
-    else setNoGamesMsg(data.message ?? 'No games found');
+    executePick(selectedMoods);
   };
 
   const handleClose = () => {
