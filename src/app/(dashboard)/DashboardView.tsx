@@ -8,9 +8,9 @@ import { SearchInput } from "@/src/components/ui/SearchInput";
 import { Dices, Plus } from "lucide-react";
 
 const STAT_CARDS = [
-  { key: "backlog" as const, label: "Backlog", color: "text-brand-400" },
-  { key: "playing" as const, label: "Playing", color: "text-green-400" },
-  { key: "completed" as const, label: "Completed", color: "text-blue-400" },
+  { key: "playing" as const, label: "Playing", color: "text-emerald-400" },
+  { key: "backlog" as const, label: "Backlog", color: "text-violet-400" },
+  { key: "completed" as const, label: "Completed", color: "text-green-400" },
   { key: "ongoing" as const, label: "Ongoing", color: "text-cyan-400" },
   { key: "wishlist" as const, label: "Wishlist", color: "text-yellow-400" },
 ] as const;
@@ -20,9 +20,6 @@ export function DashboardView() {
     stats,
     topPriority,
     recentlyPlayed,
-    searchQuery,
-    setSearchQuery,
-    searchResults,
     moods,
     showAdd,
     setShowAdd,
@@ -62,7 +59,6 @@ export function DashboardView() {
           </div>
         )}
       </div>
-
       <div className="gap-3 md:gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 mb-6">
         {STAT_CARDS.map((s) => (
           <div
@@ -78,31 +74,32 @@ export function DashboardView() {
           </div>
         ))}
       </div>
-
-      <SearchInput
-        value={searchQuery}
-        onChange={setSearchQuery}
-        className="mb-8"
-      />
-
-      {searchQuery ? (
+      <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
         <section>
           <h2 className="mb-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-            Search Results ({searchResults.length})
+            Top Priority
           </h2>
-          {searchResults.length === 0 ? (
+          {topPriority.length === 0 ? (
             <div className="bg-gray-900 p-8 border border-gray-800 rounded-xl text-center">
-              <p className="text-gray-600 text-sm">
-                No games found for &ldquo;{searchQuery}&rdquo;
+              <p className="mb-3 text-gray-600 text-sm">
+                Your backlog is empty
               </p>
+              {isAuthenticated && (
+                <button
+                  onClick={() => setShowAdd(true)}
+                  className="text-brand-400 hover:text-brand-300 text-sm transition-colors"
+                >
+                  Add your first game →
+                </button>
+              )}
             </div>
           ) : (
             <div className="space-y-3">
-              {searchResults.map((game) => (
+              {topPriority.map((game) => (
                 <GameCard
                   key={game.id}
                   game={game}
-                  showStatusBadge
+                  showPriority
                   onStatusChange={
                     isAuthenticated ? handleStatusChange : undefined
                   }
@@ -111,66 +108,29 @@ export function DashboardView() {
             </div>
           )}
         </section>
-      ) : (
-        <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
-          <section>
-            <h2 className="mb-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-              Top Priority
-            </h2>
-            {topPriority.length === 0 ? (
-              <div className="bg-gray-900 p-8 border border-gray-800 rounded-xl text-center">
-                <p className="mb-3 text-gray-600 text-sm">
-                  Your backlog is empty
-                </p>
-                {isAuthenticated && (
-                  <button
-                    onClick={() => setShowAdd(true)}
-                    className="text-brand-400 hover:text-brand-300 text-sm transition-colors"
-                  >
-                    Add your first game →
-                  </button>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {topPriority.map((game) => (
-                  <GameCard
-                    key={game.id}
-                    game={game}
-                    showPriority
-                    onStatusChange={
-                      isAuthenticated ? handleStatusChange : undefined
-                    }
-                  />
-                ))}
-              </div>
-            )}
-          </section>
 
-          <section>
-            <h2 className="mb-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-              Recently Played
-            </h2>
-            {recentlyPlayed.length === 0 ? (
-              <div className="bg-gray-900 p-8 border border-gray-800 rounded-xl text-center">
-                <p className="text-gray-600 text-sm">No recent activity</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {recentlyPlayed.map((game) => (
-                  <GameCard
-                    key={game.id}
-                    game={game}
-                    showActions={false}
-                    showStatusBadge
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
-      )}
-
+        <section>
+          <h2 className="mb-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
+            Recently Played
+          </h2>
+          {recentlyPlayed.length === 0 ? (
+            <div className="bg-gray-900 p-8 border border-gray-800 rounded-xl text-center">
+              <p className="text-gray-600 text-sm">No recent activity</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {recentlyPlayed.map((game) => (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  showActions={false}
+                  showStatusBadge
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
       <AddGameModal
         isOpen={showAdd}
         onClose={() => setShowAdd(false)}

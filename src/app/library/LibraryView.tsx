@@ -47,12 +47,14 @@ export function LibraryView() {
       <div className="mb-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="font-bold text-white text-2xl">Library</h1>
-          <button
-            onClick={() => setShowAdd(true)}
-            className="flex flex-1 sm:flex-none justify-center items-center gap-2 bg-linear-to-r from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 shadow-lg px-4 py-2 rounded-lg font-semibold text-white text-sm text-center transition-all"
-          >
-            <Plus size={15} /> Add Game
-          </button>
+          {isAuthenticated && (
+            <button
+              onClick={() => setShowAdd(true)}
+              className="flex flex-1 sm:flex-none justify-center items-center gap-2 bg-linear-to-r from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 shadow-lg px-4 py-2 rounded-lg font-semibold text-white text-sm text-center transition-all"
+            >
+              <Plus size={15} /> Add Game
+            </button>
+          )}
         </div>
         <TabBar
           tabs={TABS}
@@ -92,7 +94,8 @@ export function LibraryView() {
         <>
           <div className="space-y-3">
             <p className="text-gray-600 text-sm">
-              {filtered.length} game{filtered.length !== 1 ? "s" : ""}
+              {filtered.length} {LIBRARY_TAB_LABELS[tab].toLowerCase()} game
+              {filtered.length !== 1 ? "s" : ""}
             </p>
             {paginated.map((game) => (
               <GameCard

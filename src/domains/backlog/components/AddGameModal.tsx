@@ -14,6 +14,7 @@ import {
 } from "@/src/domains/backlog/models/game.types";
 import { MoodDto } from "@/src/domains/backlog/models/mood.types";
 import { MoodBadge } from "@/src/domains/backlog/components/MoodBadge";
+import { Trash2 } from "lucide-react";
 
 export interface AddGamePayload {
   title: string;
@@ -169,7 +170,7 @@ export function AddGameModal({
 
   return (
     <div className="z-50 fixed inset-0 flex justify-center items-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="relative bg-gray-900 shadow-2xl border border-gray-700 rounded-2xl w-full max-w-md max-h-[90vh] overflow-hidden">
+      <div className="relative bg-gray-900 shadow-2xl border border-gray-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
         {(coverArtUrl ||
           coverUrl ||
           editGame?.cover_art_url ||
@@ -296,7 +297,9 @@ export function AddGameModal({
                   {igdbLoading ? (
                     <span className="text-gray-500">Fetching IGDB data…</span>
                   ) : igdbLoaded ? (
-                    <span className="text-green-400">Cover art + description from IGDB</span>
+                    <span className="text-green-400">
+                      Cover art + description from IGDB
+                    </span>
                   ) : (
                     "Cover art loaded from RAWG"
                   )}
@@ -473,9 +476,9 @@ export function AddGameModal({
                     await onDelete(editGame.id);
                     onClose();
                   }}
-                  className="bg-gray-800 hover:bg-red-900/40 px-3 py-2 border border-gray-700 hover:border-red-800 rounded-lg font-medium text-gray-500 hover:text-red-400 text-sm transition-colors"
+                  className="flex items-center gap-1 bg-red-400 hover:bg-red-900/40 px-3 py-2 border border-gray-700 hover:border-red-800 rounded-lg font-medium text-white hover:text-red-400 text-sm transition-colors"
                 >
-                  Delete
+                  <Trash2 /> Delete
                 </button>
               )}
               <button

@@ -2,13 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { GameDto, GameStatus } from '@/src/domains/backlog/models/game.types';
-import { MoodDto } from '@/src/domains/backlog/models/mood.types';
+import { GameDto } from '@/src/domains/backlog/models/game.types';
 import { useAuth } from '@/src/domains/shared/auth/AuthContext';
-import { gameKeys, moodKeys } from '@/src/domains/backlog/queryKeys';
+import { useAuthFetch } from '@/src/domains/shared/auth/useAuthFetch';
+import { useMoods } from '@/src/domains/backlog/hooks/useMoods';
+import { useGameActions } from '@/src/domains/backlog/hooks/useGameActions';
+import { filterByMood, filterByTitle } from '@/src/domains/backlog/services/game.queries';
+import { gameKeys } from '@/src/domains/backlog/queryKeys';
 
 export function useBacklog() {
   const { session, authLoading } = useAuth();
+  const { authJsonFetch } = useAuthFetch();
+  const { moods, moodsLoading } = useMoods();
   const isAuthenticated = session !== null;
   const queryClient = useQueryClient();
 
@@ -26,21 +31,9 @@ export function useBacklog() {
     queryFn: () => fetch('/api/games?status=backlog').then((r) => r.json()),
   });
 
-  const { data: moods = [], isPending: moodsLoading } = useQuery<MoodDto[]>({
-    queryKey: moodKeys.all,
-    queryFn: () => fetch('/api/moods').then((r) => r.json()),
-    staleTime: Infinity,
-  });
-
   const loading = authLoading || gamesLoading || moodsLoading;
 
-  const moodFiltered = moodFilter
-    ? games.filter((g) => g.moods?.some((m) => m.name === moodFilter))
-    : games;
-
-  const filtered = searchQuery.trim()
-    ? moodFiltered.filter((g) => g.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    : moodFiltered;
+  const filtered = filterByTitle(filterByMood(games, moodFilter), searchQuery);
 
   useEffect(() => { setPage(1); }, [moodFilter]);
   useEffect(() => { setPage(1); }, [searchQuery]);
@@ -48,61 +41,23 @@ export function useBacklog() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const authHeaders = (): Record<string, string> =>
-    session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
-
   const invalidateGames = () =>
     queryClient.invalidateQueries({ queryKey: gameKeys.byStatus('backlog') });
 
-  const addMutation = useMutation({
-    mutationFn: (data: object) =>
-      fetch('/api/games', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ ...data, status: 'backlog' }),
-      }),
-    onSuccess: invalidateGames,
-  });
-
-  const editMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: object }) =>
-      fetch(`/api/games/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify(data),
-      }),
-    onSuccess: () => {
+  const { handleAdd, handleStatusChange, handleEdit, handleDelete } = useGameActions({
+    onAddSuccess: invalidateGames,
+    onStatusSuccess: invalidateGames,
+    onEditSuccess: () => {
       setEditGame(null);
       invalidateGames();
     },
+    onDeleteSuccess: invalidateGames,
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) =>
-      fetch(`/api/games/${id}`, { method: 'DELETE', headers: authHeaders() }),
-    onSuccess: invalidateGames,
-  });
-
-  const statusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: GameStatus }) => {
-      const updates: Record<string, unknown> = { status };
-      if (status === 'playing') updates.last_played_at = new Date().toISOString();
-      return fetch(`/api/games/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify(updates),
-      });
-    },
-    onSuccess: invalidateGames,
-  });
-
+  // Kept local: optimistic update requires onMutate with queryClient.setQueryData
   const priorityMutation = useMutation({
     mutationFn: ({ id, newScore }: { id: string; newScore: number }) =>
-      fetch(`/api/games/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ priority_score: newScore }),
-      }),
+      authJsonFetch(`/api/games/${id}`, 'PUT', { priority_score: newScore }),
     onMutate: ({ id, newScore }) => {
       queryClient.setQueryData<GameDto[]>(gameKeys.byStatus('backlog'), (prev = []) =>
         prev
@@ -112,20 +67,15 @@ export function useBacklog() {
     },
   });
 
-  const handleAdd = (data: object) => addMutation.mutate(data);
-
-  const handleEdit = (data: object) => {
-    if (!editGame) return;
-    editMutation.mutate({ id: editGame.id, data });
-  };
-
-  const handleDelete = (id: string) => {
+  const handleDeleteConfirm = (id: string) => {
     if (!confirm('Remove this game from your backlog?')) return;
-    deleteMutation.mutate(id);
+    handleDelete(id);
   };
 
-  const handleStatusChange = (id: string, status: GameStatus) =>
-    statusMutation.mutate({ id, status });
+  const handleEditSubmit = (data: object) => {
+    if (!editGame) return;
+    handleEdit(editGame.id, data);
+  };
 
   const handlePriorityChange = (id: string, delta: number) => {
     const game = games.find((g) => g.id === id);
@@ -155,8 +105,8 @@ export function useBacklog() {
     loading,
     isAuthenticated,
     handleAdd,
-    handleEdit,
-    handleDelete,
+    handleEdit: handleEditSubmit,
+    handleDelete: handleDeleteConfirm,
     handleStatusChange,
     handlePriorityChange,
   };

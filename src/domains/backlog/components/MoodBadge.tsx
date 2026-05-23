@@ -5,7 +5,7 @@ type MoodName =
   | 'online' | 'multiplayer' | 'co-op' | 'tactical' | 'puzzle'
   | 'quick-session' | 'new-release' | 'retro' | 'open-world' | 'rpg'
   | 'sports' | 'indie' | 'vr' | 'family-friendly' | 'roguelike'
-  | 'strategy' | 'adventure' | 'fighting';
+  | 'strategy' | 'adventure' | 'fighting' | 'rhythm';
 
 const MOOD_STYLES: Record<MoodName, { bg: string; text: string; label: string }> = {
   action:                          { bg: 'bg-red-900/60',      text: 'text-red-400',      label: 'Action' },
@@ -30,6 +30,7 @@ const MOOD_STYLES: Record<MoodName, { bg: string; text: string; label: string }>
   strategy:                        { bg: 'bg-slate-700/60',    text: 'text-slate-300',    label: 'Strategy' },
   adventure:                       { bg: 'bg-yellow-900/60',   text: 'text-yellow-300',   label: 'Adventure' },
   fighting:                        { bg: 'bg-orange-900/60',   text: 'text-orange-300',   label: 'Fighting' },
+  rhythm:                          { bg: 'bg-pink-900/60',     text: 'text-pink-300',     label: 'Rhythm' },
 };
 
 export function getMoodLabel(mood: string): string {

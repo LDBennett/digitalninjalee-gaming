@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, PenLine } from "lucide-react";
+import { Info, Pencil, PenLine } from "lucide-react";
 import {
   GameDto,
   GameStatus,
@@ -297,9 +297,9 @@ export function GameCard({
                 ) : (
                   <button
                     onClick={() => setShowStatusSelect(true)}
-                    className="flex items-center gap-2 text-gray-500 hover:text-brand-400 text-xs align-bottom transition-colors"
+                    className="flex items-center gap-1 text-gray-500 hover:text-brand-400 text-xs align-bottom transition-colors"
                   >
-                    <PenLine size={14} />
+                    <Info size={16} />
                     Status
                   </button>
                 )}

@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { GameDto, GameStatus } from "@/src/domains/backlog/models/game.types";
-import { MoodDto } from "@/src/domains/backlog/models/mood.types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { GameDto } from "@/src/domains/backlog/models/game.types";
 import { useAuth } from "@/src/domains/shared/auth/AuthContext";
-import { gameKeys, moodKeys } from "@/src/domains/backlog/queryKeys";
+import { useMoods } from "@/src/domains/backlog/hooks/useMoods";
+import { useGameActions } from "@/src/domains/backlog/hooks/useGameActions";
+import { filterByTitle } from "@/src/domains/backlog/services/game.queries";
+import { gameKeys } from "@/src/domains/backlog/queryKeys";
 
 export type LibraryTab =
   | "all"
@@ -34,6 +36,7 @@ export const LIBRARY_TAB_LABELS: Record<LibraryTab, string> = {
 
 export function useLibrary() {
   const { session } = useAuth();
+  const { moods } = useMoods();
   const isAuthenticated = session !== null;
   const queryClient = useQueryClient();
 
@@ -56,88 +59,34 @@ export function useLibrary() {
         : fetch("/api/games").then((r) => r.json()),
   });
 
-  const { data: moods = [] } = useQuery<MoodDto[]>({
-    queryKey: moodKeys.all,
-    queryFn: () => fetch("/api/moods").then((r) => r.json()),
-    staleTime: Infinity,
-  });
+  useEffect(() => { setPage(1); }, [tab]);
+  useEffect(() => { setPage(1); }, [searchQuery]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [tab]);
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery]);
-
-  const filtered = searchQuery.trim()
-    ? games.filter((g) =>
-        g.title.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : games;
-
+  const filtered = filterByTitle(games, searchQuery);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const authHeaders = (): Record<string, string> =>
-    session?.access_token
-      ? { Authorization: `Bearer ${session.access_token}` }
-      : {};
-
   const invalidateGames = () => queryClient.invalidateQueries({ queryKey });
 
-  const statusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: GameStatus }) =>
-      fetch(`/api/games/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({ status }),
-      }),
-    onSuccess: invalidateGames,
-  });
-
-  const editMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: object }) =>
-      fetch(`/api/games/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify(data),
-      }),
-    onSuccess: () => {
+  const { handleAdd, handleStatusChange, handleEdit, handleDelete } = useGameActions({
+    onAddSuccess: invalidateGames,
+    onStatusSuccess: invalidateGames,
+    onEditSuccess: () => {
       setEditGame(null);
       invalidateGames();
     },
+    onDeleteSuccess: invalidateGames,
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) =>
-      fetch(`/api/games/${id}`, { method: "DELETE", headers: authHeaders() }),
-    onSuccess: invalidateGames,
-  });
-
-  const addMutation = useMutation({
-    mutationFn: (data: object) =>
-      fetch("/api/games", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify(data),
-      }),
-    onSuccess: invalidateGames,
-  });
-
-  const handleStatusChange = (id: string, status: GameStatus) =>
-    statusMutation.mutate({ id, status });
-
-  const handleEdit = (data: object) => {
-    if (!editGame) return;
-    editMutation.mutate({ id: editGame.id, data });
-  };
-
-  const handleDelete = (id: string) => {
+  const handleDeleteConfirm = (id: string) => {
     if (!confirm("Delete this game?")) return;
-    deleteMutation.mutate(id);
+    handleDelete(id);
   };
 
-  const handleAdd = (data: object) => addMutation.mutate(data);
+  const handleEditSubmit = (data: object) => {
+    if (!editGame) return;
+    handleEdit(editGame.id, data);
+  };
 
   return {
     games,
@@ -156,8 +105,8 @@ export function useLibrary() {
     gamesLoading,
     isAuthenticated,
     handleStatusChange,
-    handleEdit,
-    handleDelete,
+    handleEdit: handleEditSubmit,
+    handleDelete: handleDeleteConfirm,
     handleAdd,
     showAdd,
     setShowAdd,

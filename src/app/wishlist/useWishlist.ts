@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { GameDto, GameStatus } from '@/src/domains/backlog/models/game.types';
-import { MoodDto } from '@/src/domains/backlog/models/mood.types';
+import { GameDto } from '@/src/domains/backlog/models/game.types';
 import { useAuth } from '@/src/domains/shared/auth/AuthContext';
-import { gameKeys, moodKeys } from '@/src/domains/backlog/queryKeys';
+import { useAuthFetch } from '@/src/domains/shared/auth/useAuthFetch';
+import { useMoods } from '@/src/domains/backlog/hooks/useMoods';
+import { useGameActions } from '@/src/domains/backlog/hooks/useGameActions';
+import { gameKeys } from '@/src/domains/backlog/queryKeys';
 
 export type WishlistTab = 'interested' | 'pre-ordered' | 'keep-an-eye-on' | 'all';
 
@@ -20,6 +22,8 @@ export const ALL_WISHLIST_STATUSES = 'interested,pre-ordered,keep-an-eye-on';
 
 export function useWishlist() {
   const { session } = useAuth();
+  const { authJsonFetch } = useAuthFetch();
+  const { moods } = useMoods();
   const isAuthenticated = session !== null;
   const queryClient = useQueryClient();
 
@@ -37,69 +41,28 @@ export function useWishlist() {
     queryFn: () => fetch(`/api/games?status=${statusParam}`).then((r) => r.json()),
   });
 
-  const { data: moods = [] } = useQuery<MoodDto[]>({
-    queryKey: moodKeys.all,
-    queryFn: () => fetch('/api/moods').then((r) => r.json()),
-    staleTime: Infinity,
-  });
-
   useEffect(() => { setPage(1); }, [tab]);
 
   const totalPages = Math.max(1, Math.ceil(games.length / PAGE_SIZE));
   const paginated = games.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const authHeaders = (): Record<string, string> =>
-    session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
-
   const invalidateGames = () =>
     queryClient.invalidateQueries({ queryKey: gameKeys.byStatus(statusParam) });
 
-  const addMutation = useMutation({
-    mutationFn: (data: object) =>
-      fetch('/api/games', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify(data),
-      }),
-    onSuccess: invalidateGames,
-  });
-
-  const editMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: object }) =>
-      fetch(`/api/games/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify(data),
-      }),
-    onSuccess: () => {
+  const { handleAdd, handleStatusChange, handleEdit, handleDelete } = useGameActions({
+    onAddSuccess: invalidateGames,
+    onStatusSuccess: invalidateGames,
+    onEditSuccess: () => {
       setEditGame(null);
       invalidateGames();
     },
+    onDeleteSuccess: invalidateGames,
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) =>
-      fetch(`/api/games/${id}`, { method: 'DELETE', headers: authHeaders() }),
-    onSuccess: invalidateGames,
-  });
-
-  const statusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: GameStatus }) =>
-      fetch(`/api/games/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ status }),
-      }),
-    onSuccess: invalidateGames,
-  });
-
+  // Kept local: optimistic update requires onMutate with queryClient.setQueryData
   const priorityMutation = useMutation({
     mutationFn: ({ id, newScore }: { id: string; newScore: number }) =>
-      fetch(`/api/games/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ priority_score: newScore }),
-      }),
+      authJsonFetch(`/api/games/${id}`, 'PUT', { priority_score: newScore }),
     onMutate: ({ id, newScore }) => {
       queryClient.setQueryData<GameDto[]>(gameKeys.byStatus(statusParam), (prev = []) =>
         prev
@@ -109,20 +72,15 @@ export function useWishlist() {
     },
   });
 
-  const handleAdd = (data: object) => addMutation.mutate(data);
-
-  const handleEdit = (data: object) => {
-    if (!editGame) return;
-    editMutation.mutate({ id: editGame.id, data });
-  };
-
-  const handleDelete = (id: string) => {
+  const handleDeleteConfirm = (id: string) => {
     if (!confirm('Remove this game from your wishlist?')) return;
-    deleteMutation.mutate(id);
+    handleDelete(id);
   };
 
-  const handleStatusChange = (id: string, status: GameStatus) =>
-    statusMutation.mutate({ id, status });
+  const handleEditSubmit = (data: object) => {
+    if (!editGame) return;
+    handleEdit(editGame.id, data);
+  };
 
   const handlePriorityChange = (id: string, delta: number) => {
     const game = games.find((g) => g.id === id);
@@ -147,8 +105,8 @@ export function useWishlist() {
     gamesLoading,
     isAuthenticated,
     handleAdd,
-    handleEdit,
-    handleDelete,
+    handleEdit: handleEditSubmit,
+    handleDelete: handleDeleteConfirm,
     handleStatusChange,
     handlePriorityChange,
   };
