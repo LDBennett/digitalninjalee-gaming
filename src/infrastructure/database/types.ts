@@ -6,6 +6,8 @@ export interface GameRow {
   status: string;
   priority_score: number;
   cover_url: string | null;
+  cover_art_url: string | null;
+  game_description: string | null;
   last_played_at: string | null;
   created_at: string;
 }

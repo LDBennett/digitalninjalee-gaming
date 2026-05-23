@@ -23,7 +23,7 @@ export function SearchInput({ value, onChange, placeholder = 'Search games…', 
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-gray-900 border border-gray-700 focus:border-purple-600 rounded-lg pl-9 pr-8 py-2 text-sm text-white placeholder-gray-500 focus:outline-none"
+        className="w-full bg-gray-900 border border-gray-700 focus:border-brand-600 rounded-lg pl-9 pr-8 py-2 text-sm text-white placeholder-gray-500 focus:outline-none"
       />
       {value && (
         <button

@@ -16,6 +16,8 @@ export interface NewGameProps {
   status: GameStatus;
   priorityScore: PriorityScore;
   coverUrl: string | null;
+  coverArtUrl?: string | null;
+  gameDescription?: string | null;
   moods: ReadonlyArray<MoodState>;
   id?: string;
 }
@@ -30,6 +32,8 @@ export function newGame(props: NewGameProps): Result<GameState, string> {
     status: props.status,
     priorityScore: props.priorityScore,
     coverUrl: props.coverUrl,
+    coverArtUrl: props.coverArtUrl ?? null,
+    gameDescription: props.gameDescription ?? null,
     lastPlayedAt: null,
     createdAt: new Date(),
     moods: [...props.moods],
@@ -52,9 +56,18 @@ export function updateGameDetails(
   title: string,
   platform: Platform,
   coverUrl: string | null,
+  coverArtUrl?: string | null,
+  gameDescription?: string | null,
 ): Result<GameState, string> {
   if (!title.trim()) return err('Game title cannot be empty');
-  return ok({ ...game, title: title.trim(), platform, coverUrl });
+  return ok({
+    ...game,
+    title: title.trim(),
+    platform,
+    coverUrl,
+    ...(coverArtUrl !== undefined   && { coverArtUrl }),
+    ...(gameDescription !== undefined && { gameDescription }),
+  });
 }
 
 export function adjustPriority(game: GameState, delta: number): GameState {

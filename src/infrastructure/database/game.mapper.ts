@@ -25,6 +25,8 @@ export function gameRowToDomain(row: GameRowWithMoods): GameState {
     status: statusResult.value,
     priorityScore: scoreResult.value,
     coverUrl: row.cover_url,
+    coverArtUrl: row.cover_art_url,
+    gameDescription: row.game_description,
     lastPlayedAt: row.last_played_at ? new Date(row.last_played_at) : null,
     createdAt: new Date(row.created_at),
     moods,
@@ -40,6 +42,8 @@ export function gameStateToRow(game: GameState): Omit<GameRowWithMoods, 'game_mo
     status: game.status,
     priority_score: game.priorityScore,
     cover_url: game.coverUrl,
+    cover_art_url: game.coverArtUrl,
+    game_description: game.gameDescription,
     last_played_at: game.lastPlayedAt?.toISOString() ?? null,
     created_at: game.createdAt.toISOString(),
   };

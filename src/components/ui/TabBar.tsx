@@ -22,7 +22,7 @@ export function TabBar<T extends string>({
         <select
           value={value}
           onChange={(e) => onChange(e.target.value as T)}
-          className="bg-gray-900 px-3 py-2 border border-gray-700 focus:border-purple-600 rounded-lg focus:outline-none w-full text-white text-sm"
+          className="bg-gray-900 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm"
         >
           {tabs.map((t) => (
             <option key={t} value={t}>

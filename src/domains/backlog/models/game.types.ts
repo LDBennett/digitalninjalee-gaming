@@ -71,18 +71,18 @@ export const LIBRARY_STATUSES: ReadonlyArray<GameStatus> = [
 export const STATUS_LABELS: Record<GameStatus, string> = {
   'backlog':        'Backlog',
   'playing':        'Playing',
-  'completed':      'Completed',
+  'completed':      '100% Completed',
   'dropped':        'Dropped',
-  'main-complete':  'Main Complete',
+  'main-complete':  'Complete',
   'ongoing':        'Ongoing',
   'interested':     'Interested',
   'pre-ordered':    'Pre-Ordered',
   'keep-an-eye-on': 'Keep an Eye On',
 };
 
-const VALID_TRANSITIONS: Readonly<Record<GameStatus, ReadonlyArray<GameStatus>>> = {
+export const VALID_TRANSITIONS: Readonly<Record<GameStatus, ReadonlyArray<GameStatus>>> = {
   'backlog':        ['playing', 'dropped'],
-  'playing':        ['completed', 'main-complete', 'ongoing', 'dropped'],
+  'playing':        ['completed', 'main-complete', 'ongoing', 'backlog', 'dropped'],
   'completed':      [],
   'dropped':        ['backlog'],
   'main-complete':  ['playing', 'ongoing', 'completed'],
@@ -117,6 +117,8 @@ export interface GameState {
   readonly status: GameStatus;
   readonly priorityScore: PriorityScore;
   readonly coverUrl: string | null;
+  readonly coverArtUrl: string | null;
+  readonly gameDescription: string | null;
   readonly lastPlayedAt: Date | null;
   readonly createdAt: Date;
   readonly moods: ReadonlyArray<MoodState>;
@@ -132,6 +134,8 @@ export interface GameDto {
   status: GameStatus;
   priority_score: number;
   cover_url: string | null;
+  cover_art_url: string | null;
+  game_description: string | null;
   last_played_at: string | null;
   created_at: string;
   moods: MoodDto[];
@@ -146,6 +150,8 @@ export function gameStateToDto(game: GameState): GameDto {
     status: game.status,
     priority_score: game.priorityScore,
     cover_url: game.coverUrl,
+    cover_art_url: game.coverArtUrl,
+    game_description: game.gameDescription,
     last_played_at: game.lastPlayedAt?.toISOString() ?? null,
     created_at: game.createdAt.toISOString(),
     moods: game.moods.map((m) => ({ id: m.id, name: m.name })),

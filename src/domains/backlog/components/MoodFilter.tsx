@@ -10,15 +10,22 @@ interface MoodFilterProps {
   className?: string;
 }
 
-export function MoodFilter({ moods, value, onChange, className = "" }: MoodFilterProps) {
+export function MoodFilter({
+  moods,
+  value,
+  onChange,
+  className = "",
+}: MoodFilterProps) {
   return (
     <div className={className}>
       {/* Mobile: dropdown */}
       <div className="sm:hidden">
         <select
+          id="mood-filter"
+          name="mood-filter"
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value || null)}
-          className="bg-gray-900 px-3 py-2 border border-gray-700 focus:border-purple-600 rounded-lg focus:outline-none w-full text-white text-sm"
+          className="bg-gray-900 px-3 py-2 border border-gray-800 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm"
         >
           <option value="">All moods</option>
           {moods.map((mood) => (

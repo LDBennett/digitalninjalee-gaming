@@ -4,7 +4,7 @@ import {
   useWishlist,
   WishlistTab,
   WISHLIST_TAB_LABELS,
-} from "@/src/domains/backlog/hooks/useWishlist";
+} from "./useWishlist";
 import { GameCard } from "@/src/domains/backlog/components/GameCard";
 import { GameCardSkeleton } from "@/src/domains/backlog/components/GameCardSkeleton";
 import { AddGameModal } from "@/src/domains/backlog/components/AddGameModal";
@@ -54,7 +54,7 @@ export function WishlistView() {
         {isAuthenticated && (
           <button
             onClick={() => setShowAdd(true)}
-            className="bg-purple-700 hover:bg-purple-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors sm:shrink-0"
+            className="bg-brand-700 hover:bg-brand-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors sm:shrink-0"
           >
             + Add Game
           </button>
@@ -88,7 +88,7 @@ export function WishlistView() {
           {isAuthenticated && (
             <button
               onClick={() => setShowAdd(true)}
-              className="bg-purple-700 hover:bg-purple-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
+              className="bg-brand-700 hover:bg-brand-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
             >
               + Add Game
             </button>
@@ -105,7 +105,6 @@ export function WishlistView() {
                 key={game.id}
                 game={game}
                 onEdit={isAuthenticated ? setEditGame : undefined}
-                onDelete={isAuthenticated ? handleDelete : undefined}
                 onStatusChange={
                   isAuthenticated ? handleStatusChange : undefined
                 }
@@ -132,6 +131,7 @@ export function WishlistView() {
           setEditGame(null);
         }}
         onSave={editGame ? handleEdit : handleAdd}
+        onDelete={isAuthenticated ? handleDelete : undefined}
         editGame={editGame}
         moods={moods}
         defaultStatus="interested"

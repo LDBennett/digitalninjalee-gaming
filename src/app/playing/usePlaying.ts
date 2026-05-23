@@ -5,54 +5,43 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { GameDto, GameStatus } from '@/src/domains/backlog/models/game.types';
 import { MoodDto } from '@/src/domains/backlog/models/mood.types';
 import { useAuth } from '@/src/domains/shared/auth/AuthContext';
-import { gameKeys, moodKeys } from './queryKeys';
+import { gameKeys, moodKeys } from '@/src/domains/backlog/queryKeys';
 
-export type LibraryTab = 'completed' | 'ongoing' | 'dropped';
-
-export const LIBRARY_TAB_STATUSES: Record<LibraryTab, string> = {
-  completed: 'completed,main-complete',
-  ongoing:   'ongoing',
-  dropped:   'dropped',
-};
-
-export const LIBRARY_TAB_LABELS: Record<LibraryTab, string> = {
-  completed: 'Completed',
-  ongoing:   'Ongoing',
-  dropped:   'Dropped',
-};
-
-export function useLibrary() {
-  const { session } = useAuth();
+export function usePlaying() {
+  const { session, authLoading } = useAuth();
   const isAuthenticated = session !== null;
   const queryClient = useQueryClient();
 
   const PAGE_SIZE = 20;
 
-  const [tab, setTab] = useState<LibraryTab>('completed');
+  const [moodFilter, setMoodFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
-  const tabStatus = LIBRARY_TAB_STATUSES[tab];
-
   const { data: games = [], isPending: gamesLoading } = useQuery<GameDto[]>({
-    queryKey: gameKeys.byStatus(tabStatus),
-    queryFn: () => fetch(`/api/games?status=${tabStatus}`).then((r) => r.json()),
+    queryKey: gameKeys.byStatus('playing'),
+    queryFn: () => fetch('/api/games?status=playing').then((r) => r.json()),
   });
 
-  const { data: moods = [] } = useQuery<MoodDto[]>({
+  const { data: moods = [], isPending: moodsLoading } = useQuery<MoodDto[]>({
     queryKey: moodKeys.all,
     queryFn: () => fetch('/api/moods').then((r) => r.json()),
     staleTime: Infinity,
   });
 
+  const loading = authLoading || gamesLoading || moodsLoading;
 
-  useEffect(() => { setPage(1); }, [tab]);
-  useEffect(() => { setPage(1); }, [searchQuery]);
+  const moodFiltered = moodFilter
+    ? games.filter((g) => g.moods?.some((m) => m.name === moodFilter))
+    : games;
 
   const filtered = searchQuery.trim()
-    ? games.filter((g) => g.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    : games;
+    ? moodFiltered.filter((g) => g.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    : moodFiltered;
+
+  useEffect(() => { setPage(1); }, [moodFilter]);
+  useEffect(() => { setPage(1); }, [searchQuery]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -61,15 +50,20 @@ export function useLibrary() {
     session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
 
   const invalidateGames = () =>
-    queryClient.invalidateQueries({ queryKey: gameKeys.byStatus(tabStatus) });
+    queryClient.invalidateQueries({ queryKey: gameKeys.byStatus('playing') });
 
   const statusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: GameStatus }) =>
-      fetch(`/api/games/${id}`, {
+    mutationFn: ({ id, status }: { id: string; status: GameStatus }) => {
+      const updates: Record<string, unknown> = { status };
+      if (status === 'completed' || status === 'main-complete') {
+        updates.last_played_at = new Date().toISOString();
+      }
+      return fetch(`/api/games/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ status }),
-      }),
+        body: JSON.stringify(updates),
+      });
+    },
     onSuccess: invalidateGames,
   });
 
@@ -113,13 +107,13 @@ export function useLibrary() {
     setPage,
     totalPages,
     moods,
-    tab,
-    setTab,
+    moodFilter,
+    setMoodFilter,
     searchQuery,
     setSearchQuery,
     editGame,
     setEditGame,
-    gamesLoading,
+    loading,
     isAuthenticated,
     handleStatusChange,
     handleEdit,

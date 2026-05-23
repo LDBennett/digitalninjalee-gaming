@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { Pencil, PenLine } from "lucide-react";
 import {
   GameDto,
   GameStatus,
@@ -35,6 +37,11 @@ const STATUS_ACTIONS: Record<GameStatus, StatusAction[]> = {
       color: "text-cyan-400 hover:text-cyan-300",
     },
     {
+      label: "Return to Backlog",
+      status: "backlog",
+      color: "text-brand-400 hover:text-brand-300",
+    },
+    {
       label: "Drop",
       status: "dropped",
       color: "text-gray-400 hover:text-gray-300",
@@ -45,7 +52,7 @@ const STATUS_ACTIONS: Record<GameStatus, StatusAction[]> = {
     {
       label: "Return to Backlog",
       status: "backlog",
-      color: "text-purple-400 hover:text-purple-300",
+      color: "text-brand-400 hover:text-brand-300",
     },
   ],
   "main-complete": [
@@ -67,12 +74,12 @@ const STATUS_ACTIONS: Record<GameStatus, StatusAction[]> = {
   ],
   ongoing: [
     {
-      label: "Mark Complete",
+      label: "Complete",
       status: "completed",
       color: "text-blue-400 hover:text-blue-300",
     },
     {
-      label: "Drop",
+      label: "Dropped",
       status: "dropped",
       color: "text-gray-400 hover:text-gray-300",
     },
@@ -103,7 +110,7 @@ const STATUS_ACTIONS: Record<GameStatus, StatusAction[]> = {
     {
       label: "Just Interested",
       status: "interested",
-      color: "text-purple-400 hover:text-purple-300",
+      color: "text-brand-400 hover:text-brand-300",
     },
     {
       label: "Keep an Eye On",
@@ -115,7 +122,7 @@ const STATUS_ACTIONS: Record<GameStatus, StatusAction[]> = {
     {
       label: "Now Interested",
       status: "interested",
-      color: "text-purple-400 hover:text-purple-300",
+      color: "text-brand-400 hover:text-brand-300",
     },
     {
       label: "Pre-Order",
@@ -132,7 +139,7 @@ const STATUS_BADGE: Record<GameStatus, { bg: string; text: string }> = {
   dropped: { bg: "bg-gray-800", text: "text-gray-500" },
   "main-complete": { bg: "bg-teal-900/40", text: "text-teal-400" },
   ongoing: { bg: "bg-cyan-900/40", text: "text-cyan-400" },
-  interested: { bg: "bg-purple-900/40", text: "text-purple-400" },
+  interested: { bg: "bg-brand-900/40", text: "text-brand-400" },
   "pre-ordered": { bg: "bg-yellow-900/40", text: "text-yellow-400" },
   "keep-an-eye-on": { bg: "bg-gray-800", text: "text-gray-400" },
 };
@@ -140,7 +147,6 @@ const STATUS_BADGE: Record<GameStatus, { bg: string; text: string }> = {
 interface GameCardProps {
   game: GameDto;
   onEdit?: (game: GameDto) => void;
-  onDelete?: (id: string) => void;
   onStatusChange?: (id: string, status: GameStatus) => void;
   onPriorityChange?: (id: string, delta: number) => void;
   showPriority?: boolean;
@@ -151,29 +157,49 @@ interface GameCardProps {
 export function GameCard({
   game,
   onEdit,
-  onDelete,
   onStatusChange,
   onPriorityChange,
   showPriority = false,
   showActions = true,
   showStatusBadge = false,
 }: GameCardProps) {
+  const [showStatusSelect, setShowStatusSelect] = useState(false);
   const moods = game.moods ?? [];
   const actions = STATUS_ACTIONS[game.status] ?? [];
   const badge = STATUS_BADGE[game.status];
+  const coverImage = game.cover_url || game.cover_art_url;
 
   return (
-    <div className="bg-gray-900 border border-gray-800 hover:border-purple-800/70 rounded-xl overflow-hidden transition-all duration-200">
-      <div className="flex gap-4 p-4">
-        <div className="bg-gray-800 rounded-lg w-14 h-20 overflow-hidden shrink-0">
-          {game.cover_url ? (
+    <div className="relative bg-gray-900 border border-gray-800 hover:border-brand-800/70 rounded-xl min-h-35 overflow-hidden transition-all duration-200">
+      {coverImage && (
+        <>
+          <div
+            className="absolute inset-0 scale-110"
+            style={{
+              backgroundImage: `url(${coverImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to right, rgba(17,24,39,0.5) 0%, rgba(17,24,39,0.88) 45%, rgba(17,24,39,0.97) 100%)",
+            }}
+          />
+        </>
+      )}
+      <div className="relative flex gap-4 p-4">
+        <div className="bg-gray-800 rounded-lg w-20 h-30 overflow-hidden shrink-0">
+          {game.cover_art_url ? (
             <img
-              src={game.cover_url}
+              src={game.cover_art_url}
               alt={game.title}
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="flex justify-center items-center bg-gradient-to-br from-purple-900 to-blue-900 w-full h-full">
+            <div className="flex justify-center items-center bg-linear-to-br from-brand-900 to-blue-900 w-full h-full">
               <span className="font-bold text-white/30 text-2xl">
                 {game.title.charAt(0).toUpperCase()}
               </span>
@@ -181,33 +207,44 @@ export function GameCard({
           )}
         </div>
 
-        <div className="flex-1 min-w-0">
+        <div className="flex flex-col flex-1 min-w-0">
           <div className="flex justify-between items-start gap-2">
             <h3 className="font-semibold text-white text-sm truncate leading-snug">
               {game.title}
             </h3>
 
-            {showPriority && onPriorityChange && (
-              <div className="flex items-center gap-1 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
+              {onEdit && (
                 <button
-                  onClick={() => onPriorityChange(game.id, 10)}
-                  className="px-1 text-gray-600 hover:text-purple-400 text-xs transition-colors"
-                  title="Raise priority"
+                  onClick={() => onEdit(game)}
+                  title="Edit game"
+                  className="text-gray-600 hover:text-brand-400 transition-colors"
                 >
-                  ▲
+                  <Pencil size={13} />
                 </button>
-                <span className="w-6 font-mono text-gray-500 text-xs text-center">
-                  {game.priority_score}
-                </span>
-                <button
-                  onClick={() => onPriorityChange(game.id, -10)}
-                  className="px-1 text-gray-600 hover:text-red-400 text-xs transition-colors"
-                  title="Lower priority"
-                >
-                  ▼
-                </button>
-              </div>
-            )}
+              )}
+              {showPriority && onPriorityChange && (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => onPriorityChange(game.id, 10)}
+                    className="px-1 text-gray-600 hover:text-brand-400 text-xs transition-colors"
+                    title="Raise priority"
+                  >
+                    ▲
+                  </button>
+                  <span className="w-6 font-mono text-gray-500 text-xs text-center">
+                    {game.priority_score}
+                  </span>
+                  <button
+                    onClick={() => onPriorityChange(game.id, -10)}
+                    className="px-1 text-gray-600 hover:text-red-400 text-xs transition-colors"
+                    title="Lower priority"
+                  >
+                    ▼
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 mt-1">
@@ -217,11 +254,6 @@ export function GameCard({
                 className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${badge.bg} ${badge.text}`}
               >
                 {STATUS_LABELS[game.status]}
-              </span>
-            )}
-            {game.last_played_at && (
-              <span className="text-gray-600 text-xs">
-                {new Date(game.last_played_at).toLocaleDateString()}
               </span>
             )}
           </div>
@@ -234,41 +266,46 @@ export function GameCard({
             </div>
           )}
 
-          {showActions &&
-            ((actions.length > 0 && !!onStatusChange) ||
-              onEdit ||
-              onDelete) && (
-              <div className="flex flex-wrap items-center gap-3 mt-3 pt-3 border-gray-800/60 border-t">
-                {onStatusChange &&
-                  actions.map((action) => (
-                    <button
-                      key={action.status}
-                      onClick={() => onStatusChange(game.id, action.status)}
-                      className={`text-xs font-medium transition-colors ${action.color}`}
+          {showActions && actions.length > 0 && !!onStatusChange && (
+            <div className="flex items-center mt-auto pt-3 border-gray-800/60 border-t">
+              <div className="ml-auto">
+                {showStatusSelect ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500 text-xs">Mark as:</span>
+                    <select
+                      autoFocus
+                      defaultValue=""
+                      onBlur={() => setShowStatusSelect(false)}
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          onStatusChange(game.id, e.target.value as GameStatus);
+                        }
+                        setShowStatusSelect(false);
+                      }}
+                      className="bg-gray-800 px-2 py-0.5 border border-brand-600 rounded focus:outline-none text-gray-300 text-xs cursor-pointer"
                     >
-                      {action.label}
-                    </button>
-                  ))}
-                <div className="flex items-center gap-3 ml-auto">
-                  {onEdit && (
-                    <button
-                      onClick={() => onEdit(game)}
-                      className="text-gray-500 hover:text-white text-xs transition-colors"
-                    >
-                      Edit
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button
-                      onClick={() => onDelete(game.id)}
-                      className="text-gray-700 hover:text-red-400 text-xs transition-colors"
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
+                      <option value="" disabled>
+                        Select...
+                      </option>
+                      {actions.map((action) => (
+                        <option key={action.status} value={action.status}>
+                          {action.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowStatusSelect(true)}
+                    className="flex items-center gap-2 text-gray-500 hover:text-brand-400 text-xs align-bottom transition-colors"
+                  >
+                    <PenLine size={14} />
+                    Status
+                  </button>
+                )}
               </div>
-            )}
+            </div>
+          )}
         </div>
       </div>
     </div>

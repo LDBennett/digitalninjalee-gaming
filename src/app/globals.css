@@ -1,8 +1,28 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-50: #e4e7ea;
+  --color-brand-100: #d5dadf;
+  --color-brand-200: #c7cdd5;
+  --color-brand-300: #b8c0ca;
+  --color-brand-400: #a9b3bf;
+  --color-brand-500: #91a3b3;
+  --color-brand-600: #708ea4;
+  --color-brand-700: #4e7a95;
+  --color-brand-800: #2d6587;
+  --color-brand-900: #0b5178;
+  --color-brand-950: #052436;
+}
+
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .slide-up {
@@ -10,7 +30,20 @@
 }
 
 /* Scrollbar styling for gaming feel */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0a0a0f; }
-::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+button {
+  cursor: pointer;
+}

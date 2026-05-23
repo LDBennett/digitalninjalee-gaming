@@ -1,0 +1,3 @@
+ALTER TABLE games
+  ADD COLUMN IF NOT EXISTS cover_art_url TEXT,
+  ADD COLUMN IF NOT EXISTS game_description TEXT;

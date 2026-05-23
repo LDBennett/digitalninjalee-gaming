@@ -1,6 +1,6 @@
 "use client";
 
-import { usePlaying } from "@/src/domains/backlog/hooks/usePlaying";
+import { usePlaying } from "./usePlaying";
 import { GameCard } from "@/src/domains/backlog/components/GameCard";
 import { AddGameModal } from "@/src/domains/backlog/components/AddGameModal";
 import { MoodFilter } from "@/src/domains/backlog/components/MoodFilter";
@@ -69,13 +69,12 @@ export function PlayingView() {
         </div>
       ) : (
         <>
-          <div className="space-y-3">
+          <div className="space-y-3 md:space-y-5">
             {paginated.map((game) => (
               <GameCard
                 key={game.id}
                 game={game}
                 onEdit={isAuthenticated ? setEditGame : undefined}
-                onDelete={isAuthenticated ? handleDelete : undefined}
                 onStatusChange={
                   isAuthenticated ? handleStatusChange : undefined
                 }
@@ -95,6 +94,7 @@ export function PlayingView() {
           isOpen
           onClose={() => setEditGame(null)}
           onSave={handleEdit}
+          onDelete={isAuthenticated ? handleDelete : undefined}
           editGame={editGame}
           moods={moods}
         />

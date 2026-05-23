@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { GameDto, GameStatus } from '@/src/domains/backlog/models/game.types';
 import { MoodDto } from '@/src/domains/backlog/models/mood.types';
 import { useAuth } from '@/src/domains/shared/auth/AuthContext';
-import { gameKeys, moodKeys } from './queryKeys';
+import { gameKeys, moodKeys } from '@/src/domains/backlog/queryKeys';
 
 export function useBacklog() {
   const { session, authLoading } = useAuth();

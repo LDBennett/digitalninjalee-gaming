@@ -1,6 +1,6 @@
 "use client";
 
-import { useBacklog } from "@/src/domains/backlog/hooks/useBacklog";
+import { useBacklog } from "./useBacklog";
 import { GameCard } from "@/src/domains/backlog/components/GameCard";
 import { AddGameModal } from "@/src/domains/backlog/components/AddGameModal";
 import { RandomPicker } from "@/src/domains/backlog/components/RandomPicker";
@@ -56,13 +56,13 @@ export function BacklogView() {
           <div className="flex gap-3">
             <button
               onClick={() => setShowPicker(true)}
-              className="bg-linear-to-r from-purple-700 hover:from-purple-600 to-blue-700 hover:to-blue-600 px-3 py-2 rounded-lg font-semibold text-white text-sm transition-all"
+              className="bg-linear-to-r from-brand-700 hover:from-brand-600 to-brand-700 hover:to-brand-600 px-3 py-2 rounded-lg font-semibold text-white text-sm transition-all"
             >
               🎲 Random
             </button>
             <button
               onClick={() => setShowAdd(true)}
-              className="bg-purple-700 hover:bg-purple-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
+              className="bg-brand-700 hover:bg-brand-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
             >
               + Add Game
             </button>
@@ -70,7 +70,11 @@ export function BacklogView() {
         )}
       </div>
 
-      <SearchInput value={searchQuery} onChange={setSearchQuery} className="mb-5" />
+      <SearchInput
+        value={searchQuery}
+        onChange={setSearchQuery}
+        className="mb-5"
+      />
 
       <MoodFilter
         moods={moods}
@@ -94,7 +98,7 @@ export function BacklogView() {
           {isAuthenticated && (
             <button
               onClick={() => setShowAdd(true)}
-              className="bg-purple-700 hover:bg-purple-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
+              className="bg-brand-700 hover:bg-brand-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
             >
               + Add Game
             </button>
@@ -102,7 +106,7 @@ export function BacklogView() {
         </div>
       ) : (
         <>
-          <div className="space-y-3">
+          <div className="space-y-3 md:space-y-5">
             {paginated.map((game, i) => (
               <div key={game.id} className="flex items-stretch gap-3">
                 <div className="flex justify-center items-center w-7 font-mono text-gray-700 text-xs shrink-0">
@@ -112,7 +116,6 @@ export function BacklogView() {
                   <GameCard
                     game={game}
                     onEdit={isAuthenticated ? setEditGame : undefined}
-                    onDelete={isAuthenticated ? handleDelete : undefined}
                     onStatusChange={
                       isAuthenticated ? handleStatusChange : undefined
                     }
@@ -140,6 +143,7 @@ export function BacklogView() {
           setEditGame(null);
         }}
         onSave={editGame ? handleEdit : handleAdd}
+        onDelete={isAuthenticated ? handleDelete : undefined}
         editGame={editGame}
         moods={moods}
         defaultStatus="backlog"

@@ -84,7 +84,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
           <button
             onClick={pick}
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-700 to-blue-700 hover:from-purple-600 hover:to-blue-600 disabled:opacity-60 text-white rounded-xl py-3 font-semibold text-sm transition-all shadow-lg"
+            className="w-full bg-gradient-to-r from-brand-700 to-brand-700 hover:from-brand-600 hover:to-brand-600 disabled:opacity-60 text-white rounded-xl py-3 font-semibold text-sm transition-all shadow-lg"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -106,7 +106,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
                   {pickedGame.cover_url ? (
                     <img src={pickedGame.cover_url} alt={pickedGame.title} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900 to-blue-900">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-900 to-brand-900">
                       <span className="text-xl font-bold text-white/30">
                         {pickedGame.title.charAt(0).toUpperCase()}
                       </span>
@@ -114,7 +114,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs text-purple-400 font-medium mb-0.5">Tonight you&apos;re playing…</p>
+                  <p className="text-xs text-brand-400 font-medium mb-0.5">Tonight you&apos;re playing…</p>
                   <h3 className="font-bold text-white leading-snug">{pickedGame.title}</h3>
                   <div className="mt-1.5">
                     <PlatformBadge platform={pickedGame.platform} />

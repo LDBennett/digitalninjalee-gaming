@@ -10,7 +10,7 @@ type MoodName =
 const MOOD_STYLES: Record<MoodName, { bg: string; text: string; label: string }> = {
   action:                          { bg: 'bg-red-900/60',      text: 'text-red-400',      label: 'Action' },
   chill:                           { bg: 'bg-sky-900/60',      text: 'text-sky-400',      label: 'Chill' },
-  story:                           { bg: 'bg-purple-900/60',   text: 'text-purple-400',   label: 'Story' },
+  story:                           { bg: 'bg-brand-900/60',   text: 'text-brand-400',   label: 'Story' },
   'trophy-or-achievement-hunting': { bg: 'bg-yellow-900/60',   text: 'text-yellow-400',   label: 'Trophy Hunting' },
   online:                          { bg: 'bg-cyan-900/60',     text: 'text-cyan-400',     label: 'Online' },
   multiplayer:                     { bg: 'bg-green-900/60',    text: 'text-green-400',    label: 'Multiplayer' },
@@ -22,7 +22,7 @@ const MOOD_STYLES: Record<MoodName, { bg: string; text: string; label: string }>
   retro:                           { bg: 'bg-amber-900/60',    text: 'text-amber-400',    label: 'Retro' },
   'open-world':                    { bg: 'bg-emerald-900/60',  text: 'text-emerald-400',  label: 'Open World' },
   rpg:                             { bg: 'bg-indigo-900/60',   text: 'text-indigo-400',   label: 'RPG' },
-  sports:                          { bg: 'bg-blue-900/60',     text: 'text-blue-400',     label: 'Sports' },
+  sports:                          { bg: 'bg-brand-900/60',     text: 'text-brand-400',     label: 'Sports' },
   indie:                           { bg: 'bg-fuchsia-900/60',  text: 'text-fuchsia-400',  label: 'Indie' },
   vr:                              { bg: 'bg-rose-900/60',     text: 'text-rose-400',     label: 'VR' },
   'family-friendly':               { bg: 'bg-green-900/60',    text: 'text-green-300',    label: 'Family Friendly' },

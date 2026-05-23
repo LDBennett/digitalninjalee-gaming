@@ -48,6 +48,8 @@ export async function POST(req: NextRequest) {
     status: statusResult.value,
     priorityScore: scoreResult.value,
     coverUrl: body.cover_url ?? null,
+    coverArtUrl: body.cover_art_url ?? null,
+    gameDescription: body.game_description ?? null,
     moods: moodsResult.value,
   });
   if (!gameResult.success) return NextResponse.json({ error: gameResult.error }, { status: 400 });

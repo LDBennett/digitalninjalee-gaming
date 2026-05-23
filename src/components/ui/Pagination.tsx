@@ -23,7 +23,7 @@ export function Pagination({ page, totalPages, onPageChange }: Props) {
       <select
         value={page}
         onChange={(e) => onPageChange(Number(e.target.value))}
-        className="bg-gray-900 px-3 py-1.5 border border-gray-700 focus:border-purple-600 rounded-lg focus:outline-none text-white text-sm"
+        className="bg-gray-900 px-3 py-1.5 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none text-white text-sm"
       >
         {pages.map((p) => (
           <option key={p} value={p}>

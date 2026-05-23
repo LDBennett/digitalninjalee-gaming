@@ -38,7 +38,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     game = transitionResult.value;
   }
 
-  if (body.title !== undefined || body.platform !== undefined || body.cover_url !== undefined) {
+  if (
+    body.title !== undefined ||
+    body.platform !== undefined ||
+    body.cover_url !== undefined ||
+    body.cover_art_url !== undefined ||
+    body.game_description !== undefined
+  ) {
     const platformResult = createPlatform(body.platform ?? game.platform);
     if (!platformResult.success) return NextResponse.json({ error: platformResult.error }, { status: 400 });
     const detailsResult = updateGameDetails(
@@ -46,6 +52,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       body.title ?? game.title,
       platformResult.value,
       body.cover_url !== undefined ? body.cover_url : game.coverUrl,
+      body.cover_art_url !== undefined ? body.cover_art_url : undefined,
+      body.game_description !== undefined ? body.game_description : undefined,
     );
     if (!detailsResult.success) return NextResponse.json({ error: detailsResult.error }, { status: 400 });
     game = detailsResult.value;

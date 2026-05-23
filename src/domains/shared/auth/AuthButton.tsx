@@ -74,7 +74,7 @@ export function AuthButton() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-purple-600 rounded-lg focus:outline-none w-full text-white text-sm placeholder-gray-500"
+                className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm placeholder-gray-500"
               />
               <input
                 type="password"
@@ -82,13 +82,13 @@ export function AuthButton() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSignIn()}
-                className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-purple-600 rounded-lg focus:outline-none w-full text-white text-sm placeholder-gray-500"
+                className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm placeholder-gray-500"
               />
               {error && <p className="text-red-400 text-xs">{error}</p>}
               <button
                 onClick={handleSignIn}
                 disabled={loading || !email || !password}
-                className="bg-purple-700 hover:bg-purple-600 disabled:opacity-50 px-3 py-2 rounded-lg w-full font-semibold text-white text-sm transition-colors disabled:cursor-not-allowed"
+                className="bg-brand-700 hover:bg-brand-600 disabled:opacity-50 px-3 py-2 rounded-lg w-full font-semibold text-white text-sm transition-colors disabled:cursor-not-allowed"
               >
                 {loading ? "Signing in…" : "Sign in"}
               </button>

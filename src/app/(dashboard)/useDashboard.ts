@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { GameDto, GameStatus } from '@/src/domains/backlog/models/game.types';
 import { MoodDto } from '@/src/domains/backlog/models/mood.types';
 import { useAuth } from '@/src/domains/shared/auth/AuthContext';
-import { gameKeys, moodKeys } from './queryKeys';
+import { gameKeys, moodKeys, statsKeys } from '@/src/domains/backlog/queryKeys';
 
 interface Stats {
   backlog: number;
@@ -30,21 +30,26 @@ export function useDashboard() {
     queryFn: () => fetch('/api/games').then((r) => r.json()),
   });
 
+  const { data: statusCounts = {}, isPending: statsLoading } = useQuery<Record<string, number>>({
+    queryKey: statsKeys.statusCounts,
+    queryFn: () => fetch('/api/games/stats').then((r) => r.json()),
+  });
+
   const { data: moods = [], isPending: moodsLoading } = useQuery<MoodDto[]>({
     queryKey: moodKeys.all,
     queryFn: () => fetch('/api/moods').then((r) => r.json()),
     staleTime: Infinity,
   });
 
-  const loading = authLoading || gamesLoading || moodsLoading;
+  const loading = authLoading || gamesLoading || statsLoading || moodsLoading;
 
   const stats: Stats = {
-    backlog:   allGames.filter((g) => g.status === 'backlog').length,
-    playing:   allGames.filter((g) => g.status === 'playing').length,
-    completed: allGames.filter((g) => g.status === 'completed' || g.status === 'main-complete').length,
-    ongoing:   allGames.filter((g) => g.status === 'ongoing').length,
-    wishlist:  allGames.filter((g) => g.status === 'interested' || g.status === 'pre-ordered' || g.status === 'keep-an-eye-on').length,
-    total:     allGames.length,
+    backlog:   statusCounts['backlog'] ?? 0,
+    playing:   statusCounts['playing'] ?? 0,
+    completed: (statusCounts['completed'] ?? 0) + (statusCounts['main-complete'] ?? 0),
+    ongoing:   statusCounts['ongoing'] ?? 0,
+    wishlist:  (statusCounts['interested'] ?? 0) + (statusCounts['pre-ordered'] ?? 0) + (statusCounts['keep-an-eye-on'] ?? 0),
+    total:     Object.values(statusCounts).reduce((sum, n) => sum + n, 0),
   };
 
   const topPriority = allGames
@@ -64,8 +69,10 @@ export function useDashboard() {
   const authHeaders = (): Record<string, string> =>
     session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
 
-  const invalidateGames = () =>
+  const invalidateGames = () => {
     queryClient.invalidateQueries({ queryKey: gameKeys.all });
+    queryClient.invalidateQueries({ queryKey: statsKeys.statusCounts });
+  };
 
   const addMutation = useMutation({
     mutationFn: (data: object) =>

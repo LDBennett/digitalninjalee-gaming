@@ -15,6 +15,8 @@ CREATE TABLE games (
   status game_status NOT NULL DEFAULT 'backlog',
   priority_score INTEGER DEFAULT 50 CHECK (priority_score >= 1 AND priority_score <= 100),
   cover_url TEXT,
+  cover_art_url TEXT,
+  game_description TEXT,
   last_played_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
