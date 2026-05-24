@@ -1,6 +1,6 @@
 # DigitalNinjaLee — Gaming Backlog & Picker
 
-> A personal gaming companion app to manage my backlog, track play status, and pick a game to play by "mood". Built with Next.js and Supabase. I know the pattern is overkill for the simplicity of the app, but I wanted experience using the Next.js capabilities (SSR).
+> A personal gaming companion app to manage my backlog, track play status, and pick a game to play by "mood". Built with Next.js and Supabase. I know the pattern is overkill for the simplicity of the app, but I wanted experience using the Next.js.
 
 ## Tech Stack
 
