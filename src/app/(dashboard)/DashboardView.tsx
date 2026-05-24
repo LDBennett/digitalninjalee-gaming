@@ -1,9 +1,9 @@
 "use client";
 
 import { useDashboard } from "./useDashboard";
-import { GameCard } from "@/src/domains/backlog/components/GameCard";
-import { AddGameModal } from "@/src/domains/backlog/components/AddGameModal";
-import { RandomPicker } from "@/src/domains/backlog/components/RandomPicker";
+import { GameCard } from "@/src/domains/games/components/GameCard";
+import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
+import { RandomPicker } from "@/src/domains/games/components/RandomPicker";
 import { SearchInput } from "@/src/components/ui/SearchInput";
 import { Dices, Plus } from "lucide-react";
 
@@ -54,7 +54,7 @@ export function DashboardView() {
               onClick={() => setShowPicker(true)}
               className="flex flex-1 sm:flex-none justify-center items-center gap-2 bg-linear-to-r from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 shadow-lg px-4 py-2 rounded-lg font-semibold text-white text-sm text-center transition-all"
             >
-              <Dices /> Pick a Game
+              <Dices /> Random Game
             </button>
           </div>
         )}

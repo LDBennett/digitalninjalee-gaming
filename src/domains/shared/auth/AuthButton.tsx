@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/src/domains/shared/auth/AuthContext";
+import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 
 export function AuthButton() {
-  const { user, signIn, signOut } = useAuth();
+  const { user, signIn, signOut } = useAuthStore();
   const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

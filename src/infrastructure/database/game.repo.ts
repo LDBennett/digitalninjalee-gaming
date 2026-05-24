@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { GameRepository, GameFilter, StatusCounts } from '@/src/domains/backlog/repository/game.repo';
-import { GameState } from '@/src/domains/backlog/models/game.types';
+import { GameRepository, GameFilter, StatusCounts } from '@/src/domains/games/repository/game.repo';
+import { GameState } from '@/src/domains/games/models/game.types';
 import { Result, ok, err } from '@/src/domains/shared/result';
 import { gameRowToDomain, gameStateToRow, gameMoodJunctionRows } from '@/src/infrastructure/database/game.mapper';
 import { GameRowWithMoods } from '@/src/infrastructure/database/types';

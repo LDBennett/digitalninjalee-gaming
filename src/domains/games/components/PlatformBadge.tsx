@@ -1,6 +1,6 @@
 'use client';
 
-import { Platform } from '@/src/domains/backlog/models/game.types';
+import { Platform } from '@/src/domains/games/models/game.types';
 
 const PLATFORM_STYLES: Record<Platform, { bg: string; text: string; label: string }> = {
   pc:          { bg: 'bg-gray-700',      text: 'text-gray-300',  label: 'PC' },

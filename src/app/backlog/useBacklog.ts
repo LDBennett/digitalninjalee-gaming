@@ -2,16 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { GameDto } from '@/src/domains/backlog/models/game.types';
-import { useAuth } from '@/src/domains/shared/auth/AuthContext';
+import { GameDto } from '@/src/domains/games/models/game.types';
+import { useAuthStore } from '@/src/domains/shared/auth/auth.store';
 import { useAuthFetch } from '@/src/domains/shared/auth/useAuthFetch';
-import { useMoods } from '@/src/domains/backlog/hooks/useMoods';
-import { useGameActions } from '@/src/domains/backlog/hooks/useGameActions';
-import { filterByMood, filterByTitle } from '@/src/domains/backlog/services/game.queries';
-import { gameKeys } from '@/src/domains/backlog/queryKeys';
-
+import { useMoods } from '@/src/domains/games/hooks/useMoods';
+import { useGameActions } from '@/src/domains/games/hooks/useGameActions';
+import { filterByMood, filterByTitle } from '@/src/domains/games/services/game.queries';
+import { gameKeys } from '@/src/domains/games/queryKeys';
 export function useBacklog() {
-  const { session, authLoading } = useAuth();
+  const { session, authLoading } = useAuthStore();
   const { authJsonFetch } = useAuthFetch();
   const { moods, moodsLoading } = useMoods();
   const isAuthenticated = session !== null;
@@ -20,10 +19,10 @@ export function useBacklog() {
   const PAGE_SIZE = 20;
 
   const [moodFilter, setMoodFilter] = useState<string | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [showAdd, setShowAdd] = useState(false);
-  const [showPicker, setShowPicker] = useState(false);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
   const { data: games = [], isPending: gamesLoading } = useQuery<GameDto[]>({

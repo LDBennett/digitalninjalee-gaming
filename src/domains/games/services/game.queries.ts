@@ -1,4 +1,4 @@
-import { GameDto } from '@/src/domains/backlog/models/game.types';
+import { GameDto } from '@/src/domains/games/models/game.types';
 
 export function getTopPriority(games: GameDto[], limit = 5): GameDto[] {
   return games

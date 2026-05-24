@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { GameDto } from '@/src/domains/backlog/models/game.types';
-import { MoodDto } from '@/src/domains/backlog/models/mood.types';
-import { MoodBadge } from '@/src/domains/backlog/components/MoodBadge';
-import { PlatformBadge } from '@/src/domains/backlog/components/PlatformBadge';
+import { GameDto } from '@/src/domains/games/models/game.types';
+import { MoodDto } from '@/src/domains/games/models/mood.types';
+import { MoodBadge } from '@/src/domains/games/components/MoodBadge';
+import { PlatformBadge } from '@/src/domains/games/components/PlatformBadge';
 
 interface RandomPickerProps {
   isOpen: boolean;

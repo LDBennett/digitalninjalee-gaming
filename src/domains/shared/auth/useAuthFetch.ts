@@ -1,9 +1,9 @@
 'use client';
 
-import { useAuth } from './AuthContext';
+import { useAuthStore } from './auth.store';
 
 export function useAuthFetch() {
-  const { session } = useAuth();
+  const { session } = useAuthStore();
 
   const authHeaders = (): Record<string, string> =>
     session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};

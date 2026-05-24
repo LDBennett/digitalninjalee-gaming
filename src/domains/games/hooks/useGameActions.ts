@@ -2,7 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { useAuthFetch } from '@/src/domains/shared/auth/useAuthFetch';
-import { GameStatus } from '@/src/domains/backlog/models/game.types';
+import { GameStatus } from '@/src/domains/games/models/game.types';
 
 export interface GameActionsOptions {
   onAddSuccess?: () => void;

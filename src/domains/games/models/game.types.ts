@@ -1,5 +1,5 @@
 import { Result, ok, err } from '@/src/domains/shared/result';
-import { MoodState, MoodDto } from '@/src/domains/backlog/models/mood.types';
+import { MoodState, MoodDto } from '@/src/domains/games/models/mood.types';
 
 // ── Platform ─────────────────────────────────────────────────────────────────
 

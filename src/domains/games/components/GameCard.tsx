@@ -6,9 +6,9 @@ import {
   GameDto,
   GameStatus,
   STATUS_LABELS,
-} from "@/src/domains/backlog/models/game.types";
-import { MoodBadge } from "@/src/domains/backlog/components/MoodBadge";
-import { PlatformBadge } from "@/src/domains/backlog/components/PlatformBadge";
+} from "@/src/domains/games/models/game.types";
+import { MoodBadge } from "@/src/domains/games/components/MoodBadge";
+import { PlatformBadge } from "@/src/domains/games/components/PlatformBadge";
 
 type StatusAction = { label: string; status: GameStatus; color: string };
 
@@ -152,6 +152,7 @@ interface GameCardProps {
   showPriority?: boolean;
   showActions?: boolean;
   showStatusBadge?: boolean;
+  rank?: number;
 }
 
 export function GameCard({
@@ -162,6 +163,7 @@ export function GameCard({
   showPriority = false,
   showActions = true,
   showStatusBadge = false,
+  rank,
 }: GameCardProps) {
   const [showStatusSelect, setShowStatusSelect] = useState(false);
   const moods = game.moods ?? [];
@@ -191,7 +193,7 @@ export function GameCard({
         </>
       )}
       <div className="relative flex gap-4 p-4">
-        <div className="bg-gray-800 rounded-lg w-20 h-30 overflow-hidden shrink-0">
+        <div className="relative bg-gray-800 rounded-lg w-20 h-30 overflow-hidden shrink-0">
           {game.cover_art_url ? (
             <img
               src={game.cover_art_url}
@@ -202,6 +204,13 @@ export function GameCard({
             <div className="flex justify-center items-center bg-linear-to-br from-brand-900 to-blue-900 w-full h-full">
               <span className="font-bold text-white/30 text-2xl">
                 {game.title.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
+          {rank !== undefined && (
+            <div className="bottom-0 absolute inset-x-0 flex justify-center items-end bg-linear-to-t from-black/90 to-transparent pb-1.5 h-10">
+              <span className="font-mono font-bold text-white text-lg leading-none">
+                {rank}
               </span>
             </div>
           )}

@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/src/infrastructure/database/supabase.client';
 import { createSupabaseGameRepository } from '@/src/infrastructure/database/game.repo';
 import { createSupabaseMoodRepository } from '@/src/infrastructure/database/mood.repo';
-import { transitionGame, updateGameDetails, adjustPriority, replaceMoods } from '@/src/domains/backlog/services/game.service';
-import { gameStateToDto, createPlatform, createGameStatus, createPriorityScore } from '@/src/domains/backlog/models/game.types';
-import { GameState } from '@/src/domains/backlog/models/game.types';
+import { transitionGame, updateGameDetails, adjustPriority, replaceMoods } from '@/src/domains/games/services/game.service';
+import { gameStateToDto, createPlatform, createGameStatus, createPriorityScore } from '@/src/domains/games/models/game.types';
+import { GameState } from '@/src/domains/games/models/game.types';
 
 function getToken(req: NextRequest): string | null {
   return req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;

@@ -1,15 +1,12 @@
 "use client";
 
-import {
-  useWishlist,
-  WishlistTab,
-  WISHLIST_TAB_LABELS,
-} from "./useWishlist";
-import { GameCard } from "@/src/domains/backlog/components/GameCard";
-import { GameCardSkeleton } from "@/src/domains/backlog/components/GameCardSkeleton";
-import { AddGameModal } from "@/src/domains/backlog/components/AddGameModal";
+import { useWishlist, WishlistTab, WISHLIST_TAB_LABELS } from "./useWishlist";
+import { GameCard } from "@/src/domains/games/components/GameCard";
+import { GameCardSkeleton } from "@/src/domains/games/components/GameCardSkeleton";
+import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
 import { Pagination } from "@/src/components/ui/Pagination";
 import { TabBar } from "@/src/components/ui/TabBar";
+import { Plus } from "lucide-react";
 
 const TABS: WishlistTab[] = [
   "all",
@@ -54,9 +51,9 @@ export function WishlistView() {
         {isAuthenticated && (
           <button
             onClick={() => setShowAdd(true)}
-            className="bg-brand-700 hover:bg-brand-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors sm:shrink-0"
+            className="flex sm:flex-none justify-center items-center gap-2 bg-linear-to-r from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 shadow-lg px-4 py-2 rounded-lg font-semibold text-white text-sm text-center transition-all shrink-0"
           >
-            + Add Game
+            <Plus size={15} /> Add Game
           </button>
         )}
       </div>

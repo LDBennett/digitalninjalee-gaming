@@ -1,12 +1,13 @@
 "use client";
-
+import { useUIStore } from "@/src/domains/shared/store/ui.store";
 import { useBacklog } from "./useBacklog";
-import { GameCard } from "@/src/domains/backlog/components/GameCard";
-import { AddGameModal } from "@/src/domains/backlog/components/AddGameModal";
-import { RandomPicker } from "@/src/domains/backlog/components/RandomPicker";
-import { MoodFilter } from "@/src/domains/backlog/components/MoodFilter";
+import { GameCard } from "@/src/domains/games/components/GameCard";
+import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
+import { RandomPicker } from "@/src/domains/games/components/RandomPicker";
+import { MoodFilter } from "@/src/domains/games/components/MoodFilter";
 import { Pagination } from "@/src/components/ui/Pagination";
 import { SearchInput } from "@/src/components/ui/SearchInput";
+import { Dices, DicesIcon, Plus } from "lucide-react";
 
 export function BacklogView() {
   const {
@@ -35,6 +36,8 @@ export function BacklogView() {
     handlePriorityChange,
   } = useBacklog();
 
+  const { truncatedButtonText } = useUIStore();
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
@@ -44,7 +47,7 @@ export function BacklogView() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="flex sm:flex-row flex-col justify-between sm:items-center gap-4 mb-6">
+      <div className="flex justify-between items-center gap-4 mb-6">
         <div>
           <h1 className="font-bold text-white text-2xl">Backlog</h1>
           <p className="mt-0.5 text-gray-500 text-sm">
@@ -53,18 +56,28 @@ export function BacklogView() {
           </p>
         </div>
         {isAuthenticated && (
-          <div className="flex gap-3">
+          <div className="flex justify-end gap-3">
             <button
               onClick={() => setShowPicker(true)}
-              className="bg-linear-to-r from-brand-700 hover:from-brand-600 to-brand-700 hover:to-brand-600 px-3 py-2 rounded-lg font-semibold text-white text-sm transition-all"
+              className={`"flex flex-1 sm:flex-none justify-center items-center gap-2 bg-linear-to-r from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 shadow-lg font-semibold text-white text-sm text-center transition-all" ${truncatedButtonText ? "rounded-full p-2" : "rounded-lg px-4 py-2"}`}
             >
-              🎲 Random
+              {truncatedButtonText ? (
+                <Dices size={16} />
+              ) : (
+                <div className="flex items-center gap-2">
+                  <DicesIcon size={16} />
+                  Random
+                </div>
+              )}
             </button>
             <button
               onClick={() => setShowAdd(true)}
-              className="bg-brand-700 hover:bg-brand-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
+              className="bg-linear-to-r from-brand-800 hover:from-brand-700 to-brand-600 hover:to-brand-500 shadow-lg px-4 py-2 rounded-lg font-semibold text-white text-sm text-center transition-all"
             >
-              + Add Game
+              <div className="flex items-center gap-1">
+                <Plus size={16} />
+                {truncatedButtonText ? "Game" : "Add Game"}
+              </div>
             </button>
           </div>
         )}
@@ -108,24 +121,19 @@ export function BacklogView() {
         <>
           <div className="space-y-3 md:space-y-5">
             {paginated.map((game, i) => (
-              <div key={game.id} className="flex items-stretch gap-3">
-                <div className="flex justify-center items-center w-7 font-mono text-gray-700 text-xs shrink-0">
-                  #{(page - 1) * 20 + i + 1}
-                </div>
-                <div className="flex-1">
-                  <GameCard
-                    game={game}
-                    onEdit={isAuthenticated ? setEditGame : undefined}
-                    onStatusChange={
-                      isAuthenticated ? handleStatusChange : undefined
-                    }
-                    onPriorityChange={
-                      isAuthenticated ? handlePriorityChange : undefined
-                    }
-                    showPriority
-                  />
-                </div>
-              </div>
+              <GameCard
+                key={game.id}
+                game={game}
+                rank={(page - 1) * 20 + i + 1}
+                onEdit={isAuthenticated ? setEditGame : undefined}
+                onStatusChange={
+                  isAuthenticated ? handleStatusChange : undefined
+                }
+                onPriorityChange={
+                  isAuthenticated ? handlePriorityChange : undefined
+                }
+                showPriority
+              />
             ))}
           </div>
           <Pagination

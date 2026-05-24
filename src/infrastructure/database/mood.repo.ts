@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { MoodRepository } from '@/src/domains/backlog/repository/mood.repo';
-import { MoodState } from '@/src/domains/backlog/models/mood.types';
+import { MoodRepository } from '@/src/domains/games/repository/mood.repo';
+import { MoodState } from '@/src/domains/games/models/mood.types';
 import { Result, ok, err } from '@/src/domains/shared/result';
 import { MoodRow } from '@/src/infrastructure/database/types';
 

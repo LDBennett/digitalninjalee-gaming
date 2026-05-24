@@ -1,5 +1,5 @@
-import { GameState, createPlatform, createGameStatus, createPriorityScore } from '@/src/domains/backlog/models/game.types';
-import { MoodState } from '@/src/domains/backlog/models/mood.types';
+import { GameState, createPlatform, createGameStatus, createPriorityScore } from '@/src/domains/games/models/game.types';
+import { MoodState } from '@/src/domains/games/models/mood.types';
 import { GameRowWithMoods } from '@/src/infrastructure/database/types';
 
 export function gameRowToDomain(row: GameRowWithMoods): GameState {

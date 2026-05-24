@@ -1,9 +1,9 @@
 "use client";
 
 import { usePlaying } from "./usePlaying";
-import { GameCard } from "@/src/domains/backlog/components/GameCard";
-import { AddGameModal } from "@/src/domains/backlog/components/AddGameModal";
-import { MoodFilter } from "@/src/domains/backlog/components/MoodFilter";
+import { GameCard } from "@/src/domains/games/components/GameCard";
+import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
+import { MoodFilter } from "@/src/domains/games/components/MoodFilter";
 import { Pagination } from "@/src/components/ui/Pagination";
 import { SearchInput } from "@/src/components/ui/SearchInput";
 

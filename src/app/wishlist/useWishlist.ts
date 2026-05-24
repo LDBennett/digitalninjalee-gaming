@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { GameDto } from '@/src/domains/backlog/models/game.types';
-import { useAuth } from '@/src/domains/shared/auth/AuthContext';
+import { GameDto } from '@/src/domains/games/models/game.types';
+import { useAuthStore } from '@/src/domains/shared/auth/auth.store';
 import { useAuthFetch } from '@/src/domains/shared/auth/useAuthFetch';
-import { useMoods } from '@/src/domains/backlog/hooks/useMoods';
-import { useGameActions } from '@/src/domains/backlog/hooks/useGameActions';
-import { gameKeys } from '@/src/domains/backlog/queryKeys';
+import { useMoods } from '@/src/domains/games/hooks/useMoods';
+import { useGameActions } from '@/src/domains/games/hooks/useGameActions';
+import { gameKeys } from '@/src/domains/games/queryKeys';
 
 export type WishlistTab = 'interested' | 'pre-ordered' | 'keep-an-eye-on' | 'all';
 
@@ -21,7 +21,7 @@ export const WISHLIST_TAB_LABELS: Record<WishlistTab, string> = {
 export const ALL_WISHLIST_STATUSES = 'interested,pre-ordered,keep-an-eye-on';
 
 export function useWishlist() {
-  const { session } = useAuth();
+  const { session } = useAuthStore();
   const { authJsonFetch } = useAuthFetch();
   const { moods } = useMoods();
   const isAuthenticated = session !== null;

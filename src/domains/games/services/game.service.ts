@@ -6,8 +6,8 @@ import {
   PriorityScore,
   canTransitionTo,
   adjustPriorityScore,
-} from '@/src/domains/backlog/models/game.types';
-import { MoodState } from '@/src/domains/backlog/models/mood.types';
+} from '@/src/domains/games/models/game.types';
+import { MoodState } from '@/src/domains/games/models/mood.types';
 
 export interface NewGameProps {
   title: string;

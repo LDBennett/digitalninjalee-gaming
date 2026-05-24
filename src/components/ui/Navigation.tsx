@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AuthButton } from "@/src/domains/shared/auth/AuthButton";
-import { useAuth } from "@/src/domains/shared/auth/AuthContext";
+import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 import {
   Gift,
   Sparkles,
@@ -22,7 +22,7 @@ const NAV_ITEMS = [
 
 export function Navigation() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   return (
     <>

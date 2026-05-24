@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/src/infrastructure/database/supabase.client';
 import { createSupabaseGameRepository } from '@/src/infrastructure/database/game.repo';
-import { selectRandomGame } from '@/src/domains/backlog/services/game.service';
-import { gameStateToDto } from '@/src/domains/backlog/models/game.types';
+import { selectRandomGame } from '@/src/domains/games/services/game.service';
+import { gameStateToDto } from '@/src/domains/games/models/game.types';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);

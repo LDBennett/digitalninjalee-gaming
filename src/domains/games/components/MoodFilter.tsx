@@ -1,6 +1,6 @@
 "use client";
 
-import { MoodDto } from "@/src/domains/backlog/models/mood.types";
+import { MoodDto } from "@/src/domains/games/models/mood.types";
 import { MoodBadge, getMoodLabel } from "./MoodBadge";
 
 interface MoodFilterProps {

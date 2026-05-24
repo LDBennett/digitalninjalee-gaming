@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { GameDto } from "@/src/domains/backlog/models/game.types";
-import { useAuth } from "@/src/domains/shared/auth/AuthContext";
-import { useMoods } from "@/src/domains/backlog/hooks/useMoods";
-import { useGameActions } from "@/src/domains/backlog/hooks/useGameActions";
-import { getTopPriority, getRecentlyPlayed } from "@/src/domains/backlog/services/game.queries";
-import { gameKeys, statsKeys } from "@/src/domains/backlog/queryKeys";
-
+import { GameDto } from "@/src/domains/games/models/game.types";
+import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
+import { useMoods } from "@/src/domains/games/hooks/useMoods";
+import { useGameActions } from "@/src/domains/games/hooks/useGameActions";
+import { getTopPriority, getRecentlyPlayed } from "@/src/domains/games/services/game.queries";
+import { gameKeys, statsKeys } from "@/src/domains/games/queryKeys";
 interface Stats {
   backlog: number;
   playing: number;
@@ -19,7 +18,7 @@ interface Stats {
 }
 
 export function useDashboard() {
-  const { session, authLoading } = useAuth();
+  const { session, authLoading } = useAuthStore();
   const { moods, moodsLoading } = useMoods();
   const isAuthenticated = session !== null;
   const queryClient = useQueryClient();

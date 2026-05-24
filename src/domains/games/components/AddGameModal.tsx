@@ -11,9 +11,9 @@ import {
   LIBRARY_STATUSES,
   WISHLIST_STATUSES,
   VALID_TRANSITIONS,
-} from "@/src/domains/backlog/models/game.types";
-import { MoodDto } from "@/src/domains/backlog/models/mood.types";
-import { MoodBadge } from "@/src/domains/backlog/components/MoodBadge";
+} from "@/src/domains/games/models/game.types";
+import { MoodDto } from "@/src/domains/games/models/mood.types";
+import { MoodBadge } from "@/src/domains/games/components/MoodBadge";
 import { Trash2 } from "lucide-react";
 
 export interface AddGamePayload {
