@@ -7,6 +7,13 @@ import { MoodDto } from '@/src/domains/games/models/mood.types';
 import { MoodBadge } from '@/src/domains/games/components/MoodBadge';
 import { PlatformBadge } from '@/src/domains/games/components/PlatformBadge';
 
+type Pool = 'backlog' | 'playing';
+
+const POOLS: { value: Pool; label: string }[] = [
+  { value: 'backlog', label: 'Backlog' },
+  { value: 'playing', label: 'Currently Playing' },
+];
+
 interface RandomPickerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -14,13 +21,15 @@ interface RandomPickerProps {
 }
 
 export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
+  const [selectedPool, setSelectedPool] = useState<Pool>('backlog');
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [pickedGame, setPickedGame] = useState<GameDto | null>(null);
   const [noGamesMsg, setNoGamesMsg] = useState('');
 
   const { mutate: executePick, isPending: loading } = useMutation({
     mutationFn: async (moods: string[]) => {
-      const params = new URLSearchParams({ status: 'backlog' });
+      const status = selectedPool === 'playing' ? 'playing,ongoing' : selectedPool;
+      const params = new URLSearchParams({ status });
       if (moods.length) params.set('moods', moods.join(','));
       await new Promise((r) => setTimeout(r, 900));
       const res = await fetch(`/api/games/random?${params}`);
@@ -31,6 +40,13 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
       else setNoGamesMsg(data.message ?? 'No games found');
     },
   });
+
+  const selectPool = (pool: Pool) => {
+    setSelectedPool(pool);
+    setPickedGame(null);
+    setNoGamesMsg('');
+    setSelectedMoods([]);
+  };
 
   const toggleMood = (name: string) => {
     setSelectedMoods((prev) => (prev.includes(name) ? prev.filter((m) => m !== name) : [...prev, name]));
@@ -48,6 +64,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
     setPickedGame(null);
     setSelectedMoods([]);
     setNoGamesMsg('');
+    setSelectedPool('backlog');
     onClose();
   };
 
@@ -64,6 +81,25 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
         </div>
 
         <div className="p-5 space-y-5">
+          <div>
+            <p className="text-xs text-gray-500 mb-3 uppercase tracking-wide font-medium">Pick from</p>
+            <div className="flex gap-2">
+              {POOLS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => selectPool(value)}
+                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-150 ${
+                    selectedPool === value
+                      ? 'bg-brand-700 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:text-gray-200'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div>
             <p className="text-xs text-gray-500 mb-3 uppercase tracking-wide font-medium">Filter by mood (optional)</p>
             <div className="flex flex-wrap gap-2">

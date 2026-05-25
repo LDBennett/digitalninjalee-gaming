@@ -468,7 +468,7 @@ export function AddGameModal({
               </div>
             </div>
 
-            <div className="flex gap-3 pt-1">
+            <div className="flex justify-between gap-3 pt-1">
               {editGame && onDelete && (
                 <button
                   type="button"
@@ -481,17 +481,11 @@ export function AddGameModal({
                   <Trash2 /> Delete
                 </button>
               )}
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 bg-gray-800 hover:bg-gray-700 py-2 rounded-lg font-medium text-white text-sm transition-colors"
-              >
-                Cancel
-              </button>
+
               <button
                 type="submit"
                 disabled={saving || !title.trim()}
-                className="flex-1 bg-brand-700 hover:bg-brand-600 disabled:opacity-50 py-2 rounded-lg font-medium text-white text-sm transition-colors disabled:cursor-not-allowed"
+                className="bg-brand-700 hover:bg-brand-600 disabled:opacity-50 px-5 py-2 rounded-lg font-medium text-white text-sm transition-colors disabled:cursor-not-allowed"
               >
                 {saving ? "Saving…" : editGame ? "Update" : "Add Game"}
               </button>

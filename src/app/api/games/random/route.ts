@@ -7,7 +7,7 @@ import { gameStateToDto } from '@/src/domains/games/models/game.types';
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const moodNames = searchParams.get('moods')?.split(',').filter(Boolean) ?? [];
-  const status = searchParams.get('status') ?? 'backlog';
+  const status = searchParams.get('status')?.split(',').filter(Boolean) ?? ['backlog'];
 
   const repo = createSupabaseGameRepository(createServerClient());
   const result = await repo.findAll({ status });

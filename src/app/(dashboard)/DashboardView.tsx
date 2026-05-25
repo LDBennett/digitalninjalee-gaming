@@ -4,8 +4,8 @@ import { useDashboard } from "./useDashboard";
 import { GameCard } from "@/src/domains/games/components/GameCard";
 import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
 import { RandomPicker } from "@/src/domains/games/components/RandomPicker";
-import { SearchInput } from "@/src/components/ui/SearchInput";
-import { Dices, Plus } from "lucide-react";
+
+import { Dices } from "lucide-react";
 
 const STAT_CARDS = [
   { key: "playing" as const, label: "Playing", color: "text-emerald-400" },
@@ -19,7 +19,7 @@ export function DashboardView() {
   const {
     stats,
     topPriority,
-    recentlyPlayed,
+    playingGames,
     moods,
     showAdd,
     setShowAdd,
@@ -77,7 +77,28 @@ export function DashboardView() {
       <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
         <section>
           <h2 className="mb-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-            Top Priority
+            Games Currently Playing
+          </h2>
+          {playingGames.length === 0 ? (
+            <div className="bg-gray-900 p-8 border border-gray-800 rounded-xl text-center">
+              <p className="text-gray-600 text-sm">No recent activity</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {playingGames.map((game) => (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  showActions={false}
+                  showStatusBadge
+                />
+              ))}
+            </div>
+          )}
+        </section>
+        <section>
+          <h2 className="mb-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
+            Backlog Games
           </h2>
           {topPriority.length === 0 ? (
             <div className="bg-gray-900 p-8 border border-gray-800 rounded-xl text-center">
@@ -103,28 +124,6 @@ export function DashboardView() {
                   onStatusChange={
                     isAuthenticated ? handleStatusChange : undefined
                   }
-                />
-              ))}
-            </div>
-          )}
-        </section>
-
-        <section>
-          <h2 className="mb-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-            Recently Played
-          </h2>
-          {recentlyPlayed.length === 0 ? (
-            <div className="bg-gray-900 p-8 border border-gray-800 rounded-xl text-center">
-              <p className="text-gray-600 text-sm">No recent activity</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {recentlyPlayed.map((game) => (
-                <GameCard
-                  key={game.id}
-                  game={game}
-                  showActions={false}
-                  showStatusBadge
                 />
               ))}
             </div>

@@ -1,10 +1,17 @@
-import { GameDto } from '@/src/domains/games/models/game.types';
+import { GameDto } from "@/src/domains/games/models/game.types";
 
 export function getTopPriority(games: GameDto[], limit = 5): GameDto[] {
   return games
-    .filter((g) => g.status === 'backlog')
+    .filter((g) => g.status === "backlog")
     .sort((a, b) => b.priority_score - a.priority_score)
     .slice(0, limit);
+}
+
+export function getPlayingGames(games: GameDto[], display = 10, pool = 20): GameDto[] {
+  const candidates = games
+    .filter((g) => g.status === "playing" || g.status === "ongoing")
+    .slice(0, pool);
+  return [...candidates].sort(() => Math.random() - 0.5).slice(0, display);
 }
 
 export function getRecentlyPlayed(games: GameDto[], limit = 5): GameDto[] {
@@ -18,7 +25,10 @@ export function getRecentlyPlayed(games: GameDto[], limit = 5): GameDto[] {
     .slice(0, limit);
 }
 
-export function filterByMood(games: GameDto[], moodFilter: string | null): GameDto[] {
+export function filterByMood(
+  games: GameDto[],
+  moodFilter: string | null,
+): GameDto[] {
   if (!moodFilter) return games;
   return games.filter((g) => g.moods?.some((m) => m.name === moodFilter));
 }

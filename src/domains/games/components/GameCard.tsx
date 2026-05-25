@@ -1,7 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Info, Pencil, PenLine } from "lucide-react";
+import {
+  AlignLeft,
+  AlignRight,
+  ChevronDown,
+  ChevronUp,
+  Info,
+  ListChevronsDownUp,
+  ListChevronsUpDown,
+  Pencil,
+} from "lucide-react";
 import {
   GameDto,
   GameStatus,
@@ -166,6 +175,7 @@ export function GameCard({
   rank,
 }: GameCardProps) {
   const [showStatusSelect, setShowStatusSelect] = useState(false);
+  const [showDesc, setShowDesc] = useState(false);
   const moods = game.moods ?? [];
   const actions = STATUS_ACTIONS[game.status] ?? [];
   const badge = STATUS_BADGE[game.status];
@@ -275,42 +285,77 @@ export function GameCard({
             </div>
           )}
 
-          {showActions && actions.length > 0 && !!onStatusChange && (
+          {!!game.game_description && (
+            <div
+              className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${showDesc ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+            >
+              <div className="min-h-0 overflow-hidden">
+                <div className="bg-gray-800/80 mt-2 px-3 pt-2 pb-4 border-gray-800/60 border-t rounded">
+                  <p className="text-gray-400 text-xs leading-relaxed">
+                    {game.game_description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {((showActions && actions.length > 0 && !!onStatusChange) ||
+            !!game.game_description) && (
             <div className="flex items-center mt-auto pt-3 border-gray-800/60 border-t">
+              {!!game.game_description && (
+                <button
+                  onClick={() => setShowDesc((prev) => !prev)}
+                  className="flex items-center gap-2 bg-gray-800/90 px-2 py-1 rounded text-white hover:text-gray-300 text-xs transition-colors"
+                >
+                  {showDesc ? (
+                    <ListChevronsDownUp size={16} />
+                  ) : (
+                    <ListChevronsUpDown size={16} />
+                  )}
+                  Description
+                </button>
+              )}
               <div className="ml-auto">
-                {showStatusSelect ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500 text-xs">Mark as:</span>
-                    <select
-                      autoFocus
-                      defaultValue=""
-                      onBlur={() => setShowStatusSelect(false)}
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          onStatusChange(game.id, e.target.value as GameStatus);
-                        }
-                        setShowStatusSelect(false);
-                      }}
-                      className="bg-gray-800 px-2 py-0.5 border border-brand-600 rounded focus:outline-none text-gray-300 text-xs cursor-pointer"
-                    >
-                      <option value="" disabled>
-                        Select...
-                      </option>
-                      {actions.map((action) => (
-                        <option key={action.status} value={action.status}>
-                          {action.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setShowStatusSelect(true)}
-                    className="flex items-center gap-1 text-gray-500 hover:text-brand-400 text-xs align-bottom transition-colors"
-                  >
-                    <Info size={16} />
-                    Status
-                  </button>
+                {showActions && actions.length > 0 && !!onStatusChange && (
+                  <>
+                    {showStatusSelect ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500 text-xs">Mark as:</span>
+                        <select
+                          autoFocus
+                          defaultValue=""
+                          onBlur={() => setShowStatusSelect(false)}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              onStatusChange(
+                                game.id,
+                                e.target.value as GameStatus,
+                              );
+                            }
+                            setShowStatusSelect(false);
+                          }}
+                          className="bg-gray-800 px-2 py-0.5 border border-brand-600 rounded focus:outline-none text-gray-300 text-xs cursor-pointer"
+                        >
+                          <option value="" disabled>
+                            Select...
+                          </option>
+                          {actions.map((action) => (
+                            <option key={action.status} value={action.status}>
+                              {action.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setShowStatusSelect(true)}
+                        className="flex items-center gap-1 text-gray-500 hover:text-brand-400 text-xs align-bottom transition-colors"
+                      >
+                        <Info size={16} />
+                        Status
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </div>

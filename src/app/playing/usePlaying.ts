@@ -9,6 +9,8 @@ import { useGameActions } from '@/src/domains/games/hooks/useGameActions';
 import { filterByMood, filterByTitle } from '@/src/domains/games/services/game.queries';
 import { gameKeys } from '@/src/domains/games/queryKeys';
 
+export type PlayingTab = 'playing' | 'ongoing';
+
 const playingStatusUpdates = (status: GameStatus): Record<string, unknown> => {
   const updates: Record<string, unknown> = { status };
   if (status === 'completed' || status === 'main-complete') {
@@ -25,19 +27,34 @@ export function usePlaying() {
 
   const PAGE_SIZE = 20;
 
+  const [activeTab, setActiveTabState] = useState<PlayingTab>('playing');
   const [moodFilter, setMoodFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
-  const { data: games = [], isPending: gamesLoading } = useQuery<GameDto[]>({
+  const { data: playingGames = [], isPending: playingLoading } = useQuery<GameDto[]>({
     queryKey: gameKeys.byStatus('playing'),
     queryFn: () => fetch('/api/games?status=playing').then((r) => r.json()),
   });
 
-  const loading = authLoading || gamesLoading || moodsLoading;
+  const { data: ongoingGames = [], isPending: ongoingLoading } = useQuery<GameDto[]>({
+    queryKey: gameKeys.byStatus('ongoing'),
+    queryFn: () => fetch('/api/games?status=ongoing').then((r) => r.json()),
+  });
+
+  const games = activeTab === 'playing' ? playingGames : ongoingGames;
+  const activeLoading = activeTab === 'playing' ? playingLoading : ongoingLoading;
+  const loading = authLoading || activeLoading || moodsLoading;
 
   const filtered = filterByTitle(filterByMood(games, moodFilter), searchQuery);
+
+  const setActiveTab = (tab: PlayingTab) => {
+    setActiveTabState(tab);
+    setPage(1);
+    setMoodFilter(null);
+    setSearchQuery('');
+  };
 
   useEffect(() => { setPage(1); }, [moodFilter]);
   useEffect(() => { setPage(1); }, [searchQuery]);
@@ -46,7 +63,7 @@ export function usePlaying() {
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const invalidateGames = () =>
-    queryClient.invalidateQueries({ queryKey: gameKeys.byStatus('playing') });
+    queryClient.invalidateQueries({ queryKey: gameKeys.byStatus(activeTab) });
 
   const { handleStatusChange, handleEdit, handleDelete } = useGameActions({
     onStatusSuccess: invalidateGames,
@@ -69,6 +86,8 @@ export function usePlaying() {
   };
 
   return {
+    activeTab,
+    setActiveTab,
     games,
     filtered,
     paginated,

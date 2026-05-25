@@ -6,7 +6,11 @@ import { GameDto } from "@/src/domains/games/models/game.types";
 import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 import { useMoods } from "@/src/domains/games/hooks/useMoods";
 import { useGameActions } from "@/src/domains/games/hooks/useGameActions";
-import { getTopPriority, getRecentlyPlayed } from "@/src/domains/games/services/game.queries";
+import {
+  getTopPriority,
+  getRecentlyPlayed,
+  getPlayingGames,
+} from "@/src/domains/games/services/game.queries";
 import { gameKeys, statsKeys } from "@/src/domains/games/queryKeys";
 interface Stats {
   backlog: number;
@@ -64,12 +68,12 @@ export function useDashboard() {
   });
 
   const topPriority = getTopPriority(allGames);
-  const recentlyPlayed = getRecentlyPlayed(allGames);
+  const playingGames = getPlayingGames(allGames);
 
   return {
     stats,
     topPriority,
-    recentlyPlayed,
+    playingGames,
     moods,
     showAdd,
     setShowAdd,
