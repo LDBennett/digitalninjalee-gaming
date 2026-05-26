@@ -1,80 +1,50 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { GameDto } from "@/src/domains/games/models/game.types";
 import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
-import { useAuthFetch } from "@/src/domains/shared/auth/useAuthFetch";
 import { useMoods } from "@/src/domains/games/hooks/useMoods";
 import { useGameActions } from "@/src/domains/games/hooks/useGameActions";
-import {
-  filterByMood,
-  filterByTitle,
-} from "@/src/domains/games/services/game.queries";
-import { gameKeys } from "@/src/domains/games/queryKeys";
+import { useGameQuery } from "@/src/domains/games/hooks/useGameQuery";
+import { useGameFilters } from "@/src/domains/games/hooks/useGameFilters";
+import { useGamePriority } from "@/src/domains/games/hooks/useGamePriority";
+import { useClientPagination } from "@/src/domains/shared/hooks/useClientPagination";
+
 export function useBacklog() {
   const { session, authLoading } = useAuthStore();
-  const { authJsonFetch } = useAuthFetch();
   const { moods, moodsLoading } = useMoods();
   const isAuthenticated = session !== null;
-  const queryClient = useQueryClient();
 
-  const PAGE_SIZE = 20;
-
-  const [moodFilter, setMoodFilter] = useState<string | null>(null);
   const [showPicker, setShowPicker] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(1);
   const [showAdd, setShowAdd] = useState(false);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
-  const { data: games = [], isPending: gamesLoading } = useQuery<GameDto[]>({
-    queryKey: gameKeys.byStatus("backlog"),
-    queryFn: () => fetch("/api/games?status=backlog").then((r) => r.json()),
-  });
+  const { games, gamesLoading, invalidate, queryKey } = useGameQuery("backlog");
+  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter, filtered } =
+    useGameFilters(games);
+  const { page, setPage, totalPages, paginated } =
+    useClientPagination(filtered);
+  const { handlePriorityChange } = useGamePriority(queryKey);
 
   const loading = authLoading || gamesLoading || moodsLoading;
 
-  const filtered = filterByTitle(filterByMood(games, moodFilter), searchQuery);
-
   useEffect(() => {
     setPage(1);
-  }, [moodFilter]);
+  }, [moodFilter, setPage]);
   useEffect(() => {
     setPage(1);
-  }, [searchQuery]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const invalidateGames = () =>
-    queryClient.invalidateQueries({ queryKey: gameKeys.byStatus("backlog") });
+  }, [searchQuery, setPage]);
 
   const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
     useGameActions({
-      onAddSuccess: invalidateGames,
-      onStatusSuccess: invalidateGames,
+      onAddSuccess: invalidate,
+      onStatusSuccess: invalidate,
       onEditSuccess: () => {
         setEditGame(null);
-        invalidateGames();
+        invalidate();
       },
-      onDeleteSuccess: invalidateGames,
+      onDeleteSuccess: invalidate,
     });
-
-  // Kept local: optimistic update requires onMutate with queryClient.setQueryData
-  const priorityMutation = useMutation({
-    mutationFn: ({ id, newScore }: { id: string; newScore: number }) =>
-      authJsonFetch(`/api/games/${id}`, "PUT", { priority_score: newScore }),
-    onMutate: ({ id, newScore }) => {
-      queryClient.setQueryData<GameDto[]>(
-        gameKeys.byStatus("backlog"),
-        (prev = []) =>
-          prev
-            .map((g) => (g.id === id ? { ...g, priority_score: newScore } : g))
-            .sort((a, b) => b.priority_score - a.priority_score),
-      );
-    },
-  });
 
   const handleDeleteConfirm = (id: string) => {
     if (!confirm("Remove this game from your backlog?")) return;
@@ -84,13 +54,6 @@ export function useBacklog() {
   const handleEditSubmit = (data: object) => {
     if (!editGame) return;
     handleEdit(editGame.id, data);
-  };
-
-  const handlePriorityChange = (id: string, delta: number) => {
-    const game = games.find((g) => g.id === id);
-    if (!game) return;
-    const newScore = Math.min(100, Math.max(1, game.priority_score + delta));
-    priorityMutation.mutate({ id, newScore });
   };
 
   return {
@@ -117,6 +80,7 @@ export function useBacklog() {
     handleEdit: handleEditSubmit,
     handleDelete: handleDeleteConfirm,
     handleStatusChange,
-    handlePriorityChange,
+    handlePriorityChange: (id: string, delta: number) =>
+      handlePriorityChange(id, delta, games),
   };
 }

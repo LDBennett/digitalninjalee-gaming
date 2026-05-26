@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { GameDto, GameStatus } from '@/src/domains/games/models/game.types';
 import { useAuthStore } from '@/src/domains/shared/auth/auth.store';
 import { useMoods } from '@/src/domains/games/hooks/useMoods';
 import { useGameActions } from '@/src/domains/games/hooks/useGameActions';
-import { filterByMood, filterByTitle } from '@/src/domains/games/services/game.queries';
-import { gameKeys } from '@/src/domains/games/queryKeys';
+import { useGameQuery } from '@/src/domains/games/hooks/useGameQuery';
+import { useGameFilters } from '@/src/domains/games/hooks/useGameFilters';
+import { useClientPagination } from '@/src/domains/shared/hooks/useClientPagination';
 
 export type PlayingTab = 'playing' | 'ongoing';
 
@@ -23,31 +23,22 @@ export function usePlaying() {
   const { session, authLoading } = useAuthStore();
   const { moods, moodsLoading } = useMoods();
   const isAuthenticated = session !== null;
-  const queryClient = useQueryClient();
-
-  const PAGE_SIZE = 20;
 
   const [activeTab, setActiveTabState] = useState<PlayingTab>('playing');
-  const [moodFilter, setMoodFilter] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
-  const { data: playingGames = [], isPending: playingLoading } = useQuery<GameDto[]>({
-    queryKey: gameKeys.byStatus('playing'),
-    queryFn: () => fetch('/api/games?status=playing').then((r) => r.json()),
-  });
-
-  const { data: ongoingGames = [], isPending: ongoingLoading } = useQuery<GameDto[]>({
-    queryKey: gameKeys.byStatus('ongoing'),
-    queryFn: () => fetch('/api/games?status=ongoing').then((r) => r.json()),
-  });
+  const { games: playingGames, gamesLoading: playingLoading, invalidate: invalidatePlaying } =
+    useGameQuery('playing');
+  const { games: ongoingGames, gamesLoading: ongoingLoading, invalidate: invalidateOngoing } =
+    useGameQuery('ongoing');
 
   const games = activeTab === 'playing' ? playingGames : ongoingGames;
   const activeLoading = activeTab === 'playing' ? playingLoading : ongoingLoading;
   const loading = authLoading || activeLoading || moodsLoading;
 
-  const filtered = filterByTitle(filterByMood(games, moodFilter), searchQuery);
+  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter, filtered } =
+    useGameFilters(games);
+  const { page, setPage, totalPages, paginated } = useClientPagination(filtered);
 
   const setActiveTab = (tab: PlayingTab) => {
     setActiveTabState(tab);
@@ -56,22 +47,21 @@ export function usePlaying() {
     setSearchQuery('');
   };
 
-  useEffect(() => { setPage(1); }, [moodFilter]);
-  useEffect(() => { setPage(1); }, [searchQuery]);
+  useEffect(() => { setPage(1); }, [moodFilter, setPage]);
+  useEffect(() => { setPage(1); }, [searchQuery, setPage]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const invalidateGames = () =>
-    queryClient.invalidateQueries({ queryKey: gameKeys.byStatus(activeTab) });
+  const invalidate = () => {
+    invalidatePlaying();
+    invalidateOngoing();
+  };
 
   const { handleStatusChange, handleEdit, handleDelete } = useGameActions({
-    onStatusSuccess: invalidateGames,
+    onStatusSuccess: invalidate,
     onEditSuccess: () => {
       setEditGame(null);
-      invalidateGames();
+      invalidate();
     },
-    onDeleteSuccess: invalidateGames,
+    onDeleteSuccess: invalidate,
     buildStatusUpdates: playingStatusUpdates,
   });
 

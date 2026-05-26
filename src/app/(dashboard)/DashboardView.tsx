@@ -7,7 +7,7 @@ import { GameCardList } from "@/src/domains/games/components/GameCardList";
 import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
 import { RandomPicker } from "@/src/domains/games/components/RandomPicker";
 import { EmptyState } from "@/src/components/ui/EmptyState";
-import { GameStatsGrid } from "./GameStatsGrid";
+import { GameStatsGrid } from "@/src/domains/games/components/GameStatsGrid";
 import { TabBar } from "@/src/components/ui/TabBar";
 import { Dices } from "lucide-react";
 

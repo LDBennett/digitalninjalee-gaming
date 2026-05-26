@@ -1,24 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { GameDto } from "@/src/domains/games/models/game.types";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 import { useMoods } from "@/src/domains/games/hooks/useMoods";
 import { useGameActions } from "@/src/domains/games/hooks/useGameActions";
+import { useGameQuery } from "@/src/domains/games/hooks/useGameQuery";
+import { useStats } from "@/src/domains/games/hooks/useStats";
 import {
   getTopPriority,
   getPlayingGames,
 } from "@/src/domains/games/services/game.queries";
-import { gameKeys, statsKeys } from "@/src/domains/games/queryKeys";
-interface Stats {
-  backlog: number;
-  playing: number;
-  completed: number;
-  ongoing: number;
-  wishlist: number;
-  total: number;
-}
+import { gameKeys } from "@/src/domains/games/queryKeys";
 
 export function useDashboard() {
   const { session, authLoading } = useAuthStore();
@@ -29,41 +22,19 @@ export function useDashboard() {
   const [showAdd, setShowAdd] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
 
-  const { data: allGames = [], isPending: gamesLoading } = useQuery<GameDto[]>({
-    queryKey: gameKeys.all,
-    queryFn: () => fetch("/api/games").then((r) => r.json()),
-  });
-
-  const { data: statusCounts = {}, isPending: statsLoading } = useQuery<
-    Record<string, number>
-  >({
-    queryKey: statsKeys.statusCounts,
-    queryFn: () => fetch("/api/games/stats").then((r) => r.json()),
-  });
+  const { games: allGames, gamesLoading } = useGameQuery();
+  const { stats, statsLoading, invalidateStats } = useStats();
 
   const loading = authLoading || gamesLoading || statsLoading || moodsLoading;
 
-  const stats: Stats = {
-    backlog: statusCounts["backlog"] ?? 0,
-    playing: statusCounts["playing"] ?? 0,
-    completed:
-      (statusCounts["completed"] ?? 0) + (statusCounts["main-complete"] ?? 0),
-    ongoing: statusCounts["ongoing"] ?? 0,
-    wishlist:
-      (statusCounts["interested"] ?? 0) +
-      (statusCounts["pre-ordered"] ?? 0) +
-      (statusCounts["keep-an-eye-on"] ?? 0),
-    total: Object.values(statusCounts).reduce((sum, n) => sum + n, 0),
-  };
-
-  const invalidateGames = () => {
+  const invalidateAll = () => {
     queryClient.invalidateQueries({ queryKey: gameKeys.all });
-    queryClient.invalidateQueries({ queryKey: statsKeys.statusCounts });
+    invalidateStats();
   };
 
   const { handleAdd, handleStatusChange } = useGameActions({
-    onAddSuccess: invalidateGames,
-    onStatusSuccess: invalidateGames,
+    onAddSuccess: invalidateAll,
+    onStatusSuccess: invalidateAll,
   });
 
   const topPriority = getTopPriority(allGames);

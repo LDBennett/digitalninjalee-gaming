@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GameDto } from "@/src/domains/games/models/game.types";
 import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 import { useMoods } from "@/src/domains/games/hooks/useMoods";
 import { useGameActions } from "@/src/domains/games/hooks/useGameActions";
-import { filterByTitle, filterByMood } from "@/src/domains/games/services/game.queries";
-import { gameKeys } from "@/src/domains/games/queryKeys";
+import { useGameQuery } from "@/src/domains/games/hooks/useGameQuery";
+import { useGameFilters } from "@/src/domains/games/hooks/useGameFilters";
+import { useClientPagination } from "@/src/domains/shared/hooks/useClientPagination";
 
 export type LibraryTab =
   | "all"
@@ -38,53 +38,38 @@ export function useLibrary() {
   const { session } = useAuthStore();
   const { moods } = useMoods();
   const isAuthenticated = session !== null;
-  const queryClient = useQueryClient();
-
-  const PAGE_SIZE = 20;
 
   const [tab, setTab] = useState<LibraryTab>("all");
   const [showAdd, setShowAdd] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [moodFilter, setMoodFilter] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
   const statusParam = tab !== "all" ? LIBRARY_TAB_STATUSES[tab] : undefined;
-  const queryKey = statusParam ? gameKeys.byStatus(statusParam) : gameKeys.all;
 
-  const { data: games = [], isPending: gamesLoading } = useQuery<GameDto[]>({
-    queryKey,
-    queryFn: () =>
-      statusParam
-        ? fetch(`/api/games?status=${statusParam}`).then((r) => r.json())
-        : fetch("/api/games").then((r) => r.json()),
-  });
+  const { games, gamesLoading, invalidate } = useGameQuery(statusParam);
+  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter, filtered } =
+    useGameFilters(games);
+  const { page, setPage, totalPages, paginated } =
+    useClientPagination(filtered);
 
   useEffect(() => {
     setPage(1);
-  }, [tab]);
+  }, [tab, setPage]);
   useEffect(() => {
     setPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, setPage]);
   useEffect(() => {
     setPage(1);
-  }, [moodFilter]);
-
-  const filtered = filterByMood(filterByTitle(games, searchQuery), moodFilter);
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const invalidateGames = () => queryClient.invalidateQueries({ queryKey });
+  }, [moodFilter, setPage]);
 
   const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
     useGameActions({
-      onAddSuccess: invalidateGames,
-      onStatusSuccess: invalidateGames,
+      onAddSuccess: invalidate,
+      onStatusSuccess: invalidate,
       onEditSuccess: () => {
         setEditGame(null);
-        invalidateGames();
+        invalidate();
       },
-      onDeleteSuccess: invalidateGames,
+      onDeleteSuccess: invalidate,
     });
 
   const handleDeleteConfirm = (id: string) => {
