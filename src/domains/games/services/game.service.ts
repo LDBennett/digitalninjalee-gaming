@@ -82,3 +82,11 @@ export function selectRandomGame(games: ReadonlyArray<GameState>): GameState | n
   if (games.length === 0) return null;
   return games[Math.floor(Math.random() * games.length)];
 }
+
+export function buildStatusPayload(status: GameStatus): Record<string, unknown> {
+  const payload: Record<string, unknown> = { status };
+  if (status === 'completed' || status === 'main-complete') {
+    payload.last_played_at = new Date().toISOString();
+  }
+  return payload;
+}

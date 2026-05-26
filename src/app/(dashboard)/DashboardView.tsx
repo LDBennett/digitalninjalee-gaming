@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useDashboard } from "./useDashboard";
-import { GameCard } from "@/src/domains/games/components/GameCard";
-import { GameCardList } from "@/src/domains/games/components/GameCardList";
-import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
-import { RandomPicker } from "@/src/domains/games/components/RandomPicker";
+import { GameCard } from "@/src/domains/games/components/card/GameCard";
+import { GameCardList } from "@/src/domains/games/components/card/GameCardList";
+import { AddGameModal } from "@/src/domains/games/components/add-game/AddGameModal";
+import { RandomPicker } from "@/src/domains/games/components/dashboard/RandomPicker";
 import { EmptyState } from "@/src/components/ui/EmptyState";
-import { GameStatsGrid } from "@/src/domains/games/components/GameStatsGrid";
+import { GameStatsGrid } from "@/src/domains/games/components/dashboard/GameStatsGrid";
 import { TabBar } from "@/src/components/ui/TabBar";
 import { Dices } from "lucide-react";
 

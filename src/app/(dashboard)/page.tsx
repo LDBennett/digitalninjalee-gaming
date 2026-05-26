@@ -1,5 +1,18 @@
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { makeQueryClient } from '@/src/infrastructure/queryClient.server';
+import { prefetchGames, prefetchMoods } from '@/src/infrastructure/database/prefetch';
+import { gameKeys, moodKeys } from '@/src/domains/games/queryKeys';
 import { DashboardView } from './DashboardView';
 
-export default function DashboardPage() {
-  return <DashboardView />;
+export default async function DashboardPage() {
+  const queryClient = makeQueryClient();
+  await Promise.all([
+    queryClient.prefetchQuery({ queryKey: gameKeys.all, queryFn: () => prefetchGames() }),
+    queryClient.prefetchQuery({ queryKey: moodKeys.all, queryFn: prefetchMoods }),
+  ]);
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <DashboardView />
+    </HydrationBoundary>
+  );
 }

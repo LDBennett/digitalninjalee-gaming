@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { GameDto } from '@/src/domains/games/models/game.types';
 import { useAuthStore } from '@/src/domains/shared/auth/auth.store';
 import { useMoods } from '@/src/domains/games/hooks/useMoods';
@@ -8,17 +8,16 @@ import { useGameActions } from '@/src/domains/games/hooks/useGameActions';
 import { useGameQuery } from '@/src/domains/games/hooks/useGameQuery';
 import { useGamePriority } from '@/src/domains/games/hooks/useGamePriority';
 import { useClientPagination } from '@/src/domains/shared/hooks/useClientPagination';
+import {
+  WishlistTab,
+  ALL_WISHLIST_STATUSES,
+  WISHLIST_TAB_LABELS,
+} from '@/src/domains/games/models/wishlist.constants';
 
-export type WishlistTab = 'interested' | 'pre-ordered' | 'keep-an-eye-on' | 'all';
+export type { WishlistTab };
+export { ALL_WISHLIST_STATUSES, WISHLIST_TAB_LABELS };
 
-export const WISHLIST_TAB_LABELS: Record<WishlistTab, string> = {
-  all:              'All',
-  interested:       'Interested',
-  'pre-ordered':    'Pre-Ordered',
-  'keep-an-eye-on': 'Keep an Eye On',
-};
-
-export const ALL_WISHLIST_STATUSES = 'interested,pre-ordered,keep-an-eye-on';
+const WISHLIST_STATUS_LIST = ALL_WISHLIST_STATUSES.split(',');
 
 export function useWishlist() {
   const { session } = useAuthStore();
@@ -29,9 +28,11 @@ export function useWishlist() {
   const [editGame, setEditGame] = useState<GameDto | null>(null);
   const [showAdd, setShowAdd] = useState(false);
 
-  const statusParam = tab === 'all' ? ALL_WISHLIST_STATUSES : tab;
-
-  const { games, gamesLoading, invalidate, queryKey } = useGameQuery(statusParam);
+  const { games: allGames, gamesLoading, invalidate, queryKey } = useGameQuery();
+  const games = useMemo(() => {
+    const wishlist = allGames.filter((g) => WISHLIST_STATUS_LIST.includes(g.status));
+    return tab === 'all' ? wishlist : wishlist.filter((g) => g.status === tab);
+  }, [allGames, tab]);
   const { page, setPage, totalPages, paginated } = useClientPagination(games);
   const { handlePriorityChange } = useGamePriority(queryKey);
 

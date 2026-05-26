@@ -2,12 +2,12 @@
 
 import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { useLibrary, LibraryTab, LIBRARY_TAB_LABELS } from "./useLibrary";
-import { GameCard } from "@/src/domains/games/components/GameCard";
-import { GameCardList } from "@/src/domains/games/components/GameCardList";
-import { GameCardSkeleton } from "@/src/domains/games/components/GameCardSkeleton";
-import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
+import { GameCard } from "@/src/domains/games/components/card/GameCard";
+import { GameCardList } from "@/src/domains/games/components/card/GameCardList";
+import { GameCardSkeleton } from "@/src/domains/games/components/card/GameCardSkeleton";
+import { AddGameModal } from "@/src/domains/games/components/add-game/AddGameModal";
 import { EmptyState } from "@/src/components/ui/EmptyState";
-import { MoodFilter } from "@/src/domains/games/components/MoodFilter";
+import { MoodFilter } from "@/src/domains/games/components/mood/MoodFilter";
 import { SearchInput } from "@/src/components/ui/SearchInput";
 import { TabBar } from "@/src/components/ui/TabBar";
 import { Plus } from "lucide-react";

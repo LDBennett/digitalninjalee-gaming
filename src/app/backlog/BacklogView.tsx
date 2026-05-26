@@ -2,11 +2,11 @@
 import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { useUIStore } from "@/src/domains/shared/store/ui.store";
 import { useBacklog } from "./useBacklog";
-import { GameCard } from "@/src/domains/games/components/GameCard";
-import { GameCardList } from "@/src/domains/games/components/GameCardList";
-import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
-import { RandomPicker } from "@/src/domains/games/components/RandomPicker";
-import { MoodFilter } from "@/src/domains/games/components/MoodFilter";
+import { GameCard } from "@/src/domains/games/components/card/GameCard";
+import { GameCardList } from "@/src/domains/games/components/card/GameCardList";
+import { AddGameModal } from "@/src/domains/games/components/add-game/AddGameModal";
+import { RandomPicker } from "@/src/domains/games/components/dashboard/RandomPicker";
+import { MoodFilter } from "@/src/domains/games/components/mood/MoodFilter";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SearchInput } from "@/src/components/ui/SearchInput";
 import { Dices, DicesIcon, Plus } from "lucide-react";

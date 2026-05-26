@@ -16,8 +16,8 @@ import {
   GameStatus,
   STATUS_LABELS,
 } from "@/src/domains/games/models/game.types";
-import { MoodBadge } from "@/src/domains/games/components/MoodBadge";
-import { PlatformBadge } from "@/src/domains/games/components/PlatformBadge";
+import { MoodBadge } from "@/src/domains/games/components/mood/MoodBadge";
+import { PlatformBadge } from "@/src/domains/games/components/card/PlatformBadge";
 
 type StatusAction = { label: string; status: GameStatus; color: string };
 

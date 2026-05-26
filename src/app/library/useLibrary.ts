@@ -8,31 +8,14 @@ import { useGameActions } from "@/src/domains/games/hooks/useGameActions";
 import { useGameQuery } from "@/src/domains/games/hooks/useGameQuery";
 import { useGameFilters } from "@/src/domains/games/hooks/useGameFilters";
 import { useClientPagination } from "@/src/domains/shared/hooks/useClientPagination";
+import {
+  LibraryTab,
+  LIBRARY_TAB_STATUSES,
+} from "@/src/domains/games/models/library.constants";
 
-export type LibraryTab =
-  | "all"
-  | "completed"
-  | "main-complete"
-  | "ongoing"
-  | "dropped";
-
-export const LIBRARY_TAB_STATUSES: Record<
-  Exclude<LibraryTab, "all">,
-  string
-> = {
-  completed: "completed",
-  "main-complete": "main-complete",
-  ongoing: "ongoing",
-  dropped: "dropped",
-};
-
-export const LIBRARY_TAB_LABELS: Record<LibraryTab, string> = {
-  all: "All",
-  completed: "Completed (100%)",
-  "main-complete": "Completed",
-  ongoing: "Ongoing",
-  dropped: "Dropped",
-};
+export type { LibraryTab };
+export { LIBRARY_TAB_STATUSES };
+export { LIBRARY_TAB_LABELS } from "@/src/domains/games/models/library.constants";
 
 export function useLibrary() {
   const { session } = useAuthStore();
@@ -51,15 +34,9 @@ export function useLibrary() {
   const { page, setPage, totalPages, paginated } =
     useClientPagination(filtered);
 
-  useEffect(() => {
-    setPage(1);
-  }, [tab, setPage]);
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery, setPage]);
-  useEffect(() => {
-    setPage(1);
-  }, [moodFilter, setPage]);
+  useEffect(() => { setPage(1); }, [tab, setPage]);
+  useEffect(() => { setPage(1); }, [searchQuery, setPage]);
+  useEffect(() => { setPage(1); }, [moodFilter, setPage]);
 
   const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
     useGameActions({

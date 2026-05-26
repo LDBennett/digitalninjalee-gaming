@@ -2,10 +2,10 @@
 
 import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { useWishlist, WishlistTab, WISHLIST_TAB_LABELS } from "./useWishlist";
-import { GameCard } from "@/src/domains/games/components/GameCard";
-import { GameCardList } from "@/src/domains/games/components/GameCardList";
-import { GameCardSkeleton } from "@/src/domains/games/components/GameCardSkeleton";
-import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
+import { GameCard } from "@/src/domains/games/components/card/GameCard";
+import { GameCardList } from "@/src/domains/games/components/card/GameCardList";
+import { GameCardSkeleton } from "@/src/domains/games/components/card/GameCardSkeleton";
+import { AddGameModal } from "@/src/domains/games/components/add-game/AddGameModal";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { TabBar } from "@/src/components/ui/TabBar";
 import { Plus } from "lucide-react";

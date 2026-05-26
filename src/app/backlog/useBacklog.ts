@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { GameDto } from "@/src/domains/games/models/game.types";
 import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 import { useMoods } from "@/src/domains/games/hooks/useMoods";
@@ -12,28 +12,23 @@ import { useClientPagination } from "@/src/domains/shared/hooks/useClientPaginat
 
 export function useBacklog() {
   const { session, authLoading } = useAuthStore();
-  const { moods, moodsLoading } = useMoods();
+  const { moods } = useMoods();
   const isAuthenticated = session !== null;
 
   const [showPicker, setShowPicker] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
-  const { games, gamesLoading, invalidate, queryKey } = useGameQuery("backlog");
+  const { games: allGames, invalidate, queryKey } = useGameQuery();
+  const games = useMemo(() => allGames.filter((g) => g.status === "backlog"), [allGames]);
   const { searchQuery, setSearchQuery, moodFilter, setMoodFilter, filtered } =
     useGameFilters(games);
   const { page, setPage, totalPages, paginated } =
     useClientPagination(filtered);
   const { handlePriorityChange } = useGamePriority(queryKey);
 
-  const loading = authLoading || gamesLoading || moodsLoading;
-
-  useEffect(() => {
-    setPage(1);
-  }, [moodFilter, setPage]);
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery, setPage]);
+  useEffect(() => { setPage(1); }, [moodFilter, setPage]);
+  useEffect(() => { setPage(1); }, [searchQuery, setPage]);
 
   const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
     useGameActions({
@@ -74,7 +69,7 @@ export function useBacklog() {
     setShowPicker,
     editGame,
     setEditGame,
-    loading,
+    loading: authLoading,
     isAuthenticated,
     handleAdd,
     handleEdit: handleEditSubmit,

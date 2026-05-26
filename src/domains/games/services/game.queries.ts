@@ -1,5 +1,29 @@
 import { GameDto } from "@/src/domains/games/models/game.types";
 
+export interface GameStats {
+  backlog: number;
+  playing: number;
+  ongoing: number;
+  completed: number;
+  completedFull: number;
+  wishlist: number;
+  total: number;
+}
+
+export function deriveStats(games: GameDto[]): GameStats {
+  const counts: Record<string, number> = {};
+  for (const g of games) counts[g.status] = (counts[g.status] ?? 0) + 1;
+  return {
+    backlog: counts["backlog"] ?? 0,
+    playing: counts["playing"] ?? 0,
+    ongoing: counts["ongoing"] ?? 0,
+    completed: (counts["completed"] ?? 0) + (counts["main-complete"] ?? 0),
+    completedFull: counts["completed"] ?? 0,
+    wishlist: (counts["interested"] ?? 0) + (counts["pre-ordered"] ?? 0) + (counts["keep-an-eye-on"] ?? 0),
+    total: games.length,
+  };
+}
+
 export function getTopPriority(games: GameDto[], limit = 20): GameDto[] {
   return games
     .filter((g) => g.status === "backlog")

@@ -1,40 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState, useMemo } from "react";
 import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 import { useMoods } from "@/src/domains/games/hooks/useMoods";
 import { useGameActions } from "@/src/domains/games/hooks/useGameActions";
 import { useGameQuery } from "@/src/domains/games/hooks/useGameQuery";
-import { useStats } from "@/src/domains/games/hooks/useStats";
 import {
   getTopPriority,
   getPlayingGames,
+  deriveStats,
 } from "@/src/domains/games/services/game.queries";
-import { gameKeys } from "@/src/domains/games/queryKeys";
 
 export function useDashboard() {
   const { session, authLoading } = useAuthStore();
-  const { moods, moodsLoading } = useMoods();
+  const { moods } = useMoods();
   const isAuthenticated = session !== null;
-  const queryClient = useQueryClient();
 
   const [showAdd, setShowAdd] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
 
-  const { games: allGames, gamesLoading } = useGameQuery();
-  const { stats, statsLoading, invalidateStats } = useStats();
+  const { games: allGames, invalidate } = useGameQuery();
 
-  const loading = authLoading || gamesLoading || statsLoading || moodsLoading;
-
-  const invalidateAll = () => {
-    queryClient.invalidateQueries({ queryKey: gameKeys.all });
-    invalidateStats();
-  };
+  const stats = useMemo(() => deriveStats(allGames), [allGames]);
 
   const { handleAdd, handleStatusChange } = useGameActions({
-    onAddSuccess: invalidateAll,
-    onStatusSuccess: invalidateAll,
+    onAddSuccess: invalidate,
+    onStatusSuccess: invalidate,
   });
 
   const topPriority = getTopPriority(allGames);
@@ -49,7 +40,7 @@ export function useDashboard() {
     setShowAdd,
     showPicker,
     setShowPicker,
-    loading,
+    loading: authLoading,
     isAuthenticated,
     handleAdd,
     handleStatusChange,

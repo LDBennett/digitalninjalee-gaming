@@ -1,40 +1,30 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { GameDto, GameStatus } from '@/src/domains/games/models/game.types';
+import { useState, useEffect, useMemo } from 'react';
+import { GameDto } from '@/src/domains/games/models/game.types';
 import { useAuthStore } from '@/src/domains/shared/auth/auth.store';
 import { useMoods } from '@/src/domains/games/hooks/useMoods';
 import { useGameActions } from '@/src/domains/games/hooks/useGameActions';
 import { useGameQuery } from '@/src/domains/games/hooks/useGameQuery';
 import { useGameFilters } from '@/src/domains/games/hooks/useGameFilters';
 import { useClientPagination } from '@/src/domains/shared/hooks/useClientPagination';
+import { buildStatusPayload } from '@/src/domains/games/services/game.service';
 
 export type PlayingTab = 'playing' | 'ongoing';
 
-const playingStatusUpdates = (status: GameStatus): Record<string, unknown> => {
-  const updates: Record<string, unknown> = { status };
-  if (status === 'completed' || status === 'main-complete') {
-    updates.last_played_at = new Date().toISOString();
-  }
-  return updates;
-};
-
 export function usePlaying() {
   const { session, authLoading } = useAuthStore();
-  const { moods, moodsLoading } = useMoods();
+  const { moods } = useMoods();
   const isAuthenticated = session !== null;
 
   const [activeTab, setActiveTabState] = useState<PlayingTab>('playing');
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
-  const { games: playingGames, gamesLoading: playingLoading, invalidate: invalidatePlaying } =
-    useGameQuery('playing');
-  const { games: ongoingGames, gamesLoading: ongoingLoading, invalidate: invalidateOngoing } =
-    useGameQuery('ongoing');
+  const { games: allGames, invalidate } = useGameQuery();
+  const playingGames = useMemo(() => allGames.filter((g) => g.status === 'playing'), [allGames]);
+  const ongoingGames = useMemo(() => allGames.filter((g) => g.status === 'ongoing'), [allGames]);
 
   const games = activeTab === 'playing' ? playingGames : ongoingGames;
-  const activeLoading = activeTab === 'playing' ? playingLoading : ongoingLoading;
-  const loading = authLoading || activeLoading || moodsLoading;
 
   const { searchQuery, setSearchQuery, moodFilter, setMoodFilter, filtered } =
     useGameFilters(games);
@@ -50,11 +40,6 @@ export function usePlaying() {
   useEffect(() => { setPage(1); }, [moodFilter, setPage]);
   useEffect(() => { setPage(1); }, [searchQuery, setPage]);
 
-  const invalidate = () => {
-    invalidatePlaying();
-    invalidateOngoing();
-  };
-
   const { handleStatusChange, handleEdit, handleDelete } = useGameActions({
     onStatusSuccess: invalidate,
     onEditSuccess: () => {
@@ -62,7 +47,7 @@ export function usePlaying() {
       invalidate();
     },
     onDeleteSuccess: invalidate,
-    buildStatusUpdates: playingStatusUpdates,
+    buildStatusUpdates: buildStatusPayload,
   });
 
   const handleDeleteConfirm = (id: string) => {
@@ -91,7 +76,7 @@ export function usePlaying() {
     setSearchQuery,
     editGame,
     setEditGame,
-    loading,
+    loading: authLoading,
     isAuthenticated,
     handleStatusChange,
     handleEdit: handleEditSubmit,

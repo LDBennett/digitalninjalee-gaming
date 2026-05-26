@@ -2,10 +2,10 @@
 
 import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { usePlaying, PlayingTab } from "./usePlaying";
-import { GameCard } from "@/src/domains/games/components/GameCard";
-import { GameCardList } from "@/src/domains/games/components/GameCardList";
-import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
-import { MoodFilter } from "@/src/domains/games/components/MoodFilter";
+import { GameCard } from "@/src/domains/games/components/card/GameCard";
+import { GameCardList } from "@/src/domains/games/components/card/GameCardList";
+import { AddGameModal } from "@/src/domains/games/components/add-game/AddGameModal";
+import { MoodFilter } from "@/src/domains/games/components/mood/MoodFilter";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SearchInput } from "@/src/components/ui/SearchInput";
 import { TabBar } from "@/src/components/ui/TabBar";
