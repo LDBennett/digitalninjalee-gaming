@@ -1,10 +1,13 @@
 "use client";
 
+import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { useLibrary, LibraryTab, LIBRARY_TAB_LABELS } from "./useLibrary";
 import { GameCard } from "@/src/domains/games/components/GameCard";
+import { GameCardList } from "@/src/domains/games/components/GameCardList";
 import { GameCardSkeleton } from "@/src/domains/games/components/GameCardSkeleton";
 import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
-import { Pagination } from "@/src/components/ui/Pagination";
+import { EmptyState } from "@/src/components/ui/EmptyState";
+import { MoodFilter } from "@/src/domains/games/components/MoodFilter";
 import { SearchInput } from "@/src/components/ui/SearchInput";
 import { TabBar } from "@/src/components/ui/TabBar";
 import { Plus } from "lucide-react";
@@ -30,6 +33,8 @@ export function LibraryView() {
     setTab,
     searchQuery,
     setSearchQuery,
+    moodFilter,
+    setMoodFilter,
     editGame,
     setEditGame,
     gamesLoading,
@@ -42,8 +47,10 @@ export function LibraryView() {
     setShowAdd,
   } = useLibrary();
 
+  const topRef = useScrollToTop(page);
+
   return (
-    <div className="mx-auto max-w-3xl">
+    <div ref={topRef} className="mx-auto max-w-3xl">
       <div className="mb-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="font-bold text-white text-2xl">Library</h1>
@@ -56,16 +63,23 @@ export function LibraryView() {
             </button>
           )}
         </div>
-        <SearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          className="mb-5"
-        />
         <TabBar
           tabs={TABS}
           value={tab}
           onChange={setTab}
           labels={LIBRARY_TAB_LABELS}
+          className="mb-5"
+        />
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          className="mb-5"
+        />
+
+        <MoodFilter
+          moods={moods}
+          value={moodFilter}
+          onChange={setMoodFilter}
           className="mb-5"
         />
       </div>
@@ -76,28 +90,30 @@ export function LibraryView() {
             <GameCardSkeleton key={i} />
           ))}
         </div>
-      ) : games.length === 0 ? (
-        <div className="bg-gray-900 p-12 border border-gray-800 rounded-xl text-center">
-          <p className="text-gray-500 text-lg">
-            {tab === "all"
-              ? "No games yet"
-              : `No ${LIBRARY_TAB_LABELS[tab].toLowerCase()} games yet`}
-          </p>
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="bg-gray-900 p-12 border border-gray-800 rounded-xl text-center">
-          <p className="text-gray-500 text-lg">
-            No games found for &ldquo;{searchQuery}&rdquo;
-          </p>
-        </div>
       ) : (
         <>
-          <div className="space-y-3">
-            <p className="text-gray-600 text-sm">
+          {filtered.length > 0 && (
+            <p className="mb-3 text-gray-600 text-sm">
               {filtered.length} {LIBRARY_TAB_LABELS[tab].toLowerCase()} game
               {filtered.length !== 1 ? "s" : ""}
             </p>
-            {paginated.map((game) => (
+          )}
+          <GameCardList
+            games={paginated}
+            emptyState={
+              games.length === 0 ? (
+                <EmptyState
+                  heading={
+                    tab === "all"
+                      ? "No games yet"
+                      : `No ${LIBRARY_TAB_LABELS[tab].toLowerCase()} games yet`
+                  }
+                />
+              ) : (
+                <EmptyState heading={`No games found for "${searchQuery}"`} />
+              )
+            }
+            renderCard={(game) => (
               <GameCard
                 key={game.id}
                 game={game}
@@ -107,9 +123,8 @@ export function LibraryView() {
                 }
                 showStatusBadge={tab === "all" || tab === "completed"}
               />
-            ))}
-          </div>
-          <Pagination
+            )}
+            spacing="space-y-3"
             page={page}
             totalPages={totalPages}
             onPageChange={setPage}

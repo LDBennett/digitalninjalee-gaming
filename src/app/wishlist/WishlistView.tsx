@@ -1,10 +1,12 @@
 "use client";
 
+import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { useWishlist, WishlistTab, WISHLIST_TAB_LABELS } from "./useWishlist";
 import { GameCard } from "@/src/domains/games/components/GameCard";
+import { GameCardList } from "@/src/domains/games/components/GameCardList";
 import { GameCardSkeleton } from "@/src/domains/games/components/GameCardSkeleton";
 import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
-import { Pagination } from "@/src/components/ui/Pagination";
+import { EmptyState } from "@/src/components/ui/EmptyState";
 import { TabBar } from "@/src/components/ui/TabBar";
 import { Plus } from "lucide-react";
 
@@ -38,8 +40,10 @@ export function WishlistView() {
     handlePriorityChange,
   } = useWishlist();
 
+  const topRef = useScrollToTop(page);
+
   return (
-    <div className="mx-auto max-w-3xl">
+    <div ref={topRef} className="mx-auto max-w-3xl">
       <div className="flex sm:flex-row flex-col justify-between sm:items-center gap-4 mb-6">
         <div>
           <h1 className="font-bold text-white text-2xl">Wishlist</h1>
@@ -72,48 +76,35 @@ export function WishlistView() {
             <GameCardSkeleton key={i} />
           ))}
         </div>
-      ) : games.length === 0 ? (
-        <div className="bg-gray-900 p-12 border border-gray-800 rounded-xl text-center">
-          <p className="mb-2 text-gray-500 text-lg">
-            {tab === "all"
-              ? "Wishlist is empty!"
-              : `No ${WISHLIST_TAB_LABELS[tab]} games`}
-          </p>
-          <p className="mb-4 text-gray-600 text-sm">
-            Track games you want to buy.
-          </p>
-          {isAuthenticated && (
-            <button
-              onClick={() => setShowAdd(true)}
-              className="bg-brand-700 hover:bg-brand-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
-            >
-              + Add Game
-            </button>
-          )}
-        </div>
       ) : (
         <>
-          <div className="space-y-3">
-            <p className="text-gray-600 text-sm">
+          {games.length > 0 && (
+            <p className="mb-3 text-gray-600 text-sm">
               {games.length} game{games.length !== 1 ? "s" : ""}
             </p>
-            {paginated.map((game) => (
+          )}
+          <GameCardList
+            games={paginated}
+            emptyState={
+              <EmptyState
+                heading={tab === "all" ? "Wishlist is empty!" : `No ${WISHLIST_TAB_LABELS[tab]} games`}
+                hint="Track games you want to buy."
+                actionLabel={isAuthenticated ? "+ Add Game" : undefined}
+                onAction={isAuthenticated ? () => setShowAdd(true) : undefined}
+              />
+            }
+            renderCard={(game) => (
               <GameCard
                 key={game.id}
                 game={game}
                 onEdit={isAuthenticated ? setEditGame : undefined}
-                onStatusChange={
-                  isAuthenticated ? handleStatusChange : undefined
-                }
-                onPriorityChange={
-                  isAuthenticated ? handlePriorityChange : undefined
-                }
+                onStatusChange={isAuthenticated ? handleStatusChange : undefined}
+                onPriorityChange={isAuthenticated ? handlePriorityChange : undefined}
                 showPriority
                 showStatusBadge
               />
-            ))}
-          </div>
-          <Pagination
+            )}
+            spacing="space-y-3"
             page={page}
             totalPages={totalPages}
             onPageChange={setPage}

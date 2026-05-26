@@ -6,7 +6,7 @@ import { GameDto } from "@/src/domains/games/models/game.types";
 import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 import { useMoods } from "@/src/domains/games/hooks/useMoods";
 import { useGameActions } from "@/src/domains/games/hooks/useGameActions";
-import { filterByTitle } from "@/src/domains/games/services/game.queries";
+import { filterByTitle, filterByMood } from "@/src/domains/games/services/game.queries";
 import { gameKeys } from "@/src/domains/games/queryKeys";
 
 export type LibraryTab =
@@ -42,9 +42,10 @@ export function useLibrary() {
 
   const PAGE_SIZE = 20;
 
-  const [tab, setTab] = useState<LibraryTab>("completed");
+  const [tab, setTab] = useState<LibraryTab>("all");
   const [showAdd, setShowAdd] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [moodFilter, setMoodFilter] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
@@ -59,24 +60,32 @@ export function useLibrary() {
         : fetch("/api/games").then((r) => r.json()),
   });
 
-  useEffect(() => { setPage(1); }, [tab]);
-  useEffect(() => { setPage(1); }, [searchQuery]);
+  useEffect(() => {
+    setPage(1);
+  }, [tab]);
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery]);
+  useEffect(() => {
+    setPage(1);
+  }, [moodFilter]);
 
-  const filtered = filterByTitle(games, searchQuery);
+  const filtered = filterByMood(filterByTitle(games, searchQuery), moodFilter);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const invalidateGames = () => queryClient.invalidateQueries({ queryKey });
 
-  const { handleAdd, handleStatusChange, handleEdit, handleDelete } = useGameActions({
-    onAddSuccess: invalidateGames,
-    onStatusSuccess: invalidateGames,
-    onEditSuccess: () => {
-      setEditGame(null);
-      invalidateGames();
-    },
-    onDeleteSuccess: invalidateGames,
-  });
+  const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
+    useGameActions({
+      onAddSuccess: invalidateGames,
+      onStatusSuccess: invalidateGames,
+      onEditSuccess: () => {
+        setEditGame(null);
+        invalidateGames();
+      },
+      onDeleteSuccess: invalidateGames,
+    });
 
   const handleDeleteConfirm = (id: string) => {
     if (!confirm("Delete this game?")) return;
@@ -100,6 +109,8 @@ export function useLibrary() {
     setTab,
     searchQuery,
     setSearchQuery,
+    moodFilter,
+    setMoodFilter,
     editGame,
     setEditGame,
     gamesLoading,

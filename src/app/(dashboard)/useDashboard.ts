@@ -8,7 +8,6 @@ import { useMoods } from "@/src/domains/games/hooks/useMoods";
 import { useGameActions } from "@/src/domains/games/hooks/useGameActions";
 import {
   getTopPriority,
-  getRecentlyPlayed,
   getPlayingGames,
 } from "@/src/domains/games/services/game.queries";
 import { gameKeys, statsKeys } from "@/src/domains/games/queryKeys";

@@ -1,15 +1,20 @@
 "use client";
 
+import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { usePlaying, PlayingTab } from "./usePlaying";
 import { GameCard } from "@/src/domains/games/components/GameCard";
+import { GameCardList } from "@/src/domains/games/components/GameCardList";
 import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
 import { MoodFilter } from "@/src/domains/games/components/MoodFilter";
-import { Pagination } from "@/src/components/ui/Pagination";
+import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SearchInput } from "@/src/components/ui/SearchInput";
 import { TabBar } from "@/src/components/ui/TabBar";
 
 const TAB_VALUES: PlayingTab[] = ["playing", "ongoing"];
-const TAB_LABELS: Record<PlayingTab, string> = { playing: "Playing", ongoing: "Ongoing" };
+const TAB_LABELS: Record<PlayingTab, string> = {
+  playing: "Playing",
+  ongoing: "Ongoing",
+};
 
 const EMPTY_STATE = {
   playing: {
@@ -45,6 +50,8 @@ export function PlayingView() {
     handleDelete,
   } = usePlaying();
 
+  const topRef = useScrollToTop(page);
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
@@ -56,11 +63,12 @@ export function PlayingView() {
   const countLabel = activeTab === "playing" ? "active game" : "ongoing game";
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div ref={topRef} className="mx-auto max-w-3xl">
       <div className="mb-6">
         <h1 className="font-bold text-white text-2xl">Currently Playing</h1>
         <p className="mt-0.5 text-gray-500 text-sm">
-          {filtered.length} {countLabel}{filtered.length !== 1 ? "s" : ""}
+          {filtered.length} {countLabel}
+          {filtered.length !== 1 ? "s" : ""}
           {moodFilter ? ` · ${moodFilter}` : ""}
         </p>
       </div>
@@ -86,34 +94,26 @@ export function PlayingView() {
         className="mb-5"
       />
 
-      {filtered.length === 0 ? (
-        <div className="bg-gray-900 p-12 border border-gray-800 rounded-xl text-center">
-          <p className="mb-2 text-gray-500 text-lg">{emptyState.heading}</p>
-          <p className="text-gray-600 text-sm">
-            {moodFilter ? "Try another filter." : emptyState.hint}
-          </p>
-        </div>
-      ) : (
-        <>
-          <div className="space-y-3 md:space-y-5">
-            {paginated.map((game) => (
-              <GameCard
-                key={game.id}
-                game={game}
-                onEdit={isAuthenticated ? setEditGame : undefined}
-                onStatusChange={
-                  isAuthenticated ? handleStatusChange : undefined
-                }
-              />
-            ))}
-          </div>
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
+      <GameCardList
+        games={paginated}
+        emptyState={
+          <EmptyState
+            heading={emptyState.heading}
+            hint={moodFilter ? "Try another filter." : emptyState.hint}
           />
-        </>
-      )}
+        }
+        renderCard={(game) => (
+          <GameCard
+            key={game.id}
+            game={game}
+            onEdit={isAuthenticated ? setEditGame : undefined}
+            onStatusChange={isAuthenticated ? handleStatusChange : undefined}
+          />
+        )}
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
 
       {editGame && (
         <AddGameModal

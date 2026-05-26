@@ -1,11 +1,13 @@
 "use client";
+import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { useUIStore } from "@/src/domains/shared/store/ui.store";
 import { useBacklog } from "./useBacklog";
 import { GameCard } from "@/src/domains/games/components/GameCard";
+import { GameCardList } from "@/src/domains/games/components/GameCardList";
 import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
 import { RandomPicker } from "@/src/domains/games/components/RandomPicker";
 import { MoodFilter } from "@/src/domains/games/components/MoodFilter";
-import { Pagination } from "@/src/components/ui/Pagination";
+import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SearchInput } from "@/src/components/ui/SearchInput";
 import { Dices, DicesIcon, Plus } from "lucide-react";
 
@@ -37,6 +39,7 @@ export function BacklogView() {
   } = useBacklog();
 
   const { truncatedButtonText } = useUIStore();
+  const topRef = useScrollToTop(page);
 
   if (loading)
     return (
@@ -46,7 +49,7 @@ export function BacklogView() {
     );
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div ref={topRef} className="mx-auto max-w-3xl">
       <div className="flex justify-between items-center gap-4 mb-6">
         <div>
           <h1 className="font-bold text-white text-2xl">Backlog</h1>
@@ -96,53 +99,47 @@ export function BacklogView() {
         className="mb-5"
       />
 
-      {filtered.length === 0 ? (
-        <div className="bg-gray-900 p-12 border border-gray-800 rounded-xl text-center">
-          <p className="mb-2 text-gray-500 text-lg">
-            {moodFilter
-              ? `No "${moodFilter}" games in backlog`
-              : "Backlog is empty!"}
-          </p>
-          <p className="mb-4 text-gray-600 text-sm">
-            {moodFilter
-              ? "Try another filter or add a new game."
-              : "Add games you want to play."}
-          </p>
-          {isAuthenticated && (
-            <button
-              onClick={() => setShowAdd(true)}
-              className="bg-brand-700 hover:bg-brand-600 px-4 py-2 rounded-lg font-semibold text-white text-sm transition-colors"
-            >
-              + Add Game
-            </button>
-          )}
-        </div>
-      ) : (
-        <>
-          <div className="space-y-3 md:space-y-5">
-            {paginated.map((game, i) => (
-              <GameCard
-                key={game.id}
-                game={game}
-                rank={(page - 1) * 20 + i + 1}
-                onEdit={isAuthenticated ? setEditGame : undefined}
-                onStatusChange={
-                  isAuthenticated ? handleStatusChange : undefined
-                }
-                onPriorityChange={
-                  isAuthenticated ? handlePriorityChange : undefined
-                }
-                showPriority
-              />
-            ))}
-          </div>
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
+      <GameCardList
+        games={paginated}
+        emptyState={
+          <EmptyState
+            heading={
+              moodFilter
+                ? `No "${moodFilter}" games in backlog`
+                : "Backlog is empty!"
+            }
+            hint={
+              moodFilter
+                ? "Try another filter or add a new game."
+                : "Add games you want to play."
+            }
+            actionLabel={
+              isAuthenticated && !moodFilter ? "+ Add Game" : undefined
+            }
+            onAction={
+              isAuthenticated && !moodFilter
+                ? () => setShowAdd(true)
+                : undefined
+            }
           />
-        </>
-      )}
+        }
+        renderCard={(game, i) => (
+          <GameCard
+            key={game.id}
+            game={game}
+            rank={(page - 1) * 20 + i + 1}
+            onEdit={isAuthenticated ? setEditGame : undefined}
+            onStatusChange={isAuthenticated ? handleStatusChange : undefined}
+            onPriorityChange={
+              isAuthenticated ? handlePriorityChange : undefined
+            }
+            showPriority
+          />
+        )}
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
 
       <AddGameModal
         isOpen={showAdd || !!editGame}

@@ -1,17 +1,24 @@
 import { GameDto } from "@/src/domains/games/models/game.types";
 
-export function getTopPriority(games: GameDto[], limit = 5): GameDto[] {
+export function getTopPriority(games: GameDto[], limit = 20): GameDto[] {
   return games
     .filter((g) => g.status === "backlog")
     .sort((a, b) => b.priority_score - a.priority_score)
     .slice(0, limit);
 }
 
-export function getPlayingGames(games: GameDto[], display = 10, pool = 20): GameDto[] {
-  const candidates = games
+export function getBacklogGames(games: GameDto[], limit = 20): GameDto[] {
+  return games
+    .filter((g) => g.status === "backlog")
+    .sort((a, b) => b.priority_score - a.priority_score)
+    .slice(0, limit);
+}
+
+export function getPlayingGames(games: GameDto[], limit = 20): GameDto[] {
+  return games
     .filter((g) => g.status === "playing" || g.status === "ongoing")
-    .slice(0, pool);
-  return [...candidates].sort(() => Math.random() - 0.5).slice(0, display);
+    .sort((a, b) => b.priority_score - a.priority_score)
+    .slice(0, limit);
 }
 
 export function getRecentlyPlayed(games: GameDto[], limit = 5): GameDto[] {

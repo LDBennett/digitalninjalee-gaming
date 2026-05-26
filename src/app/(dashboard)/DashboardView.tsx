@@ -1,21 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import { useDashboard } from "./useDashboard";
 import { GameCard } from "@/src/domains/games/components/GameCard";
+import { GameCardList } from "@/src/domains/games/components/GameCardList";
 import { AddGameModal } from "@/src/domains/games/components/AddGameModal";
 import { RandomPicker } from "@/src/domains/games/components/RandomPicker";
-
+import { EmptyState } from "@/src/components/ui/EmptyState";
+import { GameStatsGrid } from "./GameStatsGrid";
+import { TabBar } from "@/src/components/ui/TabBar";
 import { Dices } from "lucide-react";
 
-const STAT_CARDS = [
-  { key: "playing" as const, label: "Playing", color: "text-emerald-400" },
-  { key: "backlog" as const, label: "Backlog", color: "text-violet-400" },
-  { key: "completed" as const, label: "Completed", color: "text-green-400" },
-  { key: "ongoing" as const, label: "Ongoing", color: "text-cyan-400" },
-  { key: "wishlist" as const, label: "Wishlist", color: "text-yellow-400" },
-] as const;
+type DashboardTab = "playing" | "backlog";
+
+const TAB_LABELS: Record<DashboardTab, string> = {
+  playing: "Currently Playing",
+  backlog: "Backlog",
+};
 
 export function DashboardView() {
+  const [activeTab, setActiveTab] = useState<DashboardTab>("playing");
   const {
     stats,
     topPriority,
@@ -59,77 +63,45 @@ export function DashboardView() {
           </div>
         )}
       </div>
-      <div className="gap-3 md:gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 mb-6">
-        {STAT_CARDS.map((s) => (
-          <div
-            key={s.label}
-            className="bg-gray-900 p-4 border border-gray-800 rounded-xl"
-          >
-            <p className="font-medium text-gray-500 text-xs uppercase tracking-wide">
-              {s.label}
-            </p>
-            <p className={`text-3xl font-bold mt-1 ${s.color}`}>
-              {stats[s.key]}
-            </p>
-          </div>
-        ))}
-      </div>
-      <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
-        <section>
-          <h2 className="mb-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-            Games Currently Playing
-          </h2>
-          {playingGames.length === 0 ? (
-            <div className="bg-gray-900 p-8 border border-gray-800 rounded-xl text-center">
-              <p className="text-gray-600 text-sm">No recent activity</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {playingGames.map((game) => (
-                <GameCard
-                  key={game.id}
-                  game={game}
-                  showActions={false}
-                  showStatusBadge
-                />
-              ))}
-            </div>
+      <GameStatsGrid stats={stats} />
+      <TabBar
+        tabs={["playing", "backlog"] as DashboardTab[]}
+        value={activeTab}
+        onChange={setActiveTab}
+        labels={TAB_LABELS}
+        className="mb-6"
+      />
+      {activeTab === "playing" && (
+        <GameCardList
+          games={playingGames}
+          emptyState={<EmptyState heading="No recent activity" />}
+          renderCard={(game) => (
+            <GameCard key={game.id} game={game} showActions={false} showStatusBadge />
           )}
-        </section>
-        <section>
-          <h2 className="mb-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-            Backlog Games
-          </h2>
-          {topPriority.length === 0 ? (
-            <div className="bg-gray-900 p-8 border border-gray-800 rounded-xl text-center">
-              <p className="mb-3 text-gray-600 text-sm">
-                Your backlog is empty
-              </p>
-              {isAuthenticated && (
-                <button
-                  onClick={() => setShowAdd(true)}
-                  className="text-brand-400 hover:text-brand-300 text-sm transition-colors"
-                >
-                  Add your first game →
-                </button>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {topPriority.map((game) => (
-                <GameCard
-                  key={game.id}
-                  game={game}
-                  showPriority
-                  onStatusChange={
-                    isAuthenticated ? handleStatusChange : undefined
-                  }
-                />
-              ))}
-            </div>
+          spacing="space-y-3"
+        />
+      )}
+      {activeTab === "backlog" && (
+        <GameCardList
+          games={topPriority}
+          emptyState={
+            <EmptyState
+              heading="Your backlog is empty"
+              actionLabel={isAuthenticated ? "Add your first game →" : undefined}
+              onAction={isAuthenticated ? () => setShowAdd(true) : undefined}
+            />
+          }
+          renderCard={(game) => (
+            <GameCard
+              key={game.id}
+              game={game}
+              showPriority
+              onStatusChange={isAuthenticated ? handleStatusChange : undefined}
+            />
           )}
-        </section>
-      </div>
+          spacing="space-y-3"
+        />
+      )}
       <AddGameModal
         isOpen={showAdd}
         onClose={() => setShowAdd(false)}
