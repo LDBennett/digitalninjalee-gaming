@@ -13,9 +13,18 @@ export interface GameStats {
 export function deriveStats(games: GameDto[]): GameStats {
   const counts: Record<string, number> = {};
   for (const g of games) counts[g.status] = (counts[g.status] ?? 0) + 1;
+
+  // Count games whose replay_status places them in a different bucket than their primary status
+  const wantToReplayExtra = games.filter(
+    (g) => g.replay_status === "want-to-replay" && g.status !== "backlog",
+  ).length;
+  const replayingExtra = games.filter(
+    (g) => g.replay_status === "replaying" && g.status !== "playing",
+  ).length;
+
   return {
-    backlog: counts["backlog"] ?? 0,
-    playing: counts["playing"] ?? 0,
+    backlog: (counts["backlog"] ?? 0) + wantToReplayExtra,
+    playing: (counts["playing"] ?? 0) + replayingExtra,
     ongoing: counts["ongoing"] ?? 0,
     completed: (counts["completed"] ?? 0) + (counts["main-complete"] ?? 0),
     completedFull: counts["completed"] ?? 0,
@@ -26,21 +35,26 @@ export function deriveStats(games: GameDto[]): GameStats {
 
 export function getTopPriority(games: GameDto[], limit = 20): GameDto[] {
   return games
-    .filter((g) => g.status === "backlog")
+    .filter((g) => g.status === "backlog" || g.replay_status === "want-to-replay")
     .sort((a, b) => b.priority_score - a.priority_score)
     .slice(0, limit);
 }
 
 export function getBacklogGames(games: GameDto[], limit = 20): GameDto[] {
   return games
-    .filter((g) => g.status === "backlog")
+    .filter((g) => g.status === "backlog" || g.replay_status === "want-to-replay")
     .sort((a, b) => b.priority_score - a.priority_score)
     .slice(0, limit);
 }
 
 export function getPlayingGames(games: GameDto[], limit = 20): GameDto[] {
   return games
-    .filter((g) => g.status === "playing" || g.status === "ongoing")
+    .filter(
+      (g) =>
+        g.status === "playing" ||
+        g.status === "ongoing" ||
+        g.replay_status === "replaying",
+    )
     .sort((a, b) => b.priority_score - a.priority_score)
     .slice(0, limit);
 }

@@ -10,6 +10,8 @@ import {
   ListChevronsDownUp,
   ListChevronsUpDown,
   Pencil,
+  Repeat,
+  RotateCcw,
 } from "lucide-react";
 import {
   GameDto,
@@ -268,6 +270,16 @@ export function GameCard({
 
           <div className="flex flex-wrap items-center gap-2 mt-1">
             <PlatformBadge platform={game.platform} />
+            {game.replay_status === 'want-to-replay' && (
+              <span className="inline-flex items-center gap-1 bg-violet-900/50 px-1.5 py-0.5 rounded text-violet-300 text-xs">
+                <RotateCcw size={10} /> Want to Replay
+              </span>
+            )}
+            {game.replay_status === 'replaying' && (
+              <span className="inline-flex items-center gap-1 bg-teal-900/50 px-1.5 py-0.5 rounded text-teal-300 text-xs">
+                <Repeat size={10} /> Replaying
+              </span>
+            )}
             {showStatusBadge && (
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${badge.bg} ${badge.text}`}

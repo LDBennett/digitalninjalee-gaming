@@ -4,6 +4,7 @@ import {
   GameStatus,
   Platform,
   PriorityScore,
+  ReplayStatus,
   canTransitionTo,
   adjustPriorityScore,
 } from '@/src/domains/games/models/game.types';
@@ -20,6 +21,7 @@ export interface NewGameProps {
   gameDescription?: string | null;
   moods: ReadonlyArray<MoodState>;
   id?: string;
+  replayStatus?: ReplayStatus;
 }
 
 export function newGame(props: NewGameProps): Result<GameState, string> {
@@ -37,7 +39,12 @@ export function newGame(props: NewGameProps): Result<GameState, string> {
     lastPlayedAt: null,
     createdAt: new Date(),
     moods: [...props.moods],
+    replayStatus: props.replayStatus ?? null,
   });
+}
+
+export function setReplayStatus(game: GameState, replayStatus: ReplayStatus): GameState {
+  return { ...game, replayStatus };
 }
 
 export function transitionGame(game: GameState, nextStatus: GameStatus): Result<GameState, string> {

@@ -92,6 +92,8 @@ export const VALID_TRANSITIONS: Readonly<Record<GameStatus, ReadonlyArray<GameSt
   'keep-an-eye-on': ['interested', 'pre-ordered'],
 };
 
+export type ReplayStatus = 'want-to-replay' | 'replaying' | null;
+
 export function createGameStatus(value: string): Result<GameStatus, string> {
   if (!GAME_STATUSES.includes(value as GameStatus)) {
     return err(`Invalid status: "${value}". Must be one of: ${GAME_STATUSES.join(', ')}`);
@@ -122,6 +124,7 @@ export interface GameState {
   readonly lastPlayedAt: Date | null;
   readonly createdAt: Date;
   readonly moods: ReadonlyArray<MoodState>;
+  readonly replayStatus: ReplayStatus;
 }
 
 // ── DTO (serialized shape returned by API) ────────────────────────────────────
@@ -139,6 +142,7 @@ export interface GameDto {
   last_played_at: string | null;
   created_at: string;
   moods: MoodDto[];
+  replay_status: ReplayStatus;
 }
 
 export function gameStateToDto(game: GameState): GameDto {
@@ -155,5 +159,6 @@ export function gameStateToDto(game: GameState): GameDto {
     last_played_at: game.lastPlayedAt?.toISOString() ?? null,
     created_at: game.createdAt.toISOString(),
     moods: game.moods.map((m) => ({ id: m.id, name: m.name })),
+    replay_status: game.replayStatus,
   };
 }

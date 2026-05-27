@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { useUIStore } from "@/src/domains/shared/store/ui.store";
 import { useBacklog } from "./useBacklog";
@@ -6,10 +7,10 @@ import { GameCard } from "@/src/domains/games/components/card/GameCard";
 import { GameCardList } from "@/src/domains/games/components/card/GameCardList";
 import { AddGameModal } from "@/src/domains/games/components/add-game/AddGameModal";
 import { RandomPicker } from "@/src/domains/games/components/dashboard/RandomPicker";
-import { MoodFilter } from "@/src/domains/games/components/mood/MoodFilter";
+import { GameFiltersPanel } from "@/src/domains/games/components/filters/GameFiltersPanel";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SearchInput } from "@/src/components/ui/SearchInput";
-import { Dices, DicesIcon, Plus } from "lucide-react";
+import { Dices, DicesIcon, Plus, SlidersHorizontal } from "lucide-react";
 
 export function BacklogView() {
   const {
@@ -21,6 +22,10 @@ export function BacklogView() {
     moods,
     moodFilter,
     setMoodFilter,
+    sortBy,
+    setSortBy,
+    platformFilter,
+    setPlatformFilter,
     searchQuery,
     setSearchQuery,
     showAdd,
@@ -36,10 +41,21 @@ export function BacklogView() {
     handleDelete,
     handleStatusChange,
     handlePriorityChange,
+    replayOnly,
+    setReplayOnly,
+    wantToReplayCount,
   } = useBacklog();
 
   const { truncatedButtonText } = useUIStore();
   const topRef = useScrollToTop(page);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const activeFilterCount = [
+    moodFilter !== null,
+    platformFilter !== null,
+    sortBy !== "priority-desc",
+    replayOnly,
+  ].filter(Boolean).length;
 
   if (loading)
     return (
@@ -54,8 +70,10 @@ export function BacklogView() {
         <div>
           <h1 className="font-bold text-white text-2xl">Backlog</h1>
           <p className="mt-0.5 text-gray-500 text-sm">
-            {filtered.length} game{filtered.length !== 1 ? "s" : ""}
-            {moodFilter ? ` · ${moodFilter}` : ""}
+            {replayOnly
+              ? `${filtered.length} game${filtered.length !== 1 ? "s" : ""} to replay${moodFilter ? ` · ${moodFilter}` : ""}`
+              : `${filtered.length} game${filtered.length !== 1 ? "s" : ""}${wantToReplayCount > 0 ? ` · ${wantToReplayCount} replay${wantToReplayCount !== 1 ? "s" : ""} queued` : ""}${moodFilter ? ` · ${moodFilter}` : ""}`
+            }
           </p>
         </div>
         {isAuthenticated && (
@@ -86,18 +104,52 @@ export function BacklogView() {
         )}
       </div>
 
-      <SearchInput
-        value={searchQuery}
-        onChange={setSearchQuery}
-        className="mb-5"
-      />
+      <div className="flex gap-2 mb-5">
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          className="flex-1"
+        />
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className={`flex items-center gap-1.5 shrink-0 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+            showFilters || activeFilterCount > 0
+              ? "bg-brand-800/30 border-brand-700 text-brand-300"
+              : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white"
+          }`}
+        >
+          <SlidersHorizontal size={15} />
+          <span className="hidden sm:inline">Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="bg-brand-600 px-1.5 rounded-full text-white text-xs leading-tight">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+      </div>
 
-      <MoodFilter
-        moods={moods}
-        value={moodFilter}
-        onChange={setMoodFilter}
-        className="mb-5"
-      />
+      {showFilters && (
+        <GameFiltersPanel
+          moods={moods}
+          moodFilter={moodFilter}
+          onMoodChange={setMoodFilter}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          platformFilter={platformFilter}
+          onPlatformChange={setPlatformFilter}
+          className="mb-5"
+        >
+          <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={replayOnly}
+              onChange={(e) => setReplayOnly(e.target.checked)}
+              className="w-4 h-4 accent-brand-800"
+            />
+            <span className="text-gray-300 text-sm">Show Games To Replay</span>
+          </label>
+        </GameFiltersPanel>
+      )}
 
       <GameCardList
         games={paginated}
@@ -106,11 +158,15 @@ export function BacklogView() {
             heading={
               moodFilter
                 ? `No "${moodFilter}" games in backlog`
+                : replayOnly
+                ? "No games marked 'Want to Replay'"
                 : "Backlog is empty!"
             }
             hint={
               moodFilter
                 ? "Try another filter or add a new game."
+                : replayOnly
+                ? "Edit a completed game and set its Replay Status."
                 : "Add games you want to play."
             }
             actionLabel={

@@ -134,7 +134,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
           <button
             onClick={pick}
             disabled={loading}
-            className="bg-gradient-to-r from-brand-700 hover:from-brand-600 to-brand-700 hover:to-brand-600 disabled:opacity-60 shadow-lg py-3 rounded-xl w-full font-semibold text-white text-sm transition-all"
+            className="bg-linear-to-r from-brand-700 hover:from-brand-600 to-brand-700 hover:to-brand-600 disabled:opacity-60 shadow-lg py-3 rounded-xl w-full font-semibold text-white text-sm transition-all"
           >
             {loading ? (
               <span className="flex justify-center items-center gap-2">

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/src/infrastructure/database/supabase.client';
 import { createSupabaseGameRepository } from '@/src/infrastructure/database/game.repo';
 import { createSupabaseMoodRepository } from '@/src/infrastructure/database/mood.repo';
-import { transitionGame, updateGameDetails, adjustPriority, replaceMoods } from '@/src/domains/games/services/game.service';
+import { transitionGame, updateGameDetails, adjustPriority, replaceMoods, setReplayStatus } from '@/src/domains/games/services/game.service';
 import { gameStateToDto, createPlatform, createGameStatus, createPriorityScore } from '@/src/domains/games/models/game.types';
 import { GameState } from '@/src/domains/games/models/game.types';
 
@@ -69,6 +69,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const moodsResult = await moodRepo.findByIds(body.mood_ids);
     if (!moodsResult.success) return NextResponse.json({ error: moodsResult.error.message }, { status: 500 });
     game = replaceMoods(game, moodsResult.value);
+  }
+
+  if (body.replay_status !== undefined) {
+    game = setReplayStatus(game, body.replay_status ?? null);
   }
 
   const updateResult = await gameRepo.update(game);

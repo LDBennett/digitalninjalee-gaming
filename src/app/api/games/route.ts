@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
     coverArtUrl: body.cover_art_url ?? null,
     gameDescription: body.game_description ?? null,
     moods: moodsResult.value,
+    replayStatus: body.replay_status ?? null,
   });
   if (!gameResult.success) return NextResponse.json({ error: gameResult.error }, { status: 400 });
 

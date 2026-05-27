@@ -5,6 +5,7 @@ import {
   GameDto,
   GameStatus,
   Platform,
+  ReplayStatus,
 } from "@/src/domains/games/models/game.types";
 import { AddGamePayload } from "@/src/domains/games/components/add-game/AddGameModal";
 
@@ -20,6 +21,7 @@ interface UseAddGameFormOptions {
   isOpen: boolean;
   defaultStatus: GameStatus;
   onSave: (data: AddGamePayload) => void | Promise<void>;
+  onClose: () => void;
 }
 
 export function useAddGameForm({
@@ -27,6 +29,7 @@ export function useAddGameForm({
   isOpen,
   defaultStatus,
   onSave,
+  onClose,
 }: UseAddGameFormOptions) {
   const [title, setTitle] = useState("");
   const [platform, setPlatform] = useState<Platform>("pc");
@@ -37,6 +40,7 @@ export function useAddGameForm({
   const [gameDescription, setGameDescription] = useState("");
   const [externalId, setExternalId] = useState<string | null>(null);
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
+  const [replayStatus, setReplayStatus] = useState<ReplayStatus>(null);
   const [saving, setSaving] = useState(false);
 
   const [rawgResults, setRawgResults] = useState<RawgResult[]>([]);
@@ -57,6 +61,7 @@ export function useAddGameForm({
       setGameDescription(editGame.game_description ?? "");
       setExternalId(editGame.external_id ?? null);
       setSelectedMoods(editGame.moods?.map((m) => m.id) ?? []);
+      setReplayStatus(editGame.replay_status ?? null);
     } else {
       setTitle("");
       setPlatform("pc");
@@ -67,6 +72,7 @@ export function useAddGameForm({
       setGameDescription("");
       setExternalId(null);
       setSelectedMoods([]);
+      setReplayStatus(null);
     }
     setRawgResults([]);
     setShowDropdown(false);
@@ -120,9 +126,25 @@ export function useAddGameForm({
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!title.trim()) return;
+  const resetForm = () => {
+    setTitle("");
+    setPlatform("pc");
+    setStatus(defaultStatus);
+    setPriorityScore(50);
+    setCoverUrl("");
+    setCoverArtUrl("");
+    setGameDescription("");
+    setExternalId(null);
+    setSelectedMoods([]);
+    setReplayStatus(null);
+    setRawgResults([]);
+    setShowDropdown(false);
+    setIgdbLoading(false);
+    setIgdbLoaded(false);
+  };
+
+  const doSave = async () => {
+    if (!title.trim()) return false;
     setSaving(true);
     await onSave({
       title: title.trim(),
@@ -134,8 +156,21 @@ export function useAddGameForm({
       game_description: gameDescription.trim() || null,
       external_id: externalId,
       mood_ids: selectedMoods,
+      replay_status: replayStatus,
     });
     setSaving(false);
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const saved = await doSave();
+    if (saved && !editGame) onClose();
+  };
+
+  const handleSubmitAndAdd = async () => {
+    const saved = await doSave();
+    if (saved) resetForm();
   };
 
   const clearCoverArt = () => {
@@ -156,6 +191,7 @@ export function useAddGameForm({
     gameDescription, setGameDescription,
     externalId, setExternalId,
     selectedMoods,
+    replayStatus, setReplayStatus,
     saving,
     rawgResults,
     showDropdown, setShowDropdown,
@@ -165,6 +201,7 @@ export function useAddGameForm({
     handleRawgSelect,
     toggleMood,
     handleSubmit,
+    handleSubmitAndAdd,
     clearCoverArt,
   };
 }

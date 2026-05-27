@@ -1,16 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { useScrollToTop } from "@/src/domains/shared/hooks/useScrollToTop";
 import { useLibrary, LibraryTab, LIBRARY_TAB_LABELS } from "./useLibrary";
 import { GameCard } from "@/src/domains/games/components/card/GameCard";
 import { GameCardList } from "@/src/domains/games/components/card/GameCardList";
 import { GameCardSkeleton } from "@/src/domains/games/components/card/GameCardSkeleton";
 import { AddGameModal } from "@/src/domains/games/components/add-game/AddGameModal";
+import { GameFiltersPanel } from "@/src/domains/games/components/filters/GameFiltersPanel";
 import { EmptyState } from "@/src/components/ui/EmptyState";
-import { MoodFilter } from "@/src/domains/games/components/mood/MoodFilter";
 import { SearchInput } from "@/src/components/ui/SearchInput";
 import { TabBar } from "@/src/components/ui/TabBar";
-import { Plus } from "lucide-react";
+import { Plus, SlidersHorizontal } from "lucide-react";
 
 const TABS: LibraryTab[] = [
   "all",
@@ -35,6 +36,10 @@ export function LibraryView() {
     setSearchQuery,
     moodFilter,
     setMoodFilter,
+    sortBy,
+    setSortBy,
+    platformFilter,
+    setPlatformFilter,
     editGame,
     setEditGame,
     gamesLoading,
@@ -48,6 +53,13 @@ export function LibraryView() {
   } = useLibrary();
 
   const topRef = useScrollToTop(page);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const activeFilterCount = [
+    moodFilter !== null,
+    platformFilter !== null,
+    sortBy !== "priority-desc",
+  ].filter(Boolean).length;
 
   return (
     <div ref={topRef} className="mx-auto max-w-3xl">
@@ -70,18 +82,42 @@ export function LibraryView() {
           labels={LIBRARY_TAB_LABELS}
           className="mb-5"
         />
-        <SearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          className="mb-5"
-        />
+        <div className="flex gap-2 mb-5">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            className="flex-1"
+          />
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-1.5 shrink-0 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+              showFilters || activeFilterCount > 0
+                ? "bg-brand-800/30 border-brand-700 text-brand-300"
+                : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white"
+            }`}
+          >
+            <SlidersHorizontal size={15} />
+            <span className="hidden sm:inline">Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="bg-brand-600 px-1.5 rounded-full text-white text-xs leading-tight">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+        </div>
 
-        <MoodFilter
-          moods={moods}
-          value={moodFilter}
-          onChange={setMoodFilter}
-          className="mb-5"
-        />
+        {showFilters && (
+          <GameFiltersPanel
+            moods={moods}
+            moodFilter={moodFilter}
+            onMoodChange={setMoodFilter}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            platformFilter={platformFilter}
+            onPlatformChange={setPlatformFilter}
+            className="mb-5"
+          />
+        )}
       </div>
 
       {gamesLoading ? (

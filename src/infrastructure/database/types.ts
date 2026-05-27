@@ -10,6 +10,7 @@ export interface GameRow {
   game_description: string | null;
   last_played_at: string | null;
   created_at: string;
+  replay_status: 'want-to-replay' | 'replaying' | null;
 }
 
 export interface MoodRow {

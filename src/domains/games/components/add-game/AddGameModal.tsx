@@ -10,6 +10,7 @@ import {
   LIBRARY_STATUSES,
   WISHLIST_STATUSES,
   VALID_TRANSITIONS,
+  ReplayStatus,
 } from "@/src/domains/games/models/game.types";
 import { MoodDto } from "@/src/domains/games/models/mood.types";
 import { Trash2 } from "lucide-react";
@@ -29,6 +30,7 @@ export interface AddGamePayload {
   game_description: string | null;
   external_id: string | null;
   mood_ids: string[];
+  replay_status: ReplayStatus;
 }
 
 interface AddGameModalProps {
@@ -50,12 +52,21 @@ export function AddGameModal({
   moods,
   defaultStatus = "backlog",
 }: AddGameModalProps) {
-  const form = useAddGameForm({ editGame, isOpen, defaultStatus, onSave });
+  const form = useAddGameForm({
+    editGame,
+    isOpen,
+    defaultStatus,
+    onSave,
+    onClose,
+  });
 
   if (!isOpen) return null;
 
   const coverImage =
-    form.coverArtUrl || form.coverUrl || editGame?.cover_art_url || editGame?.cover_url;
+    form.coverArtUrl ||
+    form.coverUrl ||
+    editGame?.cover_art_url ||
+    editGame?.cover_url;
 
   return (
     <div className="z-50 fixed inset-0 flex justify-center items-center bg-black/80 backdrop-blur-sm p-4">
@@ -179,12 +190,38 @@ export function AddGameModal({
                 </select>
               </div>
             </div>
-
+            {(LIBRARY_STATUSES as ReadonlyArray<string>).includes(
+              form.status,
+            ) && (
+              <div>
+                <label className="block mb-1 font-medium text-gray-400 text-xs">
+                  Replay Status
+                </label>
+                <select
+                  value={form.replayStatus ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    form.setReplayStatus(
+                      val === "" ? null : (val as ReplayStatus),
+                    );
+                  }}
+                  className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm"
+                >
+                  <option value="">None</option>
+                  <option value="want-to-replay">Want to Replay</option>
+                  <option value="replaying">Replaying</option>
+                </select>
+              </div>
+            )}
             <div>
               <label className="block mb-1 font-medium text-gray-400 text-xs">
                 Priority:{" "}
-                <span className="font-semibold text-brand-400">{form.priorityScore}</span>
-                <span className="ml-2 text-gray-600">(1 = lowest · 100 = highest)</span>
+                <span className="font-semibold text-brand-400">
+                  {form.priorityScore}
+                </span>
+                <span className="ml-2 text-gray-600">
+                  (1 = lowest · 100 = highest)
+                </span>
               </label>
               <input
                 type="range"
@@ -230,13 +267,25 @@ export function AddGameModal({
                   <Trash2 /> Delete
                 </button>
               )}
-              <button
-                type="submit"
-                disabled={form.saving || !form.title.trim()}
-                className="bg-brand-700 hover:bg-brand-600 disabled:opacity-50 px-5 py-2 rounded-lg font-medium text-white text-sm transition-colors disabled:cursor-not-allowed"
-              >
-                {form.saving ? "Saving…" : editGame ? "Update" : "Add Game"}
-              </button>
+              <div className="flex items-center gap-2 ml-auto">
+                {!editGame && (
+                  <button
+                    type="button"
+                    onClick={form.handleSubmitAndAdd}
+                    disabled={form.saving || !form.title.trim()}
+                    className="bg-gray-700 hover:bg-gray-600 disabled:opacity-50 px-4 py-2 rounded-lg font-medium text-white text-sm transition-colors disabled:cursor-not-allowed"
+                  >
+                    {form.saving ? "Saving…" : "Save & Add Another"}
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  disabled={form.saving || !form.title.trim()}
+                  className="bg-brand-700 hover:bg-brand-600 disabled:opacity-50 px-5 py-2 rounded-lg font-medium text-white text-sm transition-colors disabled:cursor-not-allowed"
+                >
+                  {form.saving ? "Saving…" : editGame ? "Update" : "Add Game"}
+                </button>
+              </div>
             </div>
           </form>
         </div>

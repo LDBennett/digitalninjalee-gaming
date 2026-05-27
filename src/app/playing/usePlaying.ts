@@ -10,7 +10,7 @@ import { useGameFilters } from '@/src/domains/games/hooks/useGameFilters';
 import { useClientPagination } from '@/src/domains/shared/hooks/useClientPagination';
 import { buildStatusPayload } from '@/src/domains/games/services/game.service';
 
-export type PlayingTab = 'playing' | 'ongoing';
+export type PlayingTab = 'playing' | 'ongoing' | 'replaying';
 
 export function usePlaying() {
   const { session, authLoading } = useAuthStore();
@@ -23,10 +23,15 @@ export function usePlaying() {
   const { games: allGames, invalidate } = useGameQuery();
   const playingGames = useMemo(() => allGames.filter((g) => g.status === 'playing'), [allGames]);
   const ongoingGames = useMemo(() => allGames.filter((g) => g.status === 'ongoing'), [allGames]);
+  const replayingGames = useMemo(() => allGames.filter((g) => g.replay_status === 'replaying'), [allGames]);
 
-  const games = activeTab === 'playing' ? playingGames : ongoingGames;
+  const games =
+    activeTab === 'playing' ? playingGames
+    : activeTab === 'ongoing' ? ongoingGames
+    : replayingGames;
 
-  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter, filtered } =
+  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter,
+          sortBy, setSortBy, platformFilter, setPlatformFilter, filtered } =
     useGameFilters(games);
   const { page, setPage, totalPages, paginated } = useClientPagination(filtered);
 
@@ -39,6 +44,8 @@ export function usePlaying() {
 
   useEffect(() => { setPage(1); }, [moodFilter, setPage]);
   useEffect(() => { setPage(1); }, [searchQuery, setPage]);
+  useEffect(() => { setPage(1); }, [sortBy, setPage]);
+  useEffect(() => { setPage(1); }, [platformFilter, setPage]);
 
   const { handleStatusChange, handleEdit, handleDelete } = useGameActions({
     onStatusSuccess: invalidate,
@@ -79,6 +86,8 @@ export function usePlaying() {
     loading: authLoading,
     isAuthenticated,
     handleStatusChange,
+    sortBy, setSortBy,
+    platformFilter, setPlatformFilter,
     handleEdit: handleEditSubmit,
     handleDelete: handleDeleteConfirm,
   };

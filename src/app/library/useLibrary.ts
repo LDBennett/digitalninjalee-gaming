@@ -29,7 +29,8 @@ export function useLibrary() {
   const statusParam = tab !== "all" ? LIBRARY_TAB_STATUSES[tab] : undefined;
 
   const { games, gamesLoading, invalidate } = useGameQuery(statusParam);
-  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter, filtered } =
+  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter,
+          sortBy, setSortBy, platformFilter, setPlatformFilter, filtered } =
     useGameFilters(games);
   const { page, setPage, totalPages, paginated } =
     useClientPagination(filtered);
@@ -37,6 +38,8 @@ export function useLibrary() {
   useEffect(() => { setPage(1); }, [tab, setPage]);
   useEffect(() => { setPage(1); }, [searchQuery, setPage]);
   useEffect(() => { setPage(1); }, [moodFilter, setPage]);
+  useEffect(() => { setPage(1); }, [sortBy, setPage]);
+  useEffect(() => { setPage(1); }, [platformFilter, setPage]);
 
   const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
     useGameActions({
@@ -73,6 +76,8 @@ export function useLibrary() {
     setSearchQuery,
     moodFilter,
     setMoodFilter,
+    sortBy, setSortBy,
+    platformFilter, setPlatformFilter,
     editGame,
     setEditGame,
     gamesLoading,

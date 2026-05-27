@@ -19,9 +19,20 @@ export function useBacklog() {
   const [showAdd, setShowAdd] = useState(false);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
+  const [replayOnly, setReplayOnly] = useState(false);
+
   const { games: allGames, invalidate, queryKey } = useGameQuery();
-  const games = useMemo(() => allGames.filter((g) => g.status === "backlog"), [allGames]);
-  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter, filtered } =
+  const statusGames = useMemo(() => allGames.filter((g) => g.status === "backlog"), [allGames]);
+  const wantToReplayCount = useMemo(
+    () => allGames.filter((g) => g.replay_status === "want-to-replay").length,
+    [allGames],
+  );
+  const games = useMemo(
+    () => replayOnly ? allGames.filter((g) => g.replay_status === 'want-to-replay') : statusGames,
+    [allGames, statusGames, replayOnly],
+  );
+  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter,
+          sortBy, setSortBy, platformFilter, setPlatformFilter, filtered } =
     useGameFilters(games);
   const { page, setPage, totalPages, paginated } =
     useClientPagination(filtered);
@@ -29,6 +40,8 @@ export function useBacklog() {
 
   useEffect(() => { setPage(1); }, [moodFilter, setPage]);
   useEffect(() => { setPage(1); }, [searchQuery, setPage]);
+  useEffect(() => { setPage(1); }, [sortBy, setPage]);
+  useEffect(() => { setPage(1); }, [platformFilter, setPage]);
 
   const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
     useGameActions({
@@ -54,6 +67,8 @@ export function useBacklog() {
   return {
     games,
     filtered,
+    replayOnly,
+    setReplayOnly,
     paginated,
     page,
     setPage,
@@ -75,6 +90,9 @@ export function useBacklog() {
     handleEdit: handleEditSubmit,
     handleDelete: handleDeleteConfirm,
     handleStatusChange,
+    sortBy, setSortBy,
+    platformFilter, setPlatformFilter,
+    wantToReplayCount,
     handlePriorityChange: (id: string, delta: number) =>
       handlePriorityChange(id, delta, games),
   };

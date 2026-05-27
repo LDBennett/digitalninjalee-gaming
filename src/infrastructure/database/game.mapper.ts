@@ -30,6 +30,7 @@ export function gameRowToDomain(row: GameRowWithMoods): GameState {
     lastPlayedAt: row.last_played_at ? new Date(row.last_played_at) : null,
     createdAt: new Date(row.created_at),
     moods,
+    replayStatus: row.replay_status ?? null,
   };
 }
 
@@ -46,6 +47,7 @@ export function gameStateToRow(game: GameState): Omit<GameRowWithMoods, 'game_mo
     game_description: game.gameDescription,
     last_played_at: game.lastPlayedAt?.toISOString() ?? null,
     created_at: game.createdAt.toISOString(),
+    replay_status: game.replayStatus,
   };
 }
 
