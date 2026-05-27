@@ -72,7 +72,7 @@ export function BacklogView() {
           <p className="mt-0.5 text-gray-500 text-sm">
             {replayOnly
               ? `${filtered.length} game${filtered.length !== 1 ? "s" : ""} to replay${moodFilter ? ` · ${moodFilter}` : ""}`
-              : `${filtered.length} game${filtered.length !== 1 ? "s" : ""}${wantToReplayCount > 0 ? ` · ${wantToReplayCount} replay${wantToReplayCount !== 1 ? "s" : ""} queued` : ""}${moodFilter ? ` · ${moodFilter}` : ""}`
+              : `${filtered.length} game${filtered.length !== 1 ? "s" : ""}${wantToReplayCount > 0 ? ` · ${wantToReplayCount} to replay` : ""}${moodFilter ? ` · ${moodFilter}` : ""}`
             }
           </p>
         </div>
@@ -146,7 +146,7 @@ export function BacklogView() {
               onChange={(e) => setReplayOnly(e.target.checked)}
               className="w-4 h-4 accent-brand-800"
             />
-            <span className="text-gray-300 text-sm">Show Games To Replay</span>
+            <span className="text-gray-300 text-sm">Replays Only</span>
           </label>
         </GameFiltersPanel>
       )}

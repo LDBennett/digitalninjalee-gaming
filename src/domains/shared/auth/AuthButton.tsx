@@ -6,6 +6,7 @@ import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 export function AuthButton() {
   const { user, signIn, signOut } = useAuthStore();
   const [showModal, setShowModal] = useState(false);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +30,7 @@ export function AuthButton() {
     return (
       <div className="flex justify-center items-center px-2">
         <button
-          onClick={signOut}
+          onClick={() => setShowSignOutConfirm(true)}
           className="me-2 ml-2 text-gray-600 hover:text-red-400 text-xs transition-colors cursor-pointer shrink-0"
         >
           <img
@@ -38,6 +39,37 @@ export function AuthButton() {
             className="rounded-full w-8 h-6"
           />
         </button>
+
+        {showSignOutConfirm && (
+          <div
+            className="z-50 fixed inset-0 flex justify-center items-center bg-black/60"
+            onClick={() => setShowSignOutConfirm(false)}
+          >
+            <div
+              className="bg-gray-900 shadow-xl p-6 border border-gray-800 rounded-xl w-72"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="mb-1 font-semibold text-white text-base">Sign out?</h2>
+              <p className="mb-5 text-gray-500 text-xs">
+                You&apos;ll be switched to read-only mode.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowSignOutConfirm(false)}
+                  className="flex-1 bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded-lg font-medium text-gray-300 text-sm transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => { signOut(); setShowSignOutConfirm(false); }}
+                  className="flex-1 bg-red-900/60 hover:bg-red-800/60 px-3 py-2 rounded-lg font-medium text-red-300 text-sm transition-colors"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

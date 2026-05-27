@@ -22,6 +22,8 @@ export interface NewGameProps {
   moods: ReadonlyArray<MoodState>;
   id?: string;
   replayStatus?: ReplayStatus;
+  personalNote?: string | null;
+  rating?: number | null;
 }
 
 export function newGame(props: NewGameProps): Result<GameState, string> {
@@ -40,6 +42,8 @@ export function newGame(props: NewGameProps): Result<GameState, string> {
     createdAt: new Date(),
     moods: [...props.moods],
     replayStatus: props.replayStatus ?? null,
+    personalNote: props.personalNote ?? null,
+    rating: props.rating ?? null,
   });
 }
 
@@ -65,6 +69,8 @@ export function updateGameDetails(
   coverUrl: string | null,
   coverArtUrl?: string | null,
   gameDescription?: string | null,
+  personalNote?: string | null,
+  rating?: number | null,
 ): Result<GameState, string> {
   if (!title.trim()) return err('Game title cannot be empty');
   return ok({
@@ -72,8 +78,10 @@ export function updateGameDetails(
     title: title.trim(),
     platform,
     coverUrl,
-    ...(coverArtUrl !== undefined   && { coverArtUrl }),
+    ...(coverArtUrl !== undefined    && { coverArtUrl }),
     ...(gameDescription !== undefined && { gameDescription }),
+    ...(personalNote !== undefined    && { personalNote }),
+    ...(rating !== undefined          && { rating }),
   });
 }
 

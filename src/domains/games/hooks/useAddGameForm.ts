@@ -38,6 +38,8 @@ export function useAddGameForm({
   const [coverUrl, setCoverUrl] = useState("");
   const [coverArtUrl, setCoverArtUrl] = useState("");
   const [gameDescription, setGameDescription] = useState("");
+  const [personalNote, setPersonalNote] = useState("");
+  const [rating, setRating] = useState<number | null>(null);
   const [externalId, setExternalId] = useState<string | null>(null);
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [replayStatus, setReplayStatus] = useState<ReplayStatus>(null);
@@ -59,6 +61,8 @@ export function useAddGameForm({
       setCoverUrl(editGame.cover_url ?? "");
       setCoverArtUrl(editGame.cover_art_url ?? "");
       setGameDescription(editGame.game_description ?? "");
+      setPersonalNote(editGame.personal_note ?? "");
+      setRating(editGame.rating ?? null);
       setExternalId(editGame.external_id ?? null);
       setSelectedMoods(editGame.moods?.map((m) => m.id) ?? []);
       setReplayStatus(editGame.replay_status ?? null);
@@ -70,6 +74,8 @@ export function useAddGameForm({
       setCoverUrl("");
       setCoverArtUrl("");
       setGameDescription("");
+      setPersonalNote("");
+      setRating(null);
       setExternalId(null);
       setSelectedMoods([]);
       setReplayStatus(null);
@@ -134,6 +140,8 @@ export function useAddGameForm({
     setCoverUrl("");
     setCoverArtUrl("");
     setGameDescription("");
+    setPersonalNote("");
+    setRating(null);
     setExternalId(null);
     setSelectedMoods([]);
     setReplayStatus(null);
@@ -154,6 +162,8 @@ export function useAddGameForm({
       cover_url: coverUrl.trim() || null,
       cover_art_url: coverArtUrl.trim() || null,
       game_description: gameDescription.trim() || null,
+      personal_note: personalNote.trim() || null,
+      rating,
       external_id: externalId,
       mood_ids: selectedMoods,
       replay_status: replayStatus,
@@ -189,6 +199,8 @@ export function useAddGameForm({
     coverUrl, setCoverUrl,
     coverArtUrl, setCoverArtUrl,
     gameDescription, setGameDescription,
+    personalNote, setPersonalNote,
+    rating, setRating,
     externalId, setExternalId,
     selectedMoods,
     replayStatus, setReplayStatus,

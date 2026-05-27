@@ -2,17 +2,17 @@
 
 import { useState } from "react";
 import {
-  AlignLeft,
-  AlignRight,
-  ChevronDown,
-  ChevronUp,
   Info,
   ListChevronsDownUp,
   ListChevronsUpDown,
+  NotebookPen,
   Pencil,
   Repeat,
   RotateCcw,
+  Star,
+  StarHalf,
 } from "lucide-react";
+import { scoreToTier, nextTierScore } from "@/src/domains/games/models/priority.constants";
 import {
   GameDto,
   GameStatus,
@@ -155,6 +155,25 @@ const STATUS_BADGE: Record<GameStatus, { bg: string; text: string }> = {
   "keep-an-eye-on": { bg: "bg-gray-800", text: "text-gray-400" },
 };
 
+function RatingStars({ rating }: { rating: number }) {
+  return (
+    <div className="inline-flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((star) => {
+        const filled = rating >= star;
+        const half = !filled && rating >= star - 0.5;
+        return filled ? (
+          <Star key={star} size={11} className="text-yellow-400" fill="currentColor" strokeWidth={1} />
+        ) : half ? (
+          <StarHalf key={star} size={11} className="text-yellow-400" fill="currentColor" strokeWidth={1} />
+        ) : (
+          <Star key={star} size={11} className="text-gray-700" strokeWidth={1} />
+        );
+      })}
+      <span className="ml-0.5 text-yellow-400/80 text-[10px] font-medium">{rating}</span>
+    </div>
+  );
+}
+
 interface GameCardProps {
   game: GameDto;
   onEdit?: (game: GameDto) => void;
@@ -178,13 +197,18 @@ export function GameCard({
 }: GameCardProps) {
   const [showStatusSelect, setShowStatusSelect] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
+  const [showNote, setShowNote] = useState(false);
   const moods = game.moods ?? [];
   const actions = STATUS_ACTIONS[game.status] ?? [];
   const badge = STATUS_BADGE[game.status];
   const coverImage = game.cover_url || game.cover_art_url;
+  const tier = scoreToTier(game.priority_score);
 
   return (
     <div className="relative bg-gray-900 border border-gray-800 hover:border-brand-800/70 rounded-xl min-h-35 overflow-hidden transition-all duration-200">
+      {showPriority && (
+        <div className={`absolute left-0 inset-y-0 w-1 z-10 rounded-l-xl ${tier.bar}`} />
+      )}
       {coverImage && (
         <>
           <div
@@ -245,31 +269,22 @@ export function GameCard({
                 </button>
               )}
               {showPriority && onPriorityChange && (
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => onPriorityChange(game.id, 10)}
-                    className="px-1 text-gray-600 hover:text-brand-400 text-xs transition-colors"
-                    title="Raise priority"
-                  >
-                    ▲
-                  </button>
-                  <span className="w-6 font-mono text-gray-500 text-xs text-center">
-                    {game.priority_score}
-                  </span>
-                  <button
-                    onClick={() => onPriorityChange(game.id, -10)}
-                    className="px-1 text-gray-600 hover:text-red-400 text-xs transition-colors"
-                    title="Lower priority"
-                  >
-                    ▼
-                  </button>
-                </div>
+                <button
+                  onClick={() => onPriorityChange(game.id, nextTierScore(game.priority_score) - game.priority_score)}
+                  title="Click to raise priority tier"
+                  className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium transition-colors ${tier.pillBg} ${tier.pillText}`}
+                >
+                  {tier.label}
+                </button>
               )}
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 mt-1">
             <PlatformBadge platform={game.platform} />
+            {game.rating !== null && game.rating !== undefined && (
+              <RatingStars rating={game.rating} />
+            )}
             {game.replay_status === 'want-to-replay' && (
               <span className="inline-flex items-center gap-1 bg-violet-900/50 px-1.5 py-0.5 rounded text-violet-300 text-xs">
                 <RotateCcw size={10} /> Want to Replay
@@ -311,9 +326,24 @@ export function GameCard({
             </div>
           )}
 
+          {!!game.personal_note && (
+            <div
+              className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${showNote ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+            >
+              <div className="min-h-0 overflow-hidden">
+                <div className="bg-brand-950/40 mt-2 px-3 pt-2 pb-4 border-brand-900/40 border-t rounded">
+                  <p className="text-brand-200 text-xs leading-relaxed">
+                    {game.personal_note}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {((showActions && actions.length > 0 && !!onStatusChange) ||
-            !!game.game_description) && (
-            <div className="flex items-center mt-auto pt-3 border-gray-800/60 border-t">
+            !!game.game_description ||
+            !!game.personal_note) && (
+            <div className="flex items-center gap-2 mt-auto pt-3 border-gray-800/60 border-t">
               {!!game.game_description && (
                 <button
                   onClick={() => setShowDesc((prev) => !prev)}
@@ -325,6 +355,15 @@ export function GameCard({
                     <ListChevronsUpDown size={16} />
                   )}
                   Description
+                </button>
+              )}
+              {!!game.personal_note && (
+                <button
+                  onClick={() => setShowNote((prev) => !prev)}
+                  className="flex items-center gap-2 bg-brand-900/30 px-2 py-1 rounded text-brand-300 hover:text-brand-200 text-xs transition-colors"
+                >
+                  <NotebookPen size={14} />
+                  Note
                 </button>
               )}
               <div className="ml-auto">

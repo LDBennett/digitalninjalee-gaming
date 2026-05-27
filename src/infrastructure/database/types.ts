@@ -11,6 +11,8 @@ export interface GameRow {
   last_played_at: string | null;
   created_at: string;
   replay_status: 'want-to-replay' | 'replaying' | null;
+  personal_note: string | null;
+  rating: number | null;
 }
 
 export interface MoodRow {

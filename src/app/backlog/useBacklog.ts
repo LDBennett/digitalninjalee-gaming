@@ -22,15 +22,16 @@ export function useBacklog() {
   const [replayOnly, setReplayOnly] = useState(false);
 
   const { games: allGames, invalidate, queryKey } = useGameQuery();
-  const statusGames = useMemo(() => allGames.filter((g) => g.status === "backlog"), [allGames]);
   const wantToReplayCount = useMemo(
     () => allGames.filter((g) => g.replay_status === "want-to-replay").length,
     [allGames],
   );
-  const games = useMemo(
-    () => replayOnly ? allGames.filter((g) => g.replay_status === 'want-to-replay') : statusGames,
-    [allGames, statusGames, replayOnly],
-  );
+  const games = useMemo(() => {
+    const base = allGames.filter(
+      (g) => g.status === 'backlog' || g.replay_status === 'want-to-replay',
+    );
+    return replayOnly ? base.filter((g) => g.replay_status === 'want-to-replay') : base;
+  }, [allGames, replayOnly]);
   const { searchQuery, setSearchQuery, moodFilter, setMoodFilter,
           sortBy, setSortBy, platformFilter, setPlatformFilter, filtered } =
     useGameFilters(games);

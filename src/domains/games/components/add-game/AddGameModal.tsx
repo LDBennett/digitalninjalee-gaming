@@ -19,6 +19,8 @@ import { GameTitleSearch } from "@/src/domains/games/components/add-game/GameTit
 import { SelectedGamePreview } from "@/src/domains/games/components/add-game/SelectedGamePreview";
 import { MoodSelector } from "@/src/domains/games/components/mood/MoodSelector";
 import { EditMediaFields } from "@/src/domains/games/components/add-game/EditMediaFields";
+import { PRIORITY_TIERS, scoreToTier } from "@/src/domains/games/models/priority.constants";
+import { StarRating } from "@/src/components/ui/StarRating";
 
 export interface AddGamePayload {
   title: string;
@@ -28,6 +30,8 @@ export interface AddGamePayload {
   cover_url: string | null;
   cover_art_url: string | null;
   game_description: string | null;
+  personal_note: string | null;
+  rating: number | null;
   external_id: string | null;
   mood_ids: string[];
   replay_status: ReplayStatus;
@@ -214,26 +218,27 @@ export function AddGameModal({
               </div>
             )}
             <div>
-              <label className="block mb-1 font-medium text-gray-400 text-xs">
-                Priority:{" "}
-                <span className="font-semibold text-brand-400">
-                  {form.priorityScore}
-                </span>
-                <span className="ml-2 text-gray-600">
-                  (1 = lowest · 100 = highest)
-                </span>
+              <label className="block mb-1.5 font-medium text-gray-400 text-xs">
+                Priority
               </label>
-              <input
-                type="range"
-                min="1"
-                max="100"
-                value={form.priorityScore}
-                onChange={(e) => form.setPriorityScore(Number(e.target.value))}
-                className="w-full accent-brand-600 cursor-pointer"
-              />
-              <div className="flex justify-between mt-0.5 text-gray-700 text-xs">
-                <span>Low</span>
-                <span>High</span>
+              <div className="grid grid-cols-4 gap-1.5">
+                {PRIORITY_TIERS.map((tier) => {
+                  const isSelected = scoreToTier(form.priorityScore).id === tier.id;
+                  return (
+                    <button
+                      key={tier.id}
+                      type="button"
+                      onClick={() => form.setPriorityScore(tier.score)}
+                      className={`py-2 rounded-lg text-sm font-medium transition-colors ${
+                        isSelected
+                          ? `${tier.pillBg} ${tier.pillText} ring-1 ring-inset ring-current`
+                          : "bg-gray-800 text-gray-500 hover:text-white"
+                      }`}
+                    >
+                      {tier.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -253,6 +258,26 @@ export function AddGameModal({
               selectedIds={form.selectedMoods}
               onToggle={form.toggleMood}
             />
+
+            <div>
+              <label className="block mb-1.5 font-medium text-gray-400 text-xs">
+                Your Rating
+              </label>
+              <StarRating value={form.rating} onChange={form.setRating} />
+            </div>
+
+            <div>
+              <label className="block mb-1 font-medium text-gray-400 text-xs">
+                Personal Note
+              </label>
+              <textarea
+                value={form.personalNote}
+                onChange={(e) => form.setPersonalNote(e.target.value)}
+                placeholder="Where you left off, why you dropped it..."
+                rows={2}
+                className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm resize-none placeholder-gray-600"
+              />
+            </div>
 
             <div className="flex justify-between gap-3 pt-1">
               {editGame && onDelete && (

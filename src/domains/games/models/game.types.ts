@@ -125,6 +125,8 @@ export interface GameState {
   readonly createdAt: Date;
   readonly moods: ReadonlyArray<MoodState>;
   readonly replayStatus: ReplayStatus;
+  readonly personalNote: string | null;
+  readonly rating: number | null;
 }
 
 // ── DTO (serialized shape returned by API) ────────────────────────────────────
@@ -143,6 +145,8 @@ export interface GameDto {
   created_at: string;
   moods: MoodDto[];
   replay_status: ReplayStatus;
+  personal_note: string | null;
+  rating: number | null;
 }
 
 export function gameStateToDto(game: GameState): GameDto {
@@ -160,5 +164,7 @@ export function gameStateToDto(game: GameState): GameDto {
     created_at: game.createdAt.toISOString(),
     moods: game.moods.map((m) => ({ id: m.id, name: m.name })),
     replay_status: game.replayStatus,
+    personal_note: game.personalNote,
+    rating: game.rating,
   };
 }

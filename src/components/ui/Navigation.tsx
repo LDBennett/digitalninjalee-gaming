@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AuthButton } from "@/src/domains/shared/auth/AuthButton";
-import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 import {
   Gift,
   Sparkles,
@@ -22,10 +21,17 @@ const NAV_ITEMS = [
 
 export function Navigation() {
   const pathname = usePathname();
-  const { user } = useAuthStore();
 
   return (
     <>
+      {/* Mobile top header */}
+      <header className="md:hidden fixed top-0 right-0 left-0 z-40 flex items-center justify-between bg-gray-950 border-gray-800 border-b px-4 h-12">
+        <span className="font-bold text-white text-base tracking-tight">
+          DigitalNinjaLee
+        </span>
+        <AuthButton />
+      </header>
+
       {/* Desktop sidebar */}
       <nav className="hidden md:flex flex-col bg-gray-950 p-4 pe-6 border-gray-800 border-r w-56 min-h-screen shrink-0">
         <div className="mb-8">
@@ -78,10 +84,6 @@ export function Navigation() {
             </Link>
           );
         })}
-        <div className="flex flex-col flex-1 justify-center items-center gap-0.5 py-2 font-medium text-[10px] text-gray-500">
-          <AuthButton />
-          {user ? "Sign Out" : "Sign In"}
-        </div>
       </nav>
     </>
   );
