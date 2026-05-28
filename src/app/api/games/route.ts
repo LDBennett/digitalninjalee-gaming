@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/src/infrastructure/database/supabase.client';
+import { requireAuth } from '@/src/infrastructure/database/auth.server';
 import { createSupabaseGameRepository } from '@/src/infrastructure/database/game.repo';
 import { createSupabaseMoodRepository } from '@/src/infrastructure/database/mood.repo';
 import { newGame } from '@/src/domains/games/services/game.service';
 import { gameStateToDto, createPlatform, createGameStatus, createPriorityScore, DEFAULT_PRIORITY_SCORE } from '@/src/domains/games/models/game.types';
 
-function getToken(req: NextRequest): string | null {
-  return req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
-}
-
 export async function GET(req: NextRequest) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
+
   const statusParam = new URL(req.url).searchParams.get('status') ?? undefined;
-  const client = createServerClient();
-  const repo = createSupabaseGameRepository(client);
+  const repo = createSupabaseGameRepository(auth.client);
 
   const filter = statusParam
     ? { status: statusParam.includes(',') ? statusParam.split(',') : statusParam }
@@ -24,10 +22,12 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
+
   const body = await req.json();
-  const client = createServerClient(getToken(req));
-  const gameRepo = createSupabaseGameRepository(client);
-  const moodRepo = createSupabaseMoodRepository(client);
+  const gameRepo = createSupabaseGameRepository(auth.client);
+  const moodRepo = createSupabaseMoodRepository(auth.client);
 
   const platformResult = createPlatform(body.platform);
   if (!platformResult.success) return NextResponse.json({ error: platformResult.error }, { status: 400 });
@@ -43,11 +43,10 @@ export async function POST(req: NextRequest) {
 
   const gameResult = newGame({
     title: body.title,
-    externalId: body.external_id ?? null,
     platform: platformResult.value,
     status: statusResult.value,
     priorityScore: scoreResult.value,
-    coverUrl: body.cover_url ?? null,
+    backgroundUrl: body.background_url ?? null,
     coverArtUrl: body.cover_art_url ?? null,
     gameDescription: body.game_description ?? null,
     moods: moodsResult.value,
@@ -59,6 +58,14 @@ export async function POST(req: NextRequest) {
 
   const saveResult = await gameRepo.save(gameResult.value);
   if (!saveResult.success) return NextResponse.json({ error: saveResult.error.message }, { status: 500 });
+
+  // Write external IDs to game_external_ids if provided
+  const externalIdRows: Array<{ game_id: string; source: string; external_id: string }> = [];
+  if (body.rawg_id) externalIdRows.push({ game_id: gameResult.value.id, source: 'rawg', external_id: String(body.rawg_id) });
+  if (body.igdb_id) externalIdRows.push({ game_id: gameResult.value.id, source: 'igdb', external_id: String(body.igdb_id) });
+  if (externalIdRows.length > 0) {
+    await auth.client.from('game_external_ids').upsert(externalIdRows, { ignoreDuplicates: false });
+  }
 
   return NextResponse.json(gameStateToDto(gameResult.value), { status: 201 });
 }

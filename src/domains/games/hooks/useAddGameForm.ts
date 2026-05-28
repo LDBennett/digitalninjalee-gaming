@@ -7,7 +7,10 @@ import {
   Platform,
   ReplayStatus,
 } from "@/src/domains/games/models/game.types";
+import { MoodDto } from "@/src/domains/games/models/mood.types";
 import { AddGamePayload } from "@/src/domains/games/components/add-game/AddGameModal";
+import { useAuthFetch } from "@/src/domains/shared/auth/useAuthFetch";
+import { useAuthStore } from "@/src/domains/shared/auth/auth.store";
 
 export interface RawgResult {
   id: number;
@@ -31,16 +34,19 @@ export function useAddGameForm({
   onSave,
   onClose,
 }: UseAddGameFormOptions) {
+  const { authHeaders } = useAuthFetch();
+  const { session, authLoading } = useAuthStore();
   const [title, setTitle] = useState("");
   const [platform, setPlatform] = useState<Platform>("pc");
   const [status, setStatus] = useState<GameStatus>(defaultStatus);
   const [priorityScore, setPriorityScore] = useState(50);
-  const [coverUrl, setCoverUrl] = useState("");
+  const [backgroundUrl, setBackgroundUrl] = useState("");
   const [coverArtUrl, setCoverArtUrl] = useState("");
   const [gameDescription, setGameDescription] = useState("");
   const [personalNote, setPersonalNote] = useState("");
   const [rating, setRating] = useState<number | null>(null);
-  const [externalId, setExternalId] = useState<string | null>(null);
+  const [rawgId, setRawgId] = useState<number | null>(null);
+  const [igdbId, setIgdbId] = useState<number | null>(null);
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [replayStatus, setReplayStatus] = useState<ReplayStatus>(null);
   const [saving, setSaving] = useState(false);
@@ -51,6 +57,18 @@ export function useAddGameForm({
   const [igdbLoading, setIgdbLoading] = useState(false);
   const [igdbLoaded, setIgdbLoaded] = useState(false);
 
+  // Mood list is needed to resolve suggested mood names → IDs
+  const [allMoods, setAllMoods] = useState<MoodDto[]>([]);
+  useEffect(() => {
+    if (authLoading || !session) return;
+    fetch("/api/moods", { headers: authHeaders() })
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setAllMoods(data);
+      })
+      .catch(() => {});
+  }, [authLoading, session]);
+
   useEffect(() => {
     if (!isOpen) return;
     if (editGame) {
@@ -58,12 +76,13 @@ export function useAddGameForm({
       setPlatform(editGame.platform);
       setStatus(editGame.status);
       setPriorityScore(editGame.priority_score);
-      setCoverUrl(editGame.cover_url ?? "");
+      setBackgroundUrl(editGame.background_url ?? "");
       setCoverArtUrl(editGame.cover_art_url ?? "");
       setGameDescription(editGame.game_description ?? "");
       setPersonalNote(editGame.personal_note ?? "");
       setRating(editGame.rating ?? null);
-      setExternalId(editGame.external_id ?? null);
+      setRawgId(null);
+      setIgdbId(null);
       setSelectedMoods(editGame.moods?.map((m) => m.id) ?? []);
       setReplayStatus(editGame.replay_status ?? null);
     } else {
@@ -71,12 +90,13 @@ export function useAddGameForm({
       setPlatform("pc");
       setStatus(defaultStatus);
       setPriorityScore(50);
-      setCoverUrl("");
+      setBackgroundUrl("");
       setCoverArtUrl("");
       setGameDescription("");
       setPersonalNote("");
       setRating(null);
-      setExternalId(null);
+      setRawgId(null);
+      setIgdbId(null);
       setSelectedMoods([]);
       setReplayStatus(null);
     }
@@ -95,7 +115,7 @@ export function useAddGameForm({
     const timer = setTimeout(async () => {
       setSearchLoading(true);
       try {
-        const res = await fetch(`/api/rawg?q=${encodeURIComponent(title.trim())}`);
+        const res = await fetch(`/api/rawg?q=${encodeURIComponent(title.trim())}`, { headers: authHeaders() });
         const data = await res.json();
         setRawgResults(Array.isArray(data) ? data : []);
         setShowDropdown(true);
@@ -108,23 +128,51 @@ export function useAddGameForm({
 
   const handleRawgSelect = async (game: RawgResult) => {
     setTitle(game.name);
-    setCoverUrl(game.coverUrl ?? "");
-    setExternalId(String(game.id));
+    setBackgroundUrl(game.coverUrl ?? "");
+    setRawgId(game.id);
     setRawgResults([]);
     setShowDropdown(false);
     setIgdbLoading(true);
     setIgdbLoaded(false);
-    try {
-      const res = await fetch(`/api/igdb?q=${encodeURIComponent(game.name)}`);
-      const data = await res.json();
-      if (data?.coverArtUrl) setCoverArtUrl(data.coverArtUrl);
-      if (data?.summary) setGameDescription(data.summary);
-      setIgdbLoaded(true);
-    } catch {
-      // IGDB is best-effort; RAWG data still saved
-    } finally {
-      setIgdbLoading(false);
+
+    const [igdbResult, rawgDetailResult] = await Promise.allSettled([
+      fetch(`/api/igdb?q=${encodeURIComponent(game.name)}`, { headers: authHeaders() }).then((r) => r.json()),
+      fetch(`/api/rawg/${game.id}`, { headers: authHeaders() }).then((r) => r.json()),
+    ]);
+
+    const moodNameToId = new Map<string, string>(
+      allMoods.map((m) => [m.name, m.id]),
+    );
+    const suggestedMoodNames = new Set<string>();
+
+    // Apply IGDB data (returns suggestedMoods: string[] alongside IgdbGameData)
+    if (igdbResult.status === "fulfilled" && igdbResult.value) {
+      const igdb = igdbResult.value;
+      if (igdb.coverArtUrl) setCoverArtUrl(igdb.coverArtUrl);
+      if (igdb.summary) setGameDescription(igdb.summary);
+      if (igdb.igdbId) setIgdbId(igdb.igdbId);
+      for (const name of (igdb.suggestedMoods as string[] | undefined) ?? []) suggestedMoodNames.add(name);
     }
+
+    // Apply RAWG detail data (returns suggestedMoods: string[] alongside RawgGameData)
+    if (rawgDetailResult.status === "fulfilled" && rawgDetailResult.value) {
+      const rawg = rawgDetailResult.value;
+      // Use RAWG description only as fallback
+      if (!gameDescription && rawg.description) setGameDescription(rawg.description);
+      for (const name of (rawg.suggestedMoods as string[] | undefined) ?? []) suggestedMoodNames.add(name);
+    }
+
+    // Merge suggested moods into selected (add only, never remove user's existing picks)
+    const newMoodIds = [...suggestedMoodNames]
+      .map((name) => moodNameToId.get(name))
+      .filter((id): id is string => id !== undefined);
+
+    if (newMoodIds.length > 0) {
+      setSelectedMoods((prev) => [...new Set([...prev, ...newMoodIds])]);
+    }
+
+    setIgdbLoaded(true);
+    setIgdbLoading(false);
   };
 
   const toggleMood = (id: string) =>
@@ -137,12 +185,13 @@ export function useAddGameForm({
     setPlatform("pc");
     setStatus(defaultStatus);
     setPriorityScore(50);
-    setCoverUrl("");
+    setBackgroundUrl("");
     setCoverArtUrl("");
     setGameDescription("");
     setPersonalNote("");
     setRating(null);
-    setExternalId(null);
+    setRawgId(null);
+    setIgdbId(null);
     setSelectedMoods([]);
     setReplayStatus(null);
     setRawgResults([]);
@@ -159,12 +208,13 @@ export function useAddGameForm({
       platform,
       status,
       priority_score: priorityScore,
-      cover_url: coverUrl.trim() || null,
+      background_url: backgroundUrl.trim() || null,
       cover_art_url: coverArtUrl.trim() || null,
       game_description: gameDescription.trim() || null,
       personal_note: personalNote.trim() || null,
       rating,
-      external_id: externalId,
+      rawg_id: rawgId,
+      igdb_id: igdbId,
       mood_ids: selectedMoods,
       replay_status: replayStatus,
     });
@@ -184,10 +234,11 @@ export function useAddGameForm({
   };
 
   const clearCoverArt = () => {
-    setCoverUrl("");
+    setBackgroundUrl("");
     setCoverArtUrl("");
     setGameDescription("");
-    setExternalId(null);
+    setRawgId(null);
+    setIgdbId(null);
     setIgdbLoaded(false);
   };
 
@@ -196,12 +247,13 @@ export function useAddGameForm({
     platform, setPlatform,
     status, setStatus,
     priorityScore, setPriorityScore,
-    coverUrl, setCoverUrl,
+    backgroundUrl, setBackgroundUrl,
     coverArtUrl, setCoverArtUrl,
     gameDescription, setGameDescription,
     personalNote, setPersonalNote,
     rating, setRating,
-    externalId, setExternalId,
+    rawgId, setRawgId,
+    igdbId, setIgdbId,
     selectedMoods,
     replayStatus, setReplayStatus,
     saving,

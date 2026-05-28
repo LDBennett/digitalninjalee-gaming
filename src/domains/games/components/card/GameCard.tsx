@@ -12,7 +12,10 @@ import {
   Star,
   StarHalf,
 } from "lucide-react";
-import { scoreToTier, nextTierScore } from "@/src/domains/games/models/priority.constants";
+import {
+  scoreToTier,
+  nextTierScore,
+} from "@/src/domains/games/models/priority.constants";
 import {
   GameDto,
   GameStatus,
@@ -162,14 +165,33 @@ function RatingStars({ rating }: { rating: number }) {
         const filled = rating >= star;
         const half = !filled && rating >= star - 0.5;
         return filled ? (
-          <Star key={star} size={11} className="text-yellow-400" fill="currentColor" strokeWidth={1} />
+          <Star
+            key={star}
+            size={11}
+            className="text-yellow-400"
+            fill="currentColor"
+            strokeWidth={1}
+          />
         ) : half ? (
-          <StarHalf key={star} size={11} className="text-yellow-400" fill="currentColor" strokeWidth={1} />
+          <StarHalf
+            key={star}
+            size={11}
+            className="text-yellow-400"
+            fill="currentColor"
+            strokeWidth={1}
+          />
         ) : (
-          <Star key={star} size={11} className="text-gray-700" strokeWidth={1} />
+          <Star
+            key={star}
+            size={11}
+            className="text-gray-700"
+            strokeWidth={1}
+          />
         );
       })}
-      <span className="ml-0.5 text-yellow-400/80 text-[10px] font-medium">{rating}</span>
+      <span className="ml-0.5 font-medium text-[10px] text-yellow-400/80">
+        {rating}
+      </span>
     </div>
   );
 }
@@ -201,13 +223,15 @@ export function GameCard({
   const moods = game.moods ?? [];
   const actions = STATUS_ACTIONS[game.status] ?? [];
   const badge = STATUS_BADGE[game.status];
-  const coverImage = game.cover_url || game.cover_art_url;
+  const coverImage = game.background_url || game.cover_art_url;
   const tier = scoreToTier(game.priority_score);
 
   return (
     <div className="relative bg-gray-900 border border-gray-800 hover:border-brand-800/70 rounded-xl min-h-35 overflow-hidden transition-all duration-200">
       {showPriority && (
-        <div className={`absolute left-0 inset-y-0 w-1 z-10 rounded-l-xl ${tier.bar}`} />
+        <div
+          className={`absolute left-0 inset-y-0 w-1 z-10 rounded-l-xl ${tier.bar}`}
+        />
       )}
       {coverImage && (
         <>
@@ -270,7 +294,12 @@ export function GameCard({
               )}
               {showPriority && onPriorityChange && (
                 <button
-                  onClick={() => onPriorityChange(game.id, nextTierScore(game.priority_score) - game.priority_score)}
+                  onClick={() =>
+                    onPriorityChange(
+                      game.id,
+                      nextTierScore(game.priority_score) - game.priority_score,
+                    )
+                  }
                   title="Click to raise priority tier"
                   className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium transition-colors ${tier.pillBg} ${tier.pillText}`}
                 >
@@ -285,12 +314,12 @@ export function GameCard({
             {game.rating !== null && game.rating !== undefined && (
               <RatingStars rating={game.rating} />
             )}
-            {game.replay_status === 'want-to-replay' && (
+            {game.replay_status === "want-to-replay" && (
               <span className="inline-flex items-center gap-1 bg-violet-900/50 px-1.5 py-0.5 rounded text-violet-300 text-xs">
                 <RotateCcw size={10} /> Want to Replay
               </span>
             )}
-            {game.replay_status === 'replaying' && (
+            {game.replay_status === "replaying" && (
               <span className="inline-flex items-center gap-1 bg-teal-900/50 px-1.5 py-0.5 rounded text-teal-300 text-xs">
                 <Repeat size={10} /> Replaying
               </span>

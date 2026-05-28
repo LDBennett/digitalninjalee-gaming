@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "enrich": "tsx --env-file=.env.local scripts/igdb-enrich.ts"
+    "enrich:igdb": "tsx --env-file=.env.local scripts/igdb-enrich.ts",
+    "enrich:rawg": "tsx --env-file=.env.local scripts/rawg-enrich.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

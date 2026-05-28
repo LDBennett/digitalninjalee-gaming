@@ -12,11 +12,10 @@ import { MoodState } from '@/src/domains/games/models/mood.types';
 
 export interface NewGameProps {
   title: string;
-  externalId: string | null;
   platform: Platform;
   status: GameStatus;
   priorityScore: PriorityScore;
-  coverUrl: string | null;
+  backgroundUrl: string | null;
   coverArtUrl?: string | null;
   gameDescription?: string | null;
   moods: ReadonlyArray<MoodState>;
@@ -31,11 +30,10 @@ export function newGame(props: NewGameProps): Result<GameState, string> {
   return ok({
     id: props.id ?? crypto.randomUUID(),
     title: props.title.trim(),
-    externalId: props.externalId,
     platform: props.platform,
     status: props.status,
     priorityScore: props.priorityScore,
-    coverUrl: props.coverUrl,
+    backgroundUrl: props.backgroundUrl,
     coverArtUrl: props.coverArtUrl ?? null,
     gameDescription: props.gameDescription ?? null,
     lastPlayedAt: null,
@@ -66,7 +64,7 @@ export function updateGameDetails(
   game: GameState,
   title: string,
   platform: Platform,
-  coverUrl: string | null,
+  backgroundUrl: string | null,
   coverArtUrl?: string | null,
   gameDescription?: string | null,
   personalNote?: string | null,
@@ -77,7 +75,7 @@ export function updateGameDetails(
     ...game,
     title: title.trim(),
     platform,
-    coverUrl,
+    backgroundUrl,
     ...(coverArtUrl !== undefined    && { coverArtUrl }),
     ...(gameDescription !== undefined && { gameDescription }),
     ...(personalNote !== undefined    && { personalNote }),

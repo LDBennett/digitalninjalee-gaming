@@ -1,19 +1,19 @@
 "use client";
 
 interface EditMediaFieldsProps {
-  coverUrl: string;
+  backgroundUrl: string;
   coverArtUrl: string;
   gameDescription: string;
-  onCoverUrlChange: (v: string) => void;
+  onBackgroundUrlChange: (v: string) => void;
   onCoverArtUrlChange: (v: string) => void;
   onDescriptionChange: (v: string) => void;
 }
 
 export function EditMediaFields({
-  coverUrl,
+  backgroundUrl,
   coverArtUrl,
   gameDescription,
-  onCoverUrlChange,
+  onBackgroundUrlChange,
   onCoverArtUrlChange,
   onDescriptionChange,
 }: EditMediaFieldsProps) {
@@ -21,12 +21,13 @@ export function EditMediaFields({
     <div className="space-y-3">
       <div>
         <label className="block mb-1 font-medium text-gray-400 text-xs">
-          Cover Image URL
+          Background Image URL
+          <span className="ml-1 text-gray-600">— from RAWG</span>
         </label>
         <input
           type="url"
-          value={coverUrl}
-          onChange={(e) => onCoverUrlChange(e.target.value)}
+          value={backgroundUrl}
+          onChange={(e) => onBackgroundUrlChange(e.target.value)}
           placeholder="https://..."
           className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm placeholder-gray-600"
         />
@@ -47,7 +48,7 @@ export function EditMediaFields({
       <div>
         <label className="block mb-1 font-medium text-gray-400 text-xs">
           Description
-          <span className="ml-1 text-gray-600">— from IGDB</span>
+          <span className="ml-1 text-gray-600">— from IGDB / RAWG</span>
         </label>
         <textarea
           value={gameDescription}

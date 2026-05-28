@@ -6,6 +6,7 @@ import { GameDto } from "@/src/domains/games/models/game.types";
 import { MoodDto } from "@/src/domains/games/models/mood.types";
 import { MoodBadge } from "@/src/domains/games/components/mood/MoodBadge";
 import { PlatformBadge } from "@/src/domains/games/components/card/PlatformBadge";
+import { useAuthFetch } from "@/src/domains/shared/auth/useAuthFetch";
 
 type Pool = "backlog" | "playing";
 
@@ -21,6 +22,7 @@ interface RandomPickerProps {
 }
 
 export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
+  const { authHeaders } = useAuthFetch();
   const [selectedPool, setSelectedPool] = useState<Pool>("backlog");
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [pickedGame, setPickedGame] = useState<GameDto | null>(null);
@@ -33,7 +35,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
       const params = new URLSearchParams({ status });
       if (moods.length) params.set("moods", moods.join(","));
       await new Promise((r) => setTimeout(r, 900));
-      const res = await fetch(`/api/games/random?${params}`);
+      const res = await fetch(`/api/games/random?${params}`, { headers: authHeaders() });
       return res.json() as Promise<{ game?: GameDto; message?: string }>;
     },
     onSuccess: (data) => {
@@ -155,9 +157,9 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
             <div className="space-y-3 bg-gray-800/60 p-4 border border-gray-700 rounded-xl slide-up">
               <div className="flex gap-3">
                 <div className="bg-gray-700 rounded-lg w-14 h-20 overflow-hidden shrink-0">
-                  {pickedGame.cover_url ? (
+                  {pickedGame.cover_art_url || pickedGame.background_url ? (
                     <img
-                      src={pickedGame.cover_url}
+                      src={(pickedGame.cover_art_url || pickedGame.background_url)!}
                       alt={pickedGame.title}
                       className="w-full h-full object-cover"
                     />

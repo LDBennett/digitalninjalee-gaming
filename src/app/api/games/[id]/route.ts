@@ -1,29 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/src/infrastructure/database/supabase.client';
+import { requireAuth } from '@/src/infrastructure/database/auth.server';
 import { createSupabaseGameRepository } from '@/src/infrastructure/database/game.repo';
 import { createSupabaseMoodRepository } from '@/src/infrastructure/database/mood.repo';
 import { transitionGame, updateGameDetails, adjustPriority, replaceMoods, setReplayStatus } from '@/src/domains/games/services/game.service';
 import { gameStateToDto, createPlatform, createGameStatus, createPriorityScore } from '@/src/domains/games/models/game.types';
 import { GameState } from '@/src/domains/games/models/game.types';
 
-function getToken(req: NextRequest): string | null {
-  return req.headers.get('Authorization')?.replace('Bearer ', '') ?? null;
-}
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
 
-export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const repo = createSupabaseGameRepository(createServerClient());
+  const repo = createSupabaseGameRepository(auth.client);
   const result = await repo.findById(id);
   if (!result.success) return NextResponse.json({ error: 'Game not found' }, { status: 404 });
   return NextResponse.json(gameStateToDto(result.value));
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
+
   const { id } = await params;
   const body = await req.json();
-  const client = createServerClient(getToken(req));
-  const gameRepo = createSupabaseGameRepository(client);
-  const moodRepo = createSupabaseMoodRepository(client);
+  const gameRepo = createSupabaseGameRepository(auth.client);
+  const moodRepo = createSupabaseMoodRepository(auth.client);
 
   const findResult = await gameRepo.findById(id);
   if (!findResult.success) return NextResponse.json({ error: 'Game not found' }, { status: 404 });
@@ -41,7 +42,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (
     body.title !== undefined ||
     body.platform !== undefined ||
-    body.cover_url !== undefined ||
+    body.background_url !== undefined ||
     body.cover_art_url !== undefined ||
     body.game_description !== undefined ||
     body.personal_note !== undefined ||
@@ -53,7 +54,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       game,
       body.title ?? game.title,
       platformResult.value,
-      body.cover_url !== undefined ? body.cover_url : game.coverUrl,
+      body.background_url !== undefined ? body.background_url : game.backgroundUrl,
       body.cover_art_url !== undefined ? body.cover_art_url : undefined,
       body.game_description !== undefined ? body.game_description : undefined,
       body.personal_note !== undefined ? body.personal_note : undefined,
@@ -82,12 +83,23 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const updateResult = await gameRepo.update(game);
   if (!updateResult.success) return NextResponse.json({ error: updateResult.error.message }, { status: 500 });
 
+  // Update external IDs if provided
+  const externalIdRows: Array<{ game_id: string; source: string; external_id: string }> = [];
+  if (body.rawg_id) externalIdRows.push({ game_id: id, source: 'rawg', external_id: String(body.rawg_id) });
+  if (body.igdb_id) externalIdRows.push({ game_id: id, source: 'igdb', external_id: String(body.igdb_id) });
+  if (externalIdRows.length > 0) {
+    await auth.client.from('game_external_ids').upsert(externalIdRows, { ignoreDuplicates: false });
+  }
+
   return NextResponse.json(gameStateToDto(game));
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
+
   const { id } = await params;
-  const repo = createSupabaseGameRepository(createServerClient(getToken(req)));
+  const repo = createSupabaseGameRepository(auth.client);
   const result = await repo.delete(id);
   if (!result.success) return NextResponse.json({ error: result.error.message }, { status: 500 });
   return NextResponse.json({ deleted: true });

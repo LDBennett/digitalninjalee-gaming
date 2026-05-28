@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createIgdbClient } from "@/src/infrastructure/platform-apis/igdb";
+import { createIgdbClient, mapIgdbToMoods } from "@/src/infrastructure/platform-apis/igdb";
+import { requireAuth } from "@/src/infrastructure/database/auth.server";
 
 export async function GET(req: NextRequest) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
+
   const query = new URL(req.url).searchParams.get("q") ?? "";
   if (query.trim().length < 2) return NextResponse.json(null);
 
@@ -17,7 +21,9 @@ export async function GET(req: NextRequest) {
   try {
     const client = await createIgdbClient(clientId, clientSecret);
     const data = await client.fetchGame(query.trim());
-    return NextResponse.json(data);
+    return NextResponse.json(
+      data ? { ...data, suggestedMoods: mapIgdbToMoods(data) } : null,
+    );
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });
   }

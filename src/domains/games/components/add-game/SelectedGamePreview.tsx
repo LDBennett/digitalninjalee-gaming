@@ -1,7 +1,7 @@
 "use client";
 
 interface SelectedGamePreviewProps {
-  coverUrl: string;
+  backgroundUrl: string;
   coverArtUrl: string;
   igdbLoading: boolean;
   igdbLoaded: boolean;
@@ -9,7 +9,7 @@ interface SelectedGamePreviewProps {
 }
 
 export function SelectedGamePreview({
-  coverUrl,
+  backgroundUrl,
   coverArtUrl,
   igdbLoading,
   igdbLoaded,
@@ -18,7 +18,7 @@ export function SelectedGamePreview({
   return (
     <div className="flex items-center gap-3 bg-gray-800 p-2 rounded-lg">
       <img
-        src={coverArtUrl || coverUrl}
+        src={coverArtUrl || backgroundUrl}
         alt=""
         className="rounded w-10 h-10 object-cover shrink-0"
       />

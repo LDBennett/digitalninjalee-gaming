@@ -114,11 +114,10 @@ export function isWishlistStatus(status: GameStatus): boolean {
 export interface GameState {
   readonly id: string;
   readonly title: string;
-  readonly externalId: string | null;
   readonly platform: Platform;
   readonly status: GameStatus;
   readonly priorityScore: PriorityScore;
-  readonly coverUrl: string | null;
+  readonly backgroundUrl: string | null;
   readonly coverArtUrl: string | null;
   readonly gameDescription: string | null;
   readonly lastPlayedAt: Date | null;
@@ -134,11 +133,10 @@ export interface GameState {
 export interface GameDto {
   id: string;
   title: string;
-  external_id: string | null;
   platform: Platform;
   status: GameStatus;
   priority_score: number;
-  cover_url: string | null;
+  background_url: string | null;
   cover_art_url: string | null;
   game_description: string | null;
   last_played_at: string | null;
@@ -153,11 +151,10 @@ export function gameStateToDto(game: GameState): GameDto {
   return {
     id: game.id,
     title: game.title,
-    external_id: game.externalId,
     platform: game.platform,
     status: game.status,
     priority_score: game.priorityScore,
-    cover_url: game.coverUrl,
+    background_url: game.backgroundUrl,
     cover_art_url: game.coverArtUrl,
     game_description: game.gameDescription,
     last_played_at: game.lastPlayedAt?.toISOString() ?? null,

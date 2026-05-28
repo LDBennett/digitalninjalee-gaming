@@ -1,33 +1,32 @@
 /**
- * IGDB Enrichment Script
+ * RAWG Enrichment Script
  *
- * Fills cover_art_url and game_description, and suggests moods for games not
- * yet synced with IGDB. Uses game_external_ids (source='igdb') as the sync
- * state — games with an existing 'ok' row are skipped; games with no row or a
- * 'failed' row are processed.
+ * Fills background_url and suggests moods for games not yet synced with RAWG.
+ * Uses game_external_ids (source='rawg') as the sync state — games with an
+ * existing 'ok' row are skipped; games with no row or a 'failed' row are processed.
+ *
+ * Each game makes 2 RAWG API calls: one search by title, one detail fetch by ID.
  *
  * Required env vars (add to .env.local):
  *   SUPABASE_SERVICE_ROLE_KEY   — bypasses RLS for write access
- *   IGDB_CLIENT_ID              — from https://dev.twitch.tv/console/apps
- *   IGDB_CLIENT_SECRET          — from the same Twitch app
+ *   RAWG_API_KEY                — from https://rawg.io/apidocs
  *
  * Run:
- *   pnpm enrich:igdb
+ *   pnpm enrich:rawg
  */
 
 import { createClient } from "@supabase/supabase-js";
 import {
-  createIgdbClient,
-  mapIgdbToMoods,
-} from "../src/infrastructure/platform-apis/igdb";
+  createRawgClient,
+  mapRawgToMoods,
+} from "../src/infrastructure/platform-apis/rawg";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const IGDB_CLIENT_ID = process.env.IGDB_CLIENT_ID;
-const IGDB_CLIENT_SECRET = process.env.IGDB_CLIENT_SECRET;
+const RAWG_API_KEY = process.env.RAWG_API_KEY;
 
-// IGDB free tier: 4 requests/second
-const DELAY_MS = 260;
+// RAWG free tier: 20 req/sec. Each game uses 2 calls (search + detail).
+const DELAY_MS = 120;
 
 function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -38,8 +37,7 @@ function validateEnv(): void {
     [
       ["NEXT_PUBLIC_SUPABASE_URL", SUPABASE_URL],
       ["SUPABASE_SERVICE_ROLE_KEY", SUPABASE_SERVICE_KEY],
-      ["IGDB_CLIENT_ID", IGDB_CLIENT_ID],
-      ["IGDB_CLIENT_SECRET", IGDB_CLIENT_SECRET],
+      ["RAWG_API_KEY", RAWG_API_KEY],
     ] as [string, string | undefined][]
   )
     .filter(([, v]) => !v)
@@ -54,11 +52,11 @@ async function main() {
   validateEnv();
 
   const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_KEY!);
-  const igdb = await createIgdbClient(IGDB_CLIENT_ID!, IGDB_CLIENT_SECRET!);
+  const rawg = createRawgClient(RAWG_API_KEY!);
 
-  console.log("Connected to IGDB.\n");
+  console.log("Connected to RAWG.\n");
 
-  // Fetch games with no IGDB row yet, or with a failed previous attempt
+  // Fetch games with no RAWG row yet, or with a failed previous attempt
   const { data: games, error: gamesError } = await supabase
     .from("games")
     .select(
@@ -69,7 +67,9 @@ async function main() {
     `,
     )
     .order("title")
-    .range(999, 1500); //;
+    .range(999, 1500); // safety limit to prevent runaway script
+
+  console.log(games?.length, "games fetched from Supabase");
 
   if (gamesError)
     throw new Error(`Failed to fetch games: ${gamesError.message}`);
@@ -79,12 +79,12 @@ async function main() {
       source: string;
       sync_status: string;
     }> | null;
-    const igdbRow = extIds?.find((e) => e.source === "igdb");
-    return !igdbRow || igdbRow.sync_status === "failed";
+    const rawgRow = extIds?.find((e) => e.source === "rawg");
+    return !rawgRow || rawgRow.sync_status === "failed";
   });
 
   if (!toProcess.length) {
-    console.log("All games are already synced with IGDB.");
+    console.log("All games are already synced with RAWG.");
     return;
   }
 
@@ -111,7 +111,7 @@ async function main() {
     await supabase.from("game_external_ids").upsert(
       {
         game_id: game.id,
-        source: "igdb",
+        source: "rawg",
         external_id: "",
         sync_status: "pending",
       },
@@ -122,36 +122,52 @@ async function main() {
       const cleanedTitle = (game.title as string)
         .replace(/\s*\(.*?\)\s*$/, "")
         .trim();
-      const igdbData = await igdb.fetchGame(cleanedTitle);
+      const results = await rawg.searchGames(cleanedTitle);
 
-      if (!igdbData) {
+      if (!results.length) {
         await supabase.from("game_external_ids").upsert(
           {
             game_id: game.id,
-            source: "igdb",
+            source: "rawg",
             external_id: "",
             sync_status: "failed",
             last_synced_at: new Date().toISOString(),
           },
           { onConflict: "game_id,source" },
         );
-        console.log(`  [skip]  "${game.title}" — not found on IGDB`);
+        console.log(`  [skip]  "${game.title}" — not found on RAWG`);
         notFound++;
         continue;
       }
 
-      // Update cover art and description on the game row
+      await sleep(DELAY_MS);
+      const detail = await rawg.fetchGame(results[0].id);
+
+      if (!detail) {
+        await supabase.from("game_external_ids").upsert(
+          {
+            game_id: game.id,
+            source: "rawg",
+            external_id: String(results[0].id),
+            sync_status: "failed",
+            last_synced_at: new Date().toISOString(),
+          },
+          { onConflict: "game_id,source" },
+        );
+        console.log(`  [skip]  "${game.title}" — detail fetch returned null`);
+        notFound++;
+        continue;
+      }
+
+      // Update background_url on the game row
       const { error: updateError } = await supabase
         .from("games")
-        .update({
-          cover_art_url: igdbData.coverArtUrl,
-          game_description: igdbData.summary,
-        })
+        .update({ background_url: detail.backgroundUrl })
         .eq("id", game.id);
       if (updateError) throw new Error(updateError.message);
 
       // Suggest moods and upsert (existing moods are preserved)
-      const suggestedMoodNames = mapIgdbToMoods(igdbData);
+      const suggestedMoodNames = mapRawgToMoods(detail);
       const moodInserts = suggestedMoodNames
         .filter((name) => moodByName.has(name))
         .map((name) => ({ game_id: game.id, mood_id: moodByName.get(name)! }));
@@ -171,8 +187,8 @@ async function main() {
       await supabase.from("game_external_ids").upsert(
         {
           game_id: game.id,
-          source: "igdb",
-          external_id: String(igdbData.igdbId),
+          source: "rawg",
+          external_id: String(detail.rawgId),
           sync_status: "ok",
           last_synced_at: new Date().toISOString(),
         },
@@ -180,8 +196,7 @@ async function main() {
       );
 
       const parts = [
-        `cover=${igdbData.coverArtUrl ? "yes" : "no"}`,
-        `summary=${igdbData.summary ? "yes" : "no"}`,
+        `background=${detail.backgroundUrl ? "yes" : "no"}`,
         `moods=[${suggestedMoodNames.join(", ") || "none"}]`,
       ];
       console.log(`  [ok]    "${game.title}" — ${parts.join(" | ")}`);
@@ -190,7 +205,7 @@ async function main() {
       await supabase.from("game_external_ids").upsert(
         {
           game_id: game.id,
-          source: "igdb",
+          source: "rawg",
           external_id: "",
           sync_status: "failed",
           last_synced_at: new Date().toISOString(),

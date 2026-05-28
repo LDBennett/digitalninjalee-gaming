@@ -16,7 +16,7 @@ export interface IgdbGameData {
 const GENRE_MOODS: Record<number, string[]> = {
   2:  ['adventure'],              // Point-and-click
   4:  ['fighting'],               // Fighting
-  5:  ['action'],                 // Shooter
+  5:  ['action', 'shooter'],      // Shooter
   9:  ['puzzle'],                 // Puzzle
   11: ['strategy', 'tactical'],   // Real Time Strategy (RTS)
   12: ['rpg'],                    // Role-playing (RPG)

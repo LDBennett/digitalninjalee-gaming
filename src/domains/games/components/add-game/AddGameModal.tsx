@@ -19,7 +19,10 @@ import { GameTitleSearch } from "@/src/domains/games/components/add-game/GameTit
 import { SelectedGamePreview } from "@/src/domains/games/components/add-game/SelectedGamePreview";
 import { MoodSelector } from "@/src/domains/games/components/mood/MoodSelector";
 import { EditMediaFields } from "@/src/domains/games/components/add-game/EditMediaFields";
-import { PRIORITY_TIERS, scoreToTier } from "@/src/domains/games/models/priority.constants";
+import {
+  PRIORITY_TIERS,
+  scoreToTier,
+} from "@/src/domains/games/models/priority.constants";
 import { StarRating } from "@/src/components/ui/StarRating";
 
 export interface AddGamePayload {
@@ -27,12 +30,13 @@ export interface AddGamePayload {
   platform: Platform;
   status: GameStatus;
   priority_score: number;
-  cover_url: string | null;
+  background_url: string | null;
   cover_art_url: string | null;
   game_description: string | null;
   personal_note: string | null;
   rating: number | null;
-  external_id: string | null;
+  rawg_id: number | null;
+  igdb_id: number | null;
   mood_ids: string[];
   replay_status: ReplayStatus;
 }
@@ -67,10 +71,10 @@ export function AddGameModal({
   if (!isOpen) return null;
 
   const coverImage =
+    form.backgroundUrl ||
     form.coverArtUrl ||
-    form.coverUrl ||
-    editGame?.cover_art_url ||
-    editGame?.cover_url;
+    editGame?.background_url ||
+    editGame?.cover_art_url;
 
   return (
     <div className="z-50 fixed inset-0 flex justify-center items-center bg-black/80 backdrop-blur-sm p-4">
@@ -115,8 +119,8 @@ export function AddGameModal({
               value={form.title}
               onChange={(val) => {
                 form.setTitle(val);
-                form.setExternalId(null);
-                form.setCoverUrl("");
+                form.setRawgId(null);
+                form.setBackgroundUrl("");
               }}
               onSelect={form.handleRawgSelect}
               results={form.rawgResults}
@@ -126,9 +130,9 @@ export function AddGameModal({
               isEditing={!!editGame}
             />
 
-            {!editGame && form.coverUrl && (
+            {!editGame && form.backgroundUrl && (
               <SelectedGamePreview
-                coverUrl={form.coverUrl}
+                backgroundUrl={form.backgroundUrl}
                 coverArtUrl={form.coverArtUrl}
                 igdbLoading={form.igdbLoading}
                 igdbLoaded={form.igdbLoaded}
@@ -221,9 +225,10 @@ export function AddGameModal({
               <label className="block mb-1.5 font-medium text-gray-400 text-xs">
                 Priority
               </label>
-              <div className="grid grid-cols-4 gap-1.5">
+              <div className="gap-1.5 grid grid-cols-4">
                 {PRIORITY_TIERS.map((tier) => {
-                  const isSelected = scoreToTier(form.priorityScore).id === tier.id;
+                  const isSelected =
+                    scoreToTier(form.priorityScore).id === tier.id;
                   return (
                     <button
                       key={tier.id}
@@ -244,10 +249,10 @@ export function AddGameModal({
 
             {editGame && (
               <EditMediaFields
-                coverUrl={form.coverUrl}
+                backgroundUrl={form.backgroundUrl}
                 coverArtUrl={form.coverArtUrl}
                 gameDescription={form.gameDescription}
-                onCoverUrlChange={form.setCoverUrl}
+                onBackgroundUrlChange={form.setBackgroundUrl}
                 onCoverArtUrlChange={form.setCoverArtUrl}
                 onDescriptionChange={form.setGameDescription}
               />
