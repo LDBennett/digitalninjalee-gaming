@@ -2,11 +2,11 @@ import { GameCardSkeleton } from "@/src/lib/frontend/entities/game";
 
 export default function BacklogLoading() {
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-5xl">
       <div className="flex justify-between items-center gap-4 mb-6">
         <div>
           <div className="bg-gray-800 rounded w-24 h-7 animate-pulse" />
-          <div className="bg-gray-800 rounded w-32 h-4 animate-pulse mt-1.5" />
+          <div className="bg-gray-800 mt-1.5 rounded w-32 h-4 animate-pulse" />
         </div>
         <div className="flex gap-3">
           <div className="bg-gray-800 rounded-lg w-24 h-9 animate-pulse" />
@@ -15,7 +15,7 @@ export default function BacklogLoading() {
       </div>
 
       <div className="flex gap-2 mb-5">
-        <div className="bg-gray-800 rounded-lg flex-1 h-10 animate-pulse" />
+        <div className="flex-1 bg-gray-800 rounded-lg h-10 animate-pulse" />
         <div className="bg-gray-800 rounded-lg w-24 h-10 animate-pulse" />
       </div>
 
