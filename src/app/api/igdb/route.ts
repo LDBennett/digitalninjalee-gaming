@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createIgdbClient, mapIgdbToMoods } from "@/src/infrastructure/platform-apis/igdb";
-import { requireAuth } from "@/src/infrastructure/database/auth.server";
+import { createIgdbClient, mapIgdbToMoods } from "@/src/lib/backend/sync";
+import { requireAuth } from "@/src/lib/backend/backlog/infrastructure";
 
 export async function GET(req: NextRequest) {
   const auth = await requireAuth(req);

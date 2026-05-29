@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { makeQueryClient } from '@/src/infrastructure/queryClient.server';
-import { prefetchGames, prefetchMoods } from '@/src/infrastructure/database/prefetch';
-import { gameKeys, moodKeys } from '@/src/domains/games/queryKeys';
-import { BacklogView } from './BacklogView';
+import { makeQueryClient, prefetchGames, prefetchMoods } from '@/src/lib/backend/backlog/infrastructure';
+import { gameKeys, moodKeys } from '@/src/lib/backend/backlog/repository';
+import { BacklogView } from '@/src/lib/frontend/pages/backlog';
 
 export const metadata: Metadata = { title: 'Backlog' };
 

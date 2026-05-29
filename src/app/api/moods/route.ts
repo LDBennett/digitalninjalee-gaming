@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/src/infrastructure/database/auth.server';
-import { createSupabaseMoodRepository } from '@/src/infrastructure/database/mood.repo';
+import { requireAuth, createSupabaseMoodRepository } from '@/src/lib/backend/backlog/infrastructure';
 
 export async function GET(req: NextRequest) {
   const auth = await requireAuth(req);

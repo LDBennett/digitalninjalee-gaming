@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/src/infrastructure/database/auth.server';
-import { createSupabaseGameRepository } from '@/src/infrastructure/database/game.repo';
-import { selectRandomGame } from '@/src/domains/games/services/game.service';
-import { gameStateToDto } from '@/src/domains/games/models/game.types';
+import { requireAuth, createSupabaseGameRepository } from '@/src/lib/backend/backlog/infrastructure';
+import { selectRandomGame } from '@/src/lib/backend/backlog/domain/services';
+import { gameStateToDto } from '@/src/lib/backend/backlog/domain/models';
 
 export async function GET(req: NextRequest) {
   const auth = await requireAuth(req);

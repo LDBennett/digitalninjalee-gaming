@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/src/infrastructure/database/auth.server';
-import { createSupabaseGameRepository } from '@/src/infrastructure/database/game.repo';
+import { requireAuth, createSupabaseGameRepository } from '@/src/lib/backend/backlog/infrastructure';
 
 export async function GET(req: NextRequest) {
   const auth = await requireAuth(req);

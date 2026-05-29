@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { makeQueryClient } from '@/src/infrastructure/queryClient.server';
-import { prefetchGames, prefetchMoods } from '@/src/infrastructure/database/prefetch';
-import { gameKeys, moodKeys } from '@/src/domains/games/queryKeys';
-import { WishlistView } from './WishlistView';
+import { makeQueryClient, prefetchGames, prefetchMoods } from '@/src/lib/backend/backlog/infrastructure';
+import { gameKeys, moodKeys } from '@/src/lib/backend/backlog/repository';
+import { WishlistView } from '@/src/lib/frontend/pages/wishlist';
 
 export const metadata: Metadata = { title: 'Wishlist' };
 

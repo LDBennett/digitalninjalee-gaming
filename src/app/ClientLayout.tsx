@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { initAuth } from '@/src/lib/frontend/shared/auth/auth.init';
+
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () => new QueryClient({
@@ -13,6 +15,10 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
       },
     }),
   );
+
+  useEffect(() => {
+    initAuth();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

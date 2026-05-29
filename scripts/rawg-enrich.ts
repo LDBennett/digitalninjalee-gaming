@@ -19,7 +19,7 @@ import { createClient } from "@supabase/supabase-js";
 import {
   createRawgClient,
   mapRawgToMoods,
-} from "../src/infrastructure/platform-apis/rawg";
+} from "../src/lib/backend/sync/rawg.adapter";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;

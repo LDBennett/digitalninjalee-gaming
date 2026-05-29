@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/src/infrastructure/database/auth.server';
-import { createSupabaseGameRepository } from '@/src/infrastructure/database/game.repo';
-import { createSupabaseMoodRepository } from '@/src/infrastructure/database/mood.repo';
-import { transitionGame, updateGameDetails, adjustPriority, replaceMoods, setReplayStatus } from '@/src/domains/games/services/game.service';
-import { gameStateToDto, createPlatform, createGameStatus, createPriorityScore } from '@/src/domains/games/models/game.types';
-import { GameState } from '@/src/domains/games/models/game.types';
+import { requireAuth, createSupabaseGameRepository, createSupabaseMoodRepository } from '@/src/lib/backend/backlog/infrastructure';
+import { transitionGame, updateGameDetails, adjustPriority, replaceMoods, setReplayStatus } from '@/src/lib/backend/backlog/domain/services';
+import { gameStateToDto, createPlatform, createGameStatus, createPriorityScore } from '@/src/lib/backend/backlog/domain/models';
+import type { GameState } from '@/src/lib/backend/backlog/domain/models';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAuth(req);

@@ -1,4 +1,4 @@
-import { GameCardSkeleton } from "@/src/domains/games/components/card/GameCardSkeleton";
+import { GameCardSkeleton } from "@/src/lib/frontend/entities/game";
 
 export default function PlayingLoading() {
   return (

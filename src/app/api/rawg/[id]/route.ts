@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchRawgGameData, mapRawgToMoods } from '@/src/infrastructure/platform-apis/rawg';
-import { requireAuth } from '@/src/infrastructure/database/auth.server';
+import { fetchRawgGameData, mapRawgToMoods } from '@/src/lib/backend/sync';
+import { requireAuth } from '@/src/lib/backend/backlog/infrastructure';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAuth(req);
