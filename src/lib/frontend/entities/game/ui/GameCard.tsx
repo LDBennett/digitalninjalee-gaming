@@ -56,11 +56,11 @@ export function GameCard({
         ease: "circOut",
         delay: Math.min(index, 5) * 0.03,
       }}
-      className="relative bg-gray-900 border border-gray-800 hover:border-brand-800/70 rounded-xl min-h-35 overflow-hidden transition-all duration-200"
+      className="hover:border-brand-800/70 relative min-h-35 overflow-hidden rounded-xl border border-gray-800 bg-gray-900 transition-all duration-200"
     >
       {showPriority && (
         <div
-          className={`absolute left-0 inset-y-0 w-1 z-10 rounded-l-xl ${tier.bar}`}
+          className={`absolute inset-y-0 left-0 z-10 w-1 rounded-l-xl ${tier.bar}`}
         />
       )}
       {coverImage && (
@@ -90,17 +90,17 @@ export function GameCard({
           rank={rank}
         />
 
-        <div className="flex flex-col flex-1 min-w-0">
-          <div className="flex justify-between items-start gap-2">
-            <h3 className="font-semibold text-white text-sm truncate leading-snug">
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="truncate text-sm leading-snug font-semibold text-white">
               {game.title}
             </h3>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex shrink-0 items-center gap-2">
               {onEdit && (
                 <button
                   onClick={() => onEdit(game)}
                   title="Edit game"
-                  className="text-gray-600 hover:text-brand-400 transition-colors"
+                  className="hover:text-brand-400 text-gray-600 transition-colors"
                 >
                   <Pencil size={13} />
                 </button>
@@ -115,7 +115,7 @@ export function GameCard({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 mt-1">
+          <div className="mt-1 flex flex-wrap items-center gap-2">
             <PlatformBadge platform={game.platform} />
             {game.rating !== null && game.rating !== undefined && (
               <RatingStars rating={game.rating} />
@@ -125,7 +125,7 @@ export function GameCard({
           </div>
 
           {moods.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
+            <div className="mt-2 flex flex-wrap gap-1">
               {moods.map((mood) => (
                 <MoodBadge key={mood.id} mood={mood.name} />
               ))}

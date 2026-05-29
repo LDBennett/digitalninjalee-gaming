@@ -25,7 +25,7 @@ export function MoodFilter({
           name="mood-filter"
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value || null)}
-          className="bg-gray-900 px-3 py-2 border border-gray-800 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm"
+          className="focus:border-brand-600 w-full rounded-lg border border-gray-800 bg-gray-900 px-3 py-2 text-sm text-white focus:outline-none"
         >
           <option value="">All moods</option>
           {moods.map((mood) => (
@@ -37,13 +37,13 @@ export function MoodFilter({
       </div>
 
       {/* Desktop: pills */}
-      <div className="hidden sm:flex flex-wrap items-center gap-2">
+      <div className="hidden flex-wrap items-center gap-2 sm:flex">
         <button
           onClick={() => onChange(null)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
             !value
               ? "bg-gray-700 text-white"
-              : "text-gray-500 hover:text-gray-300 hover:bg-gray-800"
+              : "text-gray-500 hover:bg-gray-800 hover:text-gray-300"
           }`}
         >
           All
@@ -54,7 +54,7 @@ export function MoodFilter({
             onClick={() => onChange(value === mood.name ? null : mood.name)}
             className={`transition-all duration-150 ${
               value === mood.name
-                ? "scale-110 ring-2 ring-white/20 rounded"
+                ? "scale-110 rounded ring-2 ring-white/20"
                 : "opacity-50 hover:opacity-80"
             }`}
           >

@@ -63,12 +63,12 @@ export function LibraryView() {
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
       <div className="mb-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="font-bold text-white text-2xl">Library</h1>
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-white">Library</h1>
           {isAuthenticated && (
             <button
               onClick={() => setShowAdd(true)}
-              className="flex sm:flex-none justify-center items-center gap-2 bg-linear-to-r from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 shadow-lg px-4 py-2 rounded-lg font-semibold text-white text-sm text-center transition-all shrink-0"
+              className="from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 flex shrink-0 items-center justify-center gap-2 rounded-lg bg-linear-to-r px-4 py-2 text-center text-sm font-semibold text-white shadow-lg transition-all sm:flex-none"
             >
               <Plus size={15} /> Add Game
             </button>
@@ -81,7 +81,7 @@ export function LibraryView() {
           labels={LIBRARY_TAB_LABELS}
           className="mb-5"
         />
-        <div className="flex gap-2 mb-5">
+        <div className="mb-5 flex gap-2">
           <SearchInput
             value={searchQuery}
             onChange={setSearchQuery}
@@ -89,12 +89,12 @@ export function LibraryView() {
           />
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-1.5 shrink-0 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${showFilters || activeFilterCount > 0 ? "bg-brand-800/30 border-brand-700 text-brand-300" : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white"}`}
+            className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${showFilters || activeFilterCount > 0 ? "bg-brand-800/30 border-brand-700 text-brand-300" : "border-gray-700 bg-gray-800 text-gray-400 hover:text-white"}`}
           >
             <SlidersHorizontal size={15} />
             <span className="hidden sm:inline">Filters</span>
             {activeFilterCount > 0 && (
-              <span className="bg-brand-600 px-1.5 rounded-full text-white text-xs leading-tight">
+              <span className="bg-brand-600 rounded-full px-1.5 text-xs leading-tight text-white">
                 {activeFilterCount}
               </span>
             )}
@@ -123,7 +123,7 @@ export function LibraryView() {
       ) : (
         <>
           {filtered.length > 0 && (
-            <p className="mb-3 text-gray-600 text-sm">
+            <p className="mb-3 text-sm text-gray-600">
               {filtered.length} {LIBRARY_TAB_LABELS[tab].toLowerCase()} game
               {filtered.length !== 1 ? "s" : ""}
             </p>

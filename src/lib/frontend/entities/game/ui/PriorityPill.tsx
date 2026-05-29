@@ -17,7 +17,7 @@ export function PriorityPill({ score, gameId, onPriorityChange }: Props) {
     <button
       onClick={() => onPriorityChange(gameId, nextTierScore(score) - score)}
       title="Click to raise priority tier"
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium transition-colors ${tier.pillBg} ${tier.pillText}`}
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium transition-colors ${tier.pillBg} ${tier.pillText}`}
     >
       {tier.label}
     </button>

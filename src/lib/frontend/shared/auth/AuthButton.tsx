@@ -29,37 +29,37 @@ export function AuthButton() {
 
   if (user) {
     return (
-      <div className="flex justify-center items-center px-2">
+      <div className="flex items-center justify-center px-2">
         <button
           onClick={() => setShowSignOutConfirm(true)}
-          className="me-2 ml-2 text-gray-600 hover:text-red-400 text-xs transition-colors cursor-pointer shrink-0"
+          className="me-2 ml-2 shrink-0 cursor-pointer text-xs text-gray-600 transition-colors hover:text-red-400"
         >
           <img
             src="/logos/dnl-logo--green.png"
             alt="DigitalNinjaLee Online Avatar - Signed In"
-            className="rounded-full w-8 h-6"
+            className="h-6 w-8 rounded-full"
           />
         </button>
 
         {showSignOutConfirm && (
           <div
-            className="z-50 fixed inset-0 flex justify-center items-center bg-black/60"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
             onClick={() => setShowSignOutConfirm(false)}
           >
             <div
-              className="bg-gray-900 shadow-xl p-6 border border-gray-800 rounded-xl w-72"
+              className="w-72 rounded-xl border border-gray-800 bg-gray-900 p-6 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="mb-1 font-semibold text-white text-base">
+              <h2 className="mb-1 text-base font-semibold text-white">
                 Sign out?
               </h2>
-              <p className="mb-5 text-gray-500 text-xs">
+              <p className="mb-5 text-xs text-gray-500">
                 You&apos;ll be switched to read-only mode.
               </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowSignOutConfirm(false)}
-                  className="flex-1 bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded-lg font-medium text-gray-300 text-sm transition-colors"
+                  className="flex-1 rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-700"
                 >
                   Cancel
                 </button>
@@ -68,7 +68,7 @@ export function AuthButton() {
                     signOut();
                     setShowSignOutConfirm(false);
                   }}
-                  className="flex-1 bg-red-900/60 hover:bg-red-800/60 px-3 py-2 rounded-lg font-medium text-red-300 text-sm transition-colors"
+                  className="flex-1 rounded-lg bg-red-900/60 px-3 py-2 text-sm font-medium text-red-300 transition-colors hover:bg-red-800/60"
                 >
                   Sign Out
                 </button>
@@ -81,29 +81,29 @@ export function AuthButton() {
   }
 
   return (
-    <div className="flex justify-center items-center px-2">
+    <div className="flex items-center justify-center px-2">
       <button
         onClick={() => setShowModal(true)}
-        className="me-2 ml-2 text-gray-600 hover:text-red-400 text-xs transition-colors cursor-pointer shrink-0"
+        className="me-2 ml-2 shrink-0 cursor-pointer text-xs text-gray-600 transition-colors hover:text-red-400"
       >
         <img
           src="/logos/dnl-logo--white.png"
           alt="DigitalNinjaLee Online Avatar - Signed Out"
-          className="rounded-full w-8 h-6"
+          className="h-6 w-8 rounded-full"
         />
       </button>
 
       {showModal && (
         <div
-          className="z-50 fixed inset-0 flex justify-center items-center bg-black/60"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
           onClick={() => setShowModal(false)}
         >
           <div
-            className="bg-gray-900 shadow-xl p-6 border border-gray-800 rounded-xl w-80"
+            className="w-80 rounded-xl border border-gray-800 bg-gray-900 p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="mb-1 font-semibold text-white text-base">Sign in</h2>
-            <p className="mb-4 text-gray-500 text-xs">
+            <h2 className="mb-1 text-base font-semibold text-white">Sign in</h2>
+            <p className="mb-4 text-xs text-gray-500">
               Game Vault is personal — sign in to make changes.
             </p>
             <div className="space-y-3">
@@ -112,7 +112,7 @@ export function AuthButton() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm placeholder-gray-500"
+                className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none"
               />
               <input
                 type="password"
@@ -120,13 +120,13 @@ export function AuthButton() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSignIn()}
-                className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm placeholder-gray-500"
+                className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none"
               />
-              {error && <p className="text-red-400 text-xs">{error}</p>}
+              {error && <p className="text-xs text-red-400">{error}</p>}
               <button
                 onClick={handleSignIn}
                 disabled={loading || !email || !password}
-                className="bg-brand-700 hover:bg-brand-600 disabled:opacity-50 px-3 py-2 rounded-lg w-full font-semibold text-white text-sm transition-colors disabled:cursor-not-allowed"
+                className="bg-brand-700 hover:bg-brand-600 w-full rounded-lg px-3 py-2 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? "Signing in…" : "Sign in"}
               </button>

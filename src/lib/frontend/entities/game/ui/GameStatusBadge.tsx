@@ -23,7 +23,7 @@ export function GameStatusBadge({ status }: { status: GameStatus }) {
   const badge = STATUS_BADGE[status];
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${badge.bg} ${badge.text}`}
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${badge.bg} ${badge.text}`}
     >
       {STATUS_LABELS[status]}
     </span>

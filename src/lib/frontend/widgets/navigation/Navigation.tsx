@@ -77,23 +77,23 @@ export function Navigation() {
   return (
     <>
       {/* Mobile top header */}
-      <header className="md:hidden fixed top-0 right-0 left-0 z-40 flex items-center justify-between bg-gray-950 border-gray-800 border-b px-4 h-12">
-        <span className="font-bold text-white text-base tracking-tight">
+      <header className="fixed top-0 right-0 left-0 z-40 flex h-12 items-center justify-between border-b border-gray-800 bg-gray-950 px-4 md:hidden">
+        <span className="text-base font-bold tracking-tight text-white">
           DigitalNinjaLee
         </span>
         <AuthButton />
       </header>
 
       {/* Desktop sidebar */}
-      <nav className="hidden md:flex flex-col bg-gray-950 p-4 pe-6 border-gray-800 border-r w-56 min-h-screen shrink-0">
+      <nav className="hidden min-h-screen w-56 shrink-0 flex-col border-r border-gray-800 bg-gray-950 p-4 pe-6 md:flex">
         <div className="mb-8">
           <div className="flex items-center gap-3">
             <AuthButton />
-            <span className="font-bold text-white text-lg tracking-tight">
+            <span className="text-lg font-bold tracking-tight text-white">
               DigitalNinjaLee
             </span>
           </div>
-          <p className="flex items-center gap-1 mt-3 text-gray-500 text-sm text-center">
+          <p className="mt-3 flex items-center gap-1 text-center text-sm text-gray-500">
             Game Backlog Bunker
           </p>
         </div>
@@ -104,12 +104,12 @@ export function Navigation() {
               <Link
                 key={href}
                 href={href}
-                className="relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium"
+                className="relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium"
               >
                 {active && (
                   <motion.div
                     layoutId="desktop-pill"
-                    className="absolute inset-0 rounded-lg bg-brand-900/50 border border-brand-800/50"
+                    className="bg-brand-900/50 border-brand-800/50 absolute inset-0 rounded-lg border"
                     style={{
                       boxShadow:
                         "0 0 12px 0 rgba(var(--color-brand-800), 0.35)",
@@ -138,7 +138,7 @@ export function Navigation() {
       {/* Mobile bottom nav */}
       <div
         ref={containerRef}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40"
+        className="fixed right-0 bottom-0 left-0 z-40 md:hidden"
         style={{ height: TOTAL_H }}
       >
         {/* SVG shaped background */}
@@ -176,7 +176,7 @@ export function Navigation() {
             >
               <Link
                 href={activeHref}
-                className="flex items-center justify-center rounded-full bg-brand-800 text-white shadow-lg shadow-brand-900/60 w-full h-full"
+                className="bg-brand-800 shadow-brand-900/60 flex h-full w-full items-center justify-center rounded-full text-white shadow-lg"
               >
                 <ActiveIcon size={22} />
               </Link>
@@ -186,7 +186,7 @@ export function Navigation() {
 
         {/* Nav items row — sits in the bottom NAV_H portion */}
         <div
-          className="absolute bottom-0 left-0 right-0 flex"
+          className="absolute right-0 bottom-0 left-0 flex"
           style={{ height: NAV_H }}
         >
           {NAV_ITEMS.map(({ href, label, Icon }, i) => {
@@ -195,7 +195,7 @@ export function Navigation() {
               <Link
                 key={href}
                 href={href}
-                className={`flex-1 flex flex-col items-center justify-start gap-1 text-[10px] font-medium transition-colors ${isActive ? "text-brand-400" : "text-gray-500 hover:text-gray-300"}`}
+                className={`flex flex-1 flex-col items-center justify-start gap-1 text-[10px] font-medium transition-colors ${isActive ? "text-brand-400" : "text-gray-500 hover:text-gray-300"}`}
                 style={{ paddingTop: isActive ? CR + 6 : 16 }}
               >
                 {!isActive && <Icon size={18} />}

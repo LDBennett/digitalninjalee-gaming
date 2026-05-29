@@ -179,11 +179,11 @@ export function GameCardActions({
   if (!showFooter) return null;
 
   return (
-    <div className="flex items-center gap-2 mt-auto pt-3 border-gray-800/60 border-t">
+    <div className="mt-auto flex items-center gap-2 border-t border-gray-800/60 pt-3">
       {hasDescription && (
         <button
           onClick={onToggleDesc}
-          className="flex items-center gap-2 bg-gray-800/90 px-2 py-1 rounded text-white hover:text-gray-300 text-xs transition-colors"
+          className="flex items-center gap-2 rounded bg-gray-800/90 px-2 py-1 text-xs text-white transition-colors hover:text-gray-300"
         >
           {showDesc ? (
             <ListChevronsDownUp size={16} />
@@ -196,7 +196,7 @@ export function GameCardActions({
       {hasNote && (
         <button
           onClick={onToggleNote}
-          className="flex items-center gap-2 bg-brand-900/30 px-2 py-1 rounded text-brand-300 hover:text-brand-200 text-xs transition-colors"
+          className="bg-brand-900/30 text-brand-300 hover:text-brand-200 flex items-center gap-2 rounded px-2 py-1 text-xs transition-colors"
         >
           <NotebookPen size={14} />
           Note
@@ -207,7 +207,7 @@ export function GameCardActions({
           <>
             {showStatusSelect ? (
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 text-xs">Mark as:</span>
+                <span className="text-xs text-gray-500">Mark as:</span>
                 <select
                   autoFocus
                   defaultValue=""
@@ -218,7 +218,7 @@ export function GameCardActions({
                     }
                     onToggleStatusSelect();
                   }}
-                  className="bg-gray-800 px-2 py-0.5 border border-brand-600 rounded focus:outline-none text-gray-300 text-xs cursor-pointer"
+                  className="border-brand-600 cursor-pointer rounded border bg-gray-800 px-2 py-0.5 text-xs text-gray-300 focus:outline-none"
                 >
                   <option value="" disabled>
                     Select...
@@ -233,7 +233,7 @@ export function GameCardActions({
             ) : (
               <button
                 onClick={onToggleStatusSelect}
-                className="flex items-center gap-1 text-gray-500 hover:text-brand-400 text-xs align-bottom transition-colors"
+                className="hover:text-brand-400 flex items-center gap-1 align-bottom text-xs text-gray-500 transition-colors"
               >
                 <Info size={16} />
                 Status

@@ -21,7 +21,7 @@ export function GameCardExpandable({ text, show, variant }: Props) {
     >
       <div className="min-h-0 overflow-hidden">
         <div
-          className={`mt-2 px-3 pt-2 pb-4 border-t rounded ${styles.wrapper}`}
+          className={`mt-2 rounded border-t px-3 pt-2 pb-4 ${styles.wrapper}`}
         >
           <p className={`text-xs leading-relaxed ${styles.text}`}>{text}</p>
         </div>

@@ -31,16 +31,16 @@ const STAT_CARDS: {
 
 export function GameStatsGrid({ stats }: { stats: Stats }) {
   return (
-    <div className="gap-3 md:gap-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 mb-6">
+    <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 md:gap-4">
       {STAT_CARDS.map((s) => (
         <div
           key={s.label}
-          className="bg-gray-900 p-4 border border-gray-800 rounded-xl"
+          className="rounded-xl border border-gray-800 bg-gray-900 p-4"
         >
-          <p className="font-medium text-gray-500 text-xs uppercase tracking-wide">
+          <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
             {s.label}
           </p>
-          <p className={`text-3xl font-bold mt-1 ${s.color}`}>
+          <p className={`mt-1 text-3xl font-bold ${s.color}`}>
             {s.getValue(stats)}
           </p>
         </div>

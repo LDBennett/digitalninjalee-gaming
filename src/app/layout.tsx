@@ -27,12 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} bg-gray-950 text-white min-h-screen`}
+        className={`${inter.className} min-h-screen bg-gray-950 text-white`}
       >
         <ClientLayout>
           <div className="flex min-h-screen">
             <Navigation />
-            <main className="flex-1 p-4 md:p-8 pt-16 md:pt-8 pb-28 md:pb-8 overflow-auto">
+            <main className="flex-1 overflow-auto p-4 pt-16 pb-28 md:p-8 md:pt-8 md:pb-8">
               {children}
             </main>
           </div>

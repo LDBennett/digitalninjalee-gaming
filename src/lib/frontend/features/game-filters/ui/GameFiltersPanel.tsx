@@ -47,17 +47,17 @@ export function GameFiltersPanel({
 }: GameFiltersPanelProps) {
   return (
     <div
-      className={`bg-gray-900/60 border border-gray-800 rounded-xl p-4 space-y-4 ${className ?? ""}`}
+      className={`space-y-4 rounded-xl border border-gray-800 bg-gray-900/60 p-4 ${className ?? ""}`}
     >
-      <div className="gap-3 grid grid-cols-1 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="block mb-1.5 font-medium text-gray-400 text-xs uppercase tracking-wide">
+          <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
             Sort By
           </label>
           <select
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value as SortOption)}
-            className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm"
+            className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -68,13 +68,13 @@ export function GameFiltersPanel({
         </div>
 
         <div>
-          <label className="block mb-1.5 font-medium text-gray-400 text-xs uppercase tracking-wide">
+          <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
             Platform
           </label>
           <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => onPlatformChange(null)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
+              className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
                 platformFilter === null
                   ? "bg-brand-700 text-white"
                   : "bg-gray-800 text-gray-400 hover:text-white"
@@ -88,7 +88,7 @@ export function GameFiltersPanel({
                 onClick={() =>
                   onPlatformChange(platformFilter === p.value ? null : p.value)
                 }
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
+                className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
                   platformFilter === p.value
                     ? "bg-brand-700 text-white"
                     : "bg-gray-800 text-gray-400 hover:text-white"
@@ -102,7 +102,7 @@ export function GameFiltersPanel({
       </div>
 
       <div>
-        <label className="block mb-1.5 font-medium text-gray-400 text-xs uppercase tracking-wide">
+        <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
           Mood
         </label>
         <MoodFilter moods={moods} value={moodFilter} onChange={onMoodChange} />

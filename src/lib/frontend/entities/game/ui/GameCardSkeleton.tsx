@@ -1,17 +1,17 @@
 export function GameCardSkeleton() {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+    <div className="overflow-hidden rounded-xl border border-gray-800 bg-gray-900">
       <div className="flex gap-4 p-4">
-        <div className="bg-gray-800 rounded-lg w-14 h-30 animate-pulse shrink-0" />
-        <div className="flex-1 min-w-0">
-          <div className="bg-gray-800 rounded w-3/4 h-4 animate-pulse" />
-          <div className="flex gap-2 mt-2">
-            <div className="bg-gray-800 rounded w-16 h-4 animate-pulse" />
-            <div className="bg-gray-800 rounded w-12 h-4 animate-pulse" />
+        <div className="h-30 w-14 shrink-0 animate-pulse rounded-lg bg-gray-800" />
+        <div className="min-w-0 flex-1">
+          <div className="h-4 w-3/4 animate-pulse rounded bg-gray-800" />
+          <div className="mt-2 flex gap-2">
+            <div className="h-4 w-16 animate-pulse rounded bg-gray-800" />
+            <div className="h-4 w-12 animate-pulse rounded bg-gray-800" />
           </div>
-          <div className="flex gap-1 mt-3">
-            <div className="bg-gray-800 rounded-full w-14 h-4 animate-pulse" />
-            <div className="bg-gray-800 rounded-full w-10 h-4 animate-pulse" />
+          <div className="mt-3 flex gap-1">
+            <div className="h-4 w-14 animate-pulse rounded-full bg-gray-800" />
+            <div className="h-4 w-10 animate-pulse rounded-full bg-gray-800" />
           </div>
         </div>
       </div>

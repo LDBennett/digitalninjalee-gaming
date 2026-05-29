@@ -16,7 +16,7 @@ export function MoodSelector({
 }: MoodSelectorProps) {
   return (
     <div>
-      <label className="block mb-2 font-medium text-gray-400 text-xs">
+      <label className="mb-2 block text-xs font-medium text-gray-400">
         Mood Tags
       </label>
       <div className="flex flex-wrap gap-2">
@@ -27,7 +27,7 @@ export function MoodSelector({
             onClick={() => onToggle(mood.id)}
             className={`transition-all duration-150 ${
               selectedIds.includes(mood.id)
-                ? "ring-2 ring-brand-500/40 scale-105"
+                ? "ring-brand-500/40 scale-105 ring-2"
                 : "opacity-40 hover:opacity-70"
             }`}
           >

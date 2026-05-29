@@ -16,7 +16,7 @@ export function SearchInput({
   return (
     <div className={`relative ${className}`}>
       <svg
-        className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
+        className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-500"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -33,12 +33,12 @@ export function SearchInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-gray-900 border border-gray-700 focus:border-brand-600 rounded-lg pl-9 pr-8 py-2 text-sm text-white placeholder-gray-500 focus:outline-none"
+        className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-900 py-2 pr-8 pl-9 text-sm text-white placeholder-gray-500 focus:outline-none"
       />
       {value && (
         <button
           onClick={() => onChange("")}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors text-lg leading-none"
+          className="absolute top-1/2 right-3 -translate-y-1/2 text-lg leading-none text-gray-500 transition-colors hover:text-white"
           aria-label="Clear search"
         >
           ×

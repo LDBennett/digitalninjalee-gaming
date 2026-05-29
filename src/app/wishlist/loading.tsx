@@ -3,19 +3,19 @@ import { GameCardSkeleton } from "@/src/lib/frontend/entities/game";
 export default function WishlistLoading() {
   return (
     <div className="mx-auto max-w-5xl">
-      <div className="flex justify-between items-center gap-4 mb-5">
+      <div className="mb-5 flex items-center justify-between gap-4">
         <div>
-          <div className="bg-gray-800 rounded w-20 h-7 animate-pulse" />
-          <div className="bg-gray-800 mt-1.5 rounded w-24 h-4 animate-pulse" />
+          <div className="h-7 w-20 animate-pulse rounded bg-gray-800" />
+          <div className="mt-1.5 h-4 w-24 animate-pulse rounded bg-gray-800" />
         </div>
-        <div className="bg-gray-800 rounded-lg w-24 h-9 animate-pulse" />
+        <div className="h-9 w-24 animate-pulse rounded-lg bg-gray-800" />
       </div>
 
-      <div className="flex gap-1 mb-5">
+      <div className="mb-5 flex gap-1">
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="bg-gray-800 rounded-lg w-28 h-9 animate-pulse"
+            className="h-9 w-28 animate-pulse rounded-lg bg-gray-800"
           />
         ))}
       </div>

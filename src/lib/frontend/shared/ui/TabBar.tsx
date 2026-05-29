@@ -56,7 +56,7 @@ export function TabBar<T extends string>({
       <div
         ref={scrollRef}
         style={{ touchAction: "pan-x" }}
-        className="flex border-b border-gray-800 overflow-x-auto scrollbar-none cursor-grab active:cursor-grabbing select-none"
+        className="flex cursor-grab scrollbar-none overflow-x-auto border-b border-gray-800 select-none active:cursor-grabbing"
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={stopDrag}
@@ -74,10 +74,10 @@ export function TabBar<T extends string>({
                 }
                 onChange(t);
               }}
-              className={`flex flex-col items-center gap-1 px-5 py-3 -mb-px shrink-0 whitespace-nowrap text-sm font-medium border-b-2 transition-colors ${
+              className={`-mb-px flex shrink-0 flex-col items-center gap-1 border-b-2 px-5 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
                 active
                   ? "border-brand-500 text-brand-400"
-                  : "border-transparent text-gray-500 hover:text-gray-300 hover:border-gray-600"
+                  : "border-transparent text-gray-500 hover:border-gray-600 hover:text-gray-300"
               }`}
             >
               {icons?.[t] && <span>{icons[t]}</span>}

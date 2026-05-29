@@ -57,17 +57,17 @@ export function BacklogView() {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-gray-600 text-sm">Loading…</div>
+      <div className="flex h-64 items-center justify-center">
+        <div className="text-sm text-gray-600">Loading…</div>
       </div>
     );
 
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
-      <div className="flex justify-between items-center gap-4 mb-6">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="font-bold text-white text-2xl">Backlog</h1>
-          <p className="mt-0.5 text-gray-500 text-sm">
+          <h1 className="text-2xl font-bold text-white">Backlog</h1>
+          <p className="mt-0.5 text-sm text-gray-500">
             {replayOnly
               ? `${filtered.length} game${filtered.length !== 1 ? "s" : ""} to replay${moodFilter ? ` · ${moodFilter}` : ""}`
               : `${filtered.length} game${filtered.length !== 1 ? "s" : ""}${wantToReplayCount > 0 ? ` · ${wantToReplayCount} to replay` : ""}${moodFilter ? ` · ${moodFilter}` : ""}`}
@@ -77,7 +77,7 @@ export function BacklogView() {
           <div className="flex justify-end gap-3">
             <button
               onClick={() => setShowPicker(true)}
-              className={`"flex flex-1 sm:flex-none justify-center items-center gap-2 bg-linear-to-r from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 shadow-lg font-semibold text-white text-sm text-center transition-all" ${truncatedButtonText ? "rounded-full p-2" : "rounded-lg px-4 py-2"}`}
+              className={`"flex from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 transition-all" flex-1 items-center justify-center gap-2 bg-linear-to-r text-center text-sm font-semibold text-white shadow-lg sm:flex-none ${truncatedButtonText ? "rounded-full p-2" : "rounded-lg px-4 py-2"}`}
             >
               {truncatedButtonText ? (
                 <Dices size={16} />
@@ -90,7 +90,7 @@ export function BacklogView() {
             </button>
             <button
               onClick={() => setShowAdd(true)}
-              className="bg-linear-to-r from-brand-800 hover:from-brand-700 to-brand-600 hover:to-brand-500 shadow-lg px-4 py-2 rounded-lg font-semibold text-white text-sm text-center transition-all"
+              className="from-brand-800 hover:from-brand-700 to-brand-600 hover:to-brand-500 rounded-lg bg-linear-to-r px-4 py-2 text-center text-sm font-semibold text-white shadow-lg transition-all"
             >
               <div className="flex items-center gap-1">
                 <Plus size={16} />
@@ -101,7 +101,7 @@ export function BacklogView() {
         )}
       </div>
 
-      <div className="flex gap-2 mb-5">
+      <div className="mb-5 flex gap-2">
         <SearchInput
           value={searchQuery}
           onChange={setSearchQuery}
@@ -109,16 +109,16 @@ export function BacklogView() {
         />
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-1.5 shrink-0 px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+          className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
             showFilters || activeFilterCount > 0
               ? "bg-brand-800/30 border-brand-700 text-brand-300"
-              : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white"
+              : "border-gray-700 bg-gray-800 text-gray-400 hover:text-white"
           }`}
         >
           <SlidersHorizontal size={15} />
           <span className="hidden sm:inline">Filters</span>
           {activeFilterCount > 0 && (
-            <span className="bg-brand-600 px-1.5 rounded-full text-white text-xs leading-tight">
+            <span className="bg-brand-600 rounded-full px-1.5 text-xs leading-tight text-white">
               {activeFilterCount}
             </span>
           )}
@@ -136,14 +136,14 @@ export function BacklogView() {
           onPlatformChange={setPlatformFilter}
           className="mb-5"
         >
-          <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+          <label className="inline-flex cursor-pointer items-center gap-2 select-none">
             <input
               type="checkbox"
               checked={replayOnly}
               onChange={(e) => setReplayOnly(e.target.checked)}
-              className="w-4 h-4 accent-brand-800"
+              className="accent-brand-800 h-4 w-4"
             />
-            <span className="text-gray-300 text-sm">Replays Only</span>
+            <span className="text-sm text-gray-300">Replays Only</span>
           </label>
         </GameFiltersPanel>
       )}

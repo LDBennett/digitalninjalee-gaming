@@ -77,13 +77,13 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="z-50 fixed inset-0 flex justify-center items-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="bg-gray-900 shadow-2xl border border-gray-700 rounded-2xl w-full max-w-sm">
-        <div className="flex justify-between items-center p-5 border-gray-800 border-b">
-          <h2 className="font-semibold text-white text-base">🎲 Pick a Game</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-sm rounded-2xl border border-gray-700 bg-gray-900 shadow-2xl">
+        <div className="flex items-center justify-between border-b border-gray-800 p-5">
+          <h2 className="text-base font-semibold text-white">🎲 Pick a Game</h2>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-white text-2xl leading-none transition-colors"
+            className="text-2xl leading-none text-gray-400 transition-colors hover:text-white"
           >
             &times;
           </button>
@@ -91,7 +91,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
 
         <div className="space-y-5 p-5">
           <div>
-            <p className="mb-3 font-medium text-gray-500 text-xs uppercase tracking-wide">
+            <p className="mb-3 text-xs font-medium tracking-wide text-gray-500 uppercase">
               Pick from
             </p>
             <div className="flex gap-2">
@@ -99,7 +99,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
                 <button
                   key={value}
                   onClick={() => selectPool(value)}
-                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-150 ${
+                  className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150 ${
                     selectedPool === value
                       ? "bg-brand-700 text-white"
                       : "bg-gray-800 text-gray-400 hover:text-gray-200"
@@ -112,7 +112,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
           </div>
 
           <div>
-            <p className="mb-3 font-medium text-gray-500 text-xs uppercase tracking-wide">
+            <p className="mb-3 text-xs font-medium tracking-wide text-gray-500 uppercase">
               Filter by mood (optional)
             </p>
             <div className="flex flex-wrap gap-2">
@@ -122,7 +122,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
                   onClick={() => toggleMood(mood.name)}
                   className={`transition-all duration-150 ${
                     selectedMoods.includes(mood.name)
-                      ? "ring-2 ring-white/40 scale-105"
+                      ? "scale-105 ring-2 ring-white/40"
                       : "opacity-40 hover:opacity-70"
                   }`}
                 >
@@ -135,10 +135,10 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
           <button
             onClick={pick}
             disabled={loading}
-            className="bg-linear-to-r from-brand-700 hover:from-brand-600 to-brand-700 hover:to-brand-600 disabled:opacity-60 shadow-lg py-3 rounded-xl w-full font-semibold text-white text-sm transition-all"
+            className="from-brand-700 hover:from-brand-600 to-brand-700 hover:to-brand-600 w-full rounded-xl bg-linear-to-r py-3 text-sm font-semibold text-white shadow-lg transition-all disabled:opacity-60"
           >
             {loading ? (
-              <span className="flex justify-center items-center gap-2">
+              <span className="flex items-center justify-center gap-2">
                 <span className="inline-block animate-spin">🎲</span> Picking…
               </span>
             ) : (
@@ -147,7 +147,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
           </button>
 
           {noGamesMsg && (
-            <p className="py-2 text-gray-500 text-sm text-center">
+            <p className="py-2 text-center text-sm text-gray-500">
               {noGamesMsg}
             </p>
           )}

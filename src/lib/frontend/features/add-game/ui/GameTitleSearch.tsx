@@ -25,7 +25,7 @@ export function GameTitleSearch({
 }: GameTitleSearchProps) {
   return (
     <div className="relative">
-      <label className="block mb-1 font-medium text-gray-400 text-xs">
+      <label className="mb-1 block text-xs font-medium text-gray-400">
         Title *
         {!isEditing && (
           <span className="ml-1 text-gray-600">
@@ -42,39 +42,39 @@ export function GameTitleSearch({
           onFocus={() => results.length > 0 && onDropdownChange(true)}
           placeholder="Game title..."
           required
-          className="bg-gray-800 px-3 py-2 pr-8 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm placeholder-gray-600"
+          className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 pr-8 text-sm text-white placeholder-gray-600 focus:outline-none"
         />
         {searchLoading && (
-          <span className="top-1/2 right-3 absolute text-gray-500 text-xs -translate-y-1/2">
+          <span className="absolute top-1/2 right-3 -translate-y-1/2 text-xs text-gray-500">
             …
           </span>
         )}
       </div>
 
       {showDropdown && results.length > 0 && (
-        <ul className="z-10 absolute bg-gray-800 shadow-xl mt-1 border border-gray-700 rounded-lg w-full overflow-hidden">
+        <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-xl">
           {results.map((game) => (
             <li key={game.id}>
               <button
                 type="button"
                 onMouseDown={() => onSelect(game)}
-                className="flex items-center gap-3 hover:bg-gray-700 px-3 py-2 w-full text-left transition-colors"
+                className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-gray-700"
               >
                 {game.coverUrl ? (
                   <img
                     src={game.coverUrl}
                     alt=""
-                    className="rounded w-10 h-10 object-cover shrink-0"
+                    className="h-10 w-10 shrink-0 rounded object-cover"
                   />
                 ) : (
-                  <div className="bg-gray-700 rounded w-10 h-10 shrink-0" />
+                  <div className="h-10 w-10 shrink-0 rounded bg-gray-700" />
                 )}
                 <div className="min-w-0">
-                  <p className="font-medium text-white text-sm truncate">
+                  <p className="truncate text-sm font-medium text-white">
                     {game.name}
                   </p>
                   {game.released && (
-                    <p className="text-gray-500 text-xs">
+                    <p className="text-xs text-gray-500">
                       {game.released.slice(0, 4)}
                     </p>
                   )}

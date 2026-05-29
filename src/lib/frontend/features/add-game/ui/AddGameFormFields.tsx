@@ -72,15 +72,15 @@ export function AddGameFormFields({
 }: AddGameFormFieldsProps) {
   return (
     <>
-      <div className="gap-3 grid grid-cols-2">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block mb-1 font-medium text-gray-400 text-xs">
+          <label className="mb-1 block text-xs font-medium text-gray-400">
             Platform
           </label>
           <select
             value={platform}
             onChange={(e) => setPlatform(e.target.value as Platform)}
-            className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm"
+            className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none"
           >
             {PLATFORMS.map((p) => (
               <option key={p} value={p}>
@@ -90,13 +90,13 @@ export function AddGameFormFields({
           </select>
         </div>
         <div>
-          <label className="block mb-1 font-medium text-gray-400 text-xs">
+          <label className="mb-1 block text-xs font-medium text-gray-400">
             Status
           </label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as GameStatus)}
-            className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm"
+            className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none"
           >
             {editGame ? (
               <>
@@ -133,7 +133,7 @@ export function AddGameFormFields({
 
       {(LIBRARY_STATUSES as ReadonlyArray<string>).includes(status) && (
         <div>
-          <label className="block mb-1 font-medium text-gray-400 text-xs">
+          <label className="mb-1 block text-xs font-medium text-gray-400">
             Replay Status
           </label>
           <select
@@ -142,7 +142,7 @@ export function AddGameFormFields({
               const val = e.target.value;
               setReplayStatus(val === "" ? null : (val as ReplayStatus));
             }}
-            className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm"
+            className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none"
           >
             <option value="">None</option>
             <option value="want-to-replay">Want to Replay</option>
@@ -152,10 +152,10 @@ export function AddGameFormFields({
       )}
 
       <div>
-        <label className="block mb-1.5 font-medium text-gray-400 text-xs">
+        <label className="mb-1.5 block text-xs font-medium text-gray-400">
           Priority
         </label>
-        <div className="gap-1.5 grid grid-cols-4">
+        <div className="grid grid-cols-4 gap-1.5">
           {PRIORITY_TIERS.map((tier) => {
             const isSelected = scoreToTier(priorityScore).id === tier.id;
             return (
@@ -163,9 +163,9 @@ export function AddGameFormFields({
                 key={tier.id}
                 type="button"
                 onClick={() => setPriorityScore(tier.score)}
-                className={`py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`rounded-lg py-2 text-sm font-medium transition-colors ${
                   isSelected
-                    ? `${tier.pillBg} ${tier.pillText} ring-1 ring-inset ring-current`
+                    ? `${tier.pillBg} ${tier.pillText} ring-1 ring-current ring-inset`
                     : "bg-gray-800 text-gray-500 hover:text-white"
                 }`}
               >
@@ -194,14 +194,14 @@ export function AddGameFormFields({
       />
 
       <div>
-        <label className="block mb-1.5 font-medium text-gray-400 text-xs">
+        <label className="mb-1.5 block text-xs font-medium text-gray-400">
           Your Rating
         </label>
         <StarRating value={rating} onChange={setRating} />
       </div>
 
       <div>
-        <label className="block mb-1 font-medium text-gray-400 text-xs">
+        <label className="mb-1 block text-xs font-medium text-gray-400">
           Personal Note
         </label>
         <textarea
@@ -209,7 +209,7 @@ export function AddGameFormFields({
           onChange={(e) => setPersonalNote(e.target.value)}
           placeholder="Where you left off, why you dropped it..."
           rows={2}
-          className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm resize-none placeholder-gray-600"
+          className="focus:border-brand-600 w-full resize-none rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none"
         />
       </div>
     </>

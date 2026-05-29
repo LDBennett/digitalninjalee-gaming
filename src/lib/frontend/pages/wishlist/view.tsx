@@ -45,10 +45,10 @@ export function WishlistView() {
 
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
-      <div className="flex sm:flex-row flex-col justify-between sm:items-center gap-4 mb-6">
+      <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="font-bold text-white text-2xl">Wishlist</h1>
-          <p className="mt-0.5 text-gray-500 text-sm">
+          <h1 className="text-2xl font-bold text-white">Wishlist</h1>
+          <p className="mt-0.5 text-sm text-gray-500">
             Games I want to buy or keep an eye on. Track upcoming releases and
             pre-orders.
           </p>
@@ -56,7 +56,7 @@ export function WishlistView() {
         {isAuthenticated && (
           <button
             onClick={() => setShowAdd(true)}
-            className="flex sm:flex-none justify-center items-center gap-2 bg-linear-to-r from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 shadow-lg px-4 py-2 rounded-lg font-semibold text-white text-sm text-center transition-all shrink-0"
+            className="from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 flex shrink-0 items-center justify-center gap-2 rounded-lg bg-linear-to-r px-4 py-2 text-center text-sm font-semibold text-white shadow-lg transition-all sm:flex-none"
           >
             <Plus size={15} /> Add Game
           </button>
@@ -80,7 +80,7 @@ export function WishlistView() {
       ) : (
         <>
           {games.length > 0 && (
-            <p className="mb-3 text-gray-600 text-sm">
+            <p className="mb-3 text-sm text-gray-600">
               {games.length} game{games.length !== 1 ? "s" : ""}
             </p>
           )}

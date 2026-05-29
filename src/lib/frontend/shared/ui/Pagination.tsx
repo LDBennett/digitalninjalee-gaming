@@ -12,18 +12,18 @@ export function Pagination({ page, totalPages, onPageChange }: Props) {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="flex justify-center items-center gap-2 mt-6">
+    <div className="mt-6 flex items-center justify-center gap-2">
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
-        className="hover:bg-gray-800 disabled:opacity-30 px-3 py-1.5 rounded-lg text-gray-400 hover:text-white text-sm transition-colors disabled:cursor-not-allowed"
+        className="rounded-lg px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-gray-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
       >
         ← Prev
       </button>
       <select
         value={page}
         onChange={(e) => onPageChange(Number(e.target.value))}
-        className="bg-gray-900 px-3 py-1.5 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none text-white text-sm"
+        className="focus:border-brand-600 rounded-lg border border-gray-700 bg-gray-900 px-3 py-1.5 text-sm text-white focus:outline-none"
       >
         {pages.map((p) => (
           <option key={p} value={p}>
@@ -35,7 +35,7 @@ export function Pagination({ page, totalPages, onPageChange }: Props) {
       <button
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
-        className="hover:bg-gray-800 disabled:opacity-30 px-3 py-1.5 rounded-lg text-gray-400 hover:text-white text-sm transition-colors disabled:cursor-not-allowed"
+        className="rounded-lg px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-gray-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
       >
         Next →
       </button>

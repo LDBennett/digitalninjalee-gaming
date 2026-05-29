@@ -21,7 +21,7 @@ export function PlatformBadge({ platform }: { platform: Platform }) {
   const style = PLATFORM_STYLES[platform];
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
     >
       {style.label}
     </span>

@@ -33,7 +33,7 @@ export function RatingStars({ rating }: { rating: number }) {
           />
         );
       })}
-      <span className="ml-0.5 font-medium text-[10px] text-yellow-400/80">
+      <span className="ml-0.5 text-[10px] font-medium text-yellow-400/80">
         {rating}
       </span>
     </div>

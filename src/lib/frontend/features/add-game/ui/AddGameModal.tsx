@@ -48,8 +48,8 @@ export function AddGameModal({
     editGame?.cover_art_url;
 
   return (
-    <div className="z-50 fixed inset-0 flex justify-center items-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="relative bg-gray-900 shadow-2xl border border-gray-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+      <div className="relative max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-2xl border border-gray-700 bg-gray-900 shadow-2xl">
         {coverImage && (
           <>
             <div
@@ -73,13 +73,13 @@ export function AddGameModal({
         )}
 
         <div className="relative max-h-[90vh] overflow-y-auto">
-          <div className="flex justify-between items-center p-5 border-gray-800 border-b">
-            <h2 className="font-semibold text-white text-base">
+          <div className="flex items-center justify-between border-b border-gray-800 p-5">
+            <h2 className="text-base font-semibold text-white">
               {editGame ? "Edit Game" : "Add Game"}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white text-2xl leading-none transition-colors"
+              className="text-2xl leading-none text-gray-400 transition-colors hover:text-white"
             >
               &times;
             </button>
@@ -144,18 +144,18 @@ export function AddGameModal({
                     await onDelete(editGame.id);
                     onClose();
                   }}
-                  className="flex items-center gap-1 bg-red-400 hover:bg-red-900/40 px-3 py-2 border border-gray-700 hover:border-red-800 rounded-lg font-medium text-white hover:text-red-400 text-sm transition-colors"
+                  className="flex items-center gap-1 rounded-lg border border-gray-700 bg-red-400 px-3 py-2 text-sm font-medium text-white transition-colors hover:border-red-800 hover:bg-red-900/40 hover:text-red-400"
                 >
                   <Trash2 /> Delete
                 </button>
               )}
-              <div className="flex items-center gap-2 ml-auto">
+              <div className="ml-auto flex items-center gap-2">
                 {!editGame && (
                   <button
                     type="button"
                     onClick={form.handleSubmitAndAdd}
                     disabled={form.saving || !form.title.trim()}
-                    className="bg-gray-700 hover:bg-gray-600 disabled:opacity-50 px-4 py-2 rounded-lg font-medium text-white text-sm transition-colors disabled:cursor-not-allowed"
+                    className="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {form.saving ? "Saving…" : "Save & Add Another"}
                   </button>
@@ -163,7 +163,7 @@ export function AddGameModal({
                 <button
                   type="submit"
                   disabled={form.saving || !form.title.trim()}
-                  className="bg-brand-700 hover:bg-brand-600 disabled:opacity-50 px-5 py-2 rounded-lg font-medium text-white text-sm transition-colors disabled:cursor-not-allowed"
+                  className="bg-brand-700 hover:bg-brand-600 rounded-lg px-5 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {form.saving ? "Saving…" : editGame ? "Update" : "Add Game"}
                 </button>

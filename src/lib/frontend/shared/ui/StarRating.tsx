@@ -64,7 +64,7 @@ export function StarRating({ value, onChange }: StarRatingProps) {
           );
         })}
       </div>
-      <span className="text-gray-400 text-xs w-6">
+      <span className="w-6 text-xs text-gray-400">
         {value !== null ? value : "—"}
       </span>
     </div>
