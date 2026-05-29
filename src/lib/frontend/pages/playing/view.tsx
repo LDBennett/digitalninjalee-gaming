@@ -62,8 +62,8 @@ export function PlayingView() {
       <GameCardList
         games={paginated}
         emptyState={<EmptyState heading={emptyState.heading} hint={moodFilter ? "Try another filter." : emptyState.hint} />}
-        renderCard={(game) => (
-          <GameCard key={game.id} game={game} onEdit={isAuthenticated ? setEditGame : undefined} onStatusChange={isAuthenticated ? handleStatusChange : undefined} />
+        renderCard={(game, i) => (
+          <GameCard key={game.id} game={game} index={i} onEdit={isAuthenticated ? setEditGame : undefined} onStatusChange={isAuthenticated ? handleStatusChange : undefined} />
         )}
         page={page} totalPages={totalPages} onPageChange={setPage}
       />

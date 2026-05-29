@@ -40,13 +40,13 @@ export function DashboardView() {
       <GameStatsGrid stats={stats} />
       <TabBar tabs={["playing", "backlog"] as DashboardTab[]} value={activeTab} onChange={setActiveTab} labels={TAB_LABELS} className="mb-6" />
       {activeTab === "playing" && (
-        <GameCardList games={playingGames} emptyState={<EmptyState heading="No recent activity" />} renderCard={(game) => <GameCard key={game.id} game={game} showActions={false} showStatusBadge />} spacing="space-y-3" />
+        <GameCardList games={playingGames} emptyState={<EmptyState heading="No recent activity" />} renderCard={(game, i) => <GameCard key={game.id} game={game} index={i} showActions={false} showStatusBadge />} spacing="space-y-3" />
       )}
       {activeTab === "backlog" && (
         <GameCardList
           games={topPriority}
           emptyState={<EmptyState heading="Your backlog is empty" actionLabel={isAuthenticated ? "Add your first game →" : undefined} onAction={isAuthenticated ? () => setShowAdd(true) : undefined} />}
-          renderCard={(game) => <GameCard key={game.id} game={game} showPriority onStatusChange={isAuthenticated ? handleStatusChange : undefined} />}
+          renderCard={(game, i) => <GameCard key={game.id} game={game} index={i} showPriority onStatusChange={isAuthenticated ? handleStatusChange : undefined} />}
           spacing="space-y-3"
         />
       )}

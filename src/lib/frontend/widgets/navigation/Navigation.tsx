@@ -2,19 +2,69 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { AuthButton } from "@/src/lib/frontend/shared/auth/AuthButton";
 import { Gift, Sparkles, SquarePlay, ClipboardList, Library } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const NAV_ITEMS = [
-  { href: "/",         label: "Dashboard", icon: <Sparkles />     },
-  { href: "/playing",  label: "Playing",   icon: <SquarePlay />   },
-  { href: "/backlog",  label: "Backlog",   icon: <ClipboardList />},
-  { href: "/library",  label: "Library",   icon: <Library />      },
-  { href: "/wishlist", label: "Wishlist",  icon: <Gift />         },
+type NavItem = { href: string; label: string; Icon: LucideIcon };
+
+const NAV_ITEMS: NavItem[] = [
+  { href: "/",         label: "Dashboard", Icon: Sparkles      },
+  { href: "/playing",  label: "Playing",   Icon: SquarePlay    },
+  { href: "/backlog",  label: "Backlog",   Icon: ClipboardList },
+  { href: "/library",  label: "Library",   Icon: Library       },
+  { href: "/wishlist", label: "Wishlist",  Icon: Gift          },
 ];
+
+// ── Mobile nav geometry ───────────────────────────────────────────────────────
+const CR = 26;            // active circle radius (52px diameter)
+const NAV_H = 64;         // nav bar height
+const TOTAL_H = CR + NAV_H;
+const NY = CR;            // nav bar top Y in SVG coords — circle center sits here
+const NW = 30;            // notch half-width (CR + 4px gap each side)
+const ND = CR;            // notch depth (accommodates the lower half of the circle)
+const SW = 10;            // bezier shoulder for smooth curve-in
+const NAV_BG = "#030712"; // gray-950
+
+function buildNotchedPath(w: number, cx: number): string {
+  const d = NY + ND; // notch deepest Y
+  return [
+    `M 0 ${NY}`,
+    `L ${cx - NW - SW} ${NY}`,
+    `C ${cx - NW} ${NY} ${cx - NW} ${d} ${cx} ${d}`,
+    `C ${cx + NW} ${d} ${cx + NW} ${NY} ${cx + NW + SW} ${NY}`,
+    `L ${w} ${NY}`,
+    `L ${w} ${TOTAL_H}`,
+    `L 0 ${TOTAL_H}`,
+    `Z`,
+  ].join(" ");
+}
+
+function isActivePath(href: string, pathname: string): boolean {
+  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
 
 export function Navigation() {
   const pathname = usePathname();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [navWidth, setNavWidth] = useState(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setNavWidth(el.offsetWidth));
+    ro.observe(el);
+    setNavWidth(el.offsetWidth);
+    return () => ro.disconnect();
+  }, []);
+
+  const activeIdx = NAV_ITEMS.findIndex(({ href }) => isActivePath(href, pathname));
+  const idx = activeIdx === -1 ? 0 : activeIdx;
+  const tabW = navWidth > 0 ? navWidth / NAV_ITEMS.length : 0;
+  const cx = (idx + 0.5) * tabW;
+  const { href: activeHref, Icon: ActiveIcon } = NAV_ITEMS[idx];
 
   return (
     <>
@@ -34,12 +84,16 @@ export function Navigation() {
           <p className="flex items-center gap-1 mt-3 text-gray-500 text-sm text-center">Game Backlog Bunker</p>
         </div>
         <div className="flex-1 space-y-3">
-          {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href;
+          {NAV_ITEMS.map(({ href, label, Icon }) => {
+            const active = isActivePath(href, pathname);
             return (
-              <Link key={item.href} href={item.href} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive ? "bg-brand-900/50 text-brand-300 border border-brand-800/50" : "text-gray-400 hover:text-white hover:bg-brand-700/50"}`}>
-                <span className="text-base">{item.icon}</span>
-                {item.label}
+              <Link
+                key={href}
+                href={href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${active ? "bg-brand-900/50 text-brand-300 border border-brand-800/50" : "text-gray-400 hover:text-white hover:bg-brand-700/50"}`}
+              >
+                <Icon size={18} />
+                {label}
               </Link>
             );
           })}
@@ -47,17 +101,72 @@ export function Navigation() {
       </nav>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden right-0 bottom-0 left-0 z-40 fixed flex bg-gray-950 border-gray-800 border-t">
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link key={item.href} href={item.href} className={`flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-[10px] font-medium transition-colors ${isActive ? "text-brand-300" : "text-gray-500"}`}>
-              <span className="text-lg leading-none">{item.icon}</span>
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+      <div
+        ref={containerRef}
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40"
+        style={{ height: TOTAL_H }}
+      >
+        {/* SVG shaped background */}
+        {navWidth > 0 && (
+          <svg
+            width={navWidth}
+            height={TOTAL_H}
+            viewBox={`0 0 ${navWidth} ${TOTAL_H}`}
+            className="absolute inset-0"
+          >
+            <motion.path
+              fill={NAV_BG}
+              initial={false}
+              animate={{ d: buildNotchedPath(navWidth, cx) }}
+              transition={{ type: "spring", stiffness: 380, damping: 32 }}
+            />
+          </svg>
+        )}
+
+        {/* Active circle — center sits on nav bar top edge (y = CR in SVG) */}
+        {tabW > 0 && (
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={idx}
+              initial={{ y: CR + 20, scale: 0.5, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: CR + 20, scale: 0.5, opacity: 0 }}
+              transition={{
+                y:       { type: "spring", stiffness: 700, damping: 18 },
+                scale:   { type: "spring", stiffness: 700, damping: 18 },
+                opacity: { duration: 0.15 },
+              }}
+              className="absolute z-10"
+              style={{ top: 0, left: cx - CR, width: CR * 2, height: CR * 2 }}
+            >
+              <Link
+                href={activeHref}
+                className="flex items-center justify-center rounded-full bg-brand-800 text-white shadow-lg shadow-brand-900/60 w-full h-full"
+              >
+                <ActiveIcon size={22} />
+              </Link>
+            </motion.div>
+          </AnimatePresence>
+        )}
+
+        {/* Nav items row — sits in the bottom NAV_H portion */}
+        <div className="absolute bottom-0 left-0 right-0 flex" style={{ height: NAV_H }}>
+          {NAV_ITEMS.map(({ href, label, Icon }, i) => {
+            const isActive = i === idx;
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`flex-1 flex flex-col items-center justify-start gap-1 text-[10px] font-medium transition-colors ${isActive ? "text-brand-400" : "text-gray-500 hover:text-gray-300"}`}
+                style={{ paddingTop: isActive ? CR + 6 : 16 }}
+              >
+                {!isActive && <Icon size={18} />}
+                {label}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
     </>
   );
 }

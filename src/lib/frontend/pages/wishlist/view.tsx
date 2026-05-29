@@ -49,8 +49,8 @@ export function WishlistView() {
                 onAction={isAuthenticated ? () => setShowAdd(true) : undefined}
               />
             }
-            renderCard={(game) => (
-              <GameCard key={game.id} game={game} onEdit={isAuthenticated ? setEditGame : undefined} onStatusChange={isAuthenticated ? handleStatusChange : undefined} onPriorityChange={isAuthenticated ? handlePriorityChange : undefined} showPriority showStatusBadge />
+            renderCard={(game, i) => (
+              <GameCard key={game.id} game={game} index={i} onEdit={isAuthenticated ? setEditGame : undefined} onStatusChange={isAuthenticated ? handleStatusChange : undefined} onPriorityChange={isAuthenticated ? handlePriorityChange : undefined} showPriority showStatusBadge />
             )}
             spacing="space-y-3" page={page} totalPages={totalPages} onPageChange={setPage}
           />

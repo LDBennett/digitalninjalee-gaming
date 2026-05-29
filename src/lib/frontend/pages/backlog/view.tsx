@@ -96,7 +96,7 @@ export function BacklogView() {
           />
         }
         renderCard={(game, i) => (
-          <GameCard key={game.id} game={game} rank={(page - 1) * 20 + i + 1} onEdit={isAuthenticated ? setEditGame : undefined} onStatusChange={isAuthenticated ? handleStatusChange : undefined} onPriorityChange={isAuthenticated ? handlePriorityChange : undefined} showPriority />
+          <GameCard key={game.id} game={game} index={i} rank={(page - 1) * 20 + i + 1} onEdit={isAuthenticated ? setEditGame : undefined} onStatusChange={isAuthenticated ? handleStatusChange : undefined} onPriorityChange={isAuthenticated ? handlePriorityChange : undefined} showPriority />
         )}
         page={page} totalPages={totalPages} onPageChange={setPage}
       />

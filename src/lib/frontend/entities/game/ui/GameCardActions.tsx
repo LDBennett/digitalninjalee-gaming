@@ -30,12 +30,14 @@ export const STATUS_ACTIONS: Record<GameStatus, StatusAction[]> = {
     { label: "Dropped",          status: "dropped",        color: "text-gray-400 hover:text-gray-300"   },
   ],
   interested: [
-    { label: "Bought It!",       status: "backlog",        color: "text-green-400 hover:text-green-300" },
+    { label: "Start Playing",    status: "playing",        color: "text-green-400 hover:text-green-300" },
+    { label: "Bought It!",       status: "backlog",        color: "text-brand-400 hover:text-brand-300" },
     { label: "Pre-Order",        status: "pre-ordered",    color: "text-yellow-400 hover:text-yellow-300"},
     { label: "Keep an Eye On",   status: "keep-an-eye-on", color: "text-gray-400 hover:text-gray-300"   },
   ],
   "pre-ordered": [
-    { label: "It Released!",     status: "backlog",        color: "text-green-400 hover:text-green-300" },
+    { label: "Start Playing",    status: "playing",        color: "text-green-400 hover:text-green-300" },
+    { label: "It Released!",     status: "backlog",        color: "text-brand-400 hover:text-brand-300" },
     { label: "Just Interested",  status: "interested",     color: "text-brand-400 hover:text-brand-300" },
     { label: "Keep an Eye On",   status: "keep-an-eye-on", color: "text-gray-400 hover:text-gray-300"   },
   ],

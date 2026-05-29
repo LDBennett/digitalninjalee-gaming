@@ -64,8 +64,8 @@ export function LibraryView() {
                 ? <EmptyState heading={tab === "all" ? "No games yet" : `No ${LIBRARY_TAB_LABELS[tab].toLowerCase()} games yet`} />
                 : <EmptyState heading={`No games found for "${searchQuery}"`} />
             }
-            renderCard={(game) => (
-              <GameCard key={game.id} game={game} onEdit={isAuthenticated ? setEditGame : undefined} onStatusChange={isAuthenticated ? handleStatusChange : undefined} showStatusBadge={tab === "all" || tab === "completed"} />
+            renderCard={(game, i) => (
+              <GameCard key={game.id} game={game} index={i} onEdit={isAuthenticated ? setEditGame : undefined} onStatusChange={isAuthenticated ? handleStatusChange : undefined} showStatusBadge={tab === "all" || tab === "completed"} />
             )}
             spacing="space-y-3" page={page} totalPages={totalPages} onPageChange={setPage}
           />

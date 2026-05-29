@@ -87,8 +87,8 @@ export const VALID_TRANSITIONS: Readonly<Record<GameStatus, ReadonlyArray<GameSt
   'dropped':        ['backlog'],
   'main-complete':  ['playing', 'ongoing', 'completed'],
   'ongoing':        ['completed', 'dropped'],
-  'interested':     ['backlog', 'pre-ordered', 'keep-an-eye-on'],
-  'pre-ordered':    ['backlog', 'interested', 'keep-an-eye-on'],
+  'interested':     ['playing', 'backlog', 'pre-ordered', 'keep-an-eye-on'],
+  'pre-ordered':    ['playing', 'backlog', 'interested', 'keep-an-eye-on'],
   'keep-an-eye-on': ['interested', 'pre-ordered'],
 };
 
