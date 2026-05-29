@@ -1,102 +1,124 @@
-import { Result, ok, err } from '@/src/lib/backend/shared/result';
-import { MoodState, MoodDto } from '@/src/lib/backend/backlog/domain/models/mood.types';
+import { Result, ok, err } from "@/src/lib/backend/shared/result";
+import {
+  MoodState,
+  MoodDto,
+} from "@/src/lib/backend/backlog/domain/models/mood.types";
 
 // ── Platform ─────────────────────────────────────────────────────────────────
 
-export const PLATFORMS = ['pc', 'xbox', 'playstation', 'switch', 'other'] as const;
-export type Platform = typeof PLATFORMS[number];
+export const PLATFORMS = [
+  "pc",
+  "xbox",
+  "playstation",
+  "switch",
+  "other",
+] as const;
+export type Platform = (typeof PLATFORMS)[number];
 
 export const PLATFORM_LABELS: Record<Platform, string> = {
-  pc:          'PC',
-  xbox:        'Xbox',
-  playstation: 'PlayStation',
-  switch:      'Switch',
-  other:       'Other',
+  pc: "PC",
+  xbox: "Xbox",
+  playstation: "PlayStation",
+  switch: "Switch",
+  other: "Other",
 };
 
 export function createPlatform(value: string): Result<Platform, string> {
   if (!PLATFORMS.includes(value as Platform)) {
-    return err(`Invalid platform: "${value}". Must be one of: ${PLATFORMS.join(', ')}`);
+    return err(
+      `Invalid platform: "${value}". Must be one of: ${PLATFORMS.join(", ")}`,
+    );
   }
   return ok(value as Platform);
 }
 
 // ── PriorityScore ─────────────────────────────────────────────────────────────
 
-export type PriorityScore = number & { readonly _brand: 'PriorityScore' };
+export type PriorityScore = number & { readonly _brand: "PriorityScore" };
 export const DEFAULT_PRIORITY_SCORE = 50 as PriorityScore;
 
-export function createPriorityScore(value: number): Result<PriorityScore, string> {
+export function createPriorityScore(
+  value: number,
+): Result<PriorityScore, string> {
   if (!Number.isInteger(value) || value < 1 || value > 100) {
-    return err(`PriorityScore must be an integer between 1 and 100, got: ${value}`);
+    return err(
+      `PriorityScore must be an integer between 1 and 100, got: ${value}`,
+    );
   }
   return ok(value as PriorityScore);
 }
 
-export function adjustPriorityScore(score: PriorityScore, delta: number): PriorityScore {
+export function adjustPriorityScore(
+  score: PriorityScore,
+  delta: number,
+): PriorityScore {
   return Math.min(100, Math.max(1, score + delta)) as PriorityScore;
 }
 
 // ── GameStatus ────────────────────────────────────────────────────────────────
 
 export const GAME_STATUSES = [
-  'backlog',
-  'playing',
-  'completed',
-  'dropped',
-  'main-complete',
-  'ongoing',
-  'interested',
-  'pre-ordered',
-  'keep-an-eye-on',
+  "backlog",
+  "playing",
+  "completed",
+  "dropped",
+  "main-complete",
+  "ongoing",
+  "interested",
+  "pre-ordered",
+  "keep-an-eye-on",
 ] as const;
 
-export type GameStatus = typeof GAME_STATUSES[number];
+export type GameStatus = (typeof GAME_STATUSES)[number];
 
 export const WISHLIST_STATUSES: ReadonlyArray<GameStatus> = [
-  'interested',
-  'pre-ordered',
-  'keep-an-eye-on',
+  "interested",
+  "pre-ordered",
+  "keep-an-eye-on",
 ];
 
 export const LIBRARY_STATUSES: ReadonlyArray<GameStatus> = [
-  'backlog',
-  'playing',
-  'completed',
-  'main-complete',
-  'ongoing',
-  'dropped',
+  "backlog",
+  "playing",
+  "completed",
+  "main-complete",
+  "ongoing",
+  "dropped",
 ];
 
 export const STATUS_LABELS: Record<GameStatus, string> = {
-  'backlog':        'Backlog',
-  'playing':        'Playing',
-  'completed':      '100% Completed',
-  'dropped':        'Dropped',
-  'main-complete':  'Complete',
-  'ongoing':        'Ongoing',
-  'interested':     'Interested',
-  'pre-ordered':    'Pre-Ordered',
-  'keep-an-eye-on': 'Keep an Eye On',
+  backlog: "Backlog",
+  playing: "Playing",
+  completed: "100% Completed",
+  dropped: "Dropped",
+  "main-complete": "Complete",
+  ongoing: "Ongoing",
+  interested: "Interested",
+  "pre-ordered": "Pre-Ordered",
+  "keep-an-eye-on": "Keep an Eye On",
 };
 
-export const VALID_TRANSITIONS: Readonly<Record<GameStatus, ReadonlyArray<GameStatus>>> = {
-  'backlog':        ['playing', 'dropped'],
-  'playing':        ['completed', 'main-complete', 'ongoing', 'backlog', 'dropped'],
-  'completed':      [],
-  'dropped':        ['backlog'],
-  'main-complete':  ['playing', 'ongoing', 'completed'],
-  'ongoing':        ['completed', 'dropped'],
-  'interested':     ['playing', 'backlog', 'pre-ordered', 'keep-an-eye-on'],
-  'pre-ordered':    ['playing', 'backlog', 'interested', 'keep-an-eye-on'],
-  'keep-an-eye-on': ['interested', 'pre-ordered'],
+export const VALID_TRANSITIONS: Readonly<
+  Record<GameStatus, ReadonlyArray<GameStatus>>
+> = {
+  backlog: ["playing", "dropped"],
+  playing: ["completed", "main-complete", "ongoing", "backlog", "dropped"],
+  completed: [],
+  dropped: ["backlog"],
+  "main-complete": ["playing", "ongoing", "completed"],
+  ongoing: ["completed", "dropped"],
+  interested: ["playing", "backlog", "pre-ordered", "keep-an-eye-on"],
+  "pre-ordered": ["playing", "backlog", "interested", "keep-an-eye-on"],
+  "keep-an-eye-on": ["interested", "pre-ordered"],
 };
 
-export type ReplayStatus = 'want-to-replay' | 'replaying' | null;
+export type ReplayStatus = "want-to-replay" | "replaying" | null;
 
 export function createGameStatus(value: string): Result<GameStatus, string> {
   if (!GAME_STATUSES.includes(value as GameStatus)) {
-    return err(`Invalid status: "${value}". Must be one of: ${GAME_STATUSES.join(', ')}`);
+    return err(
+      `Invalid status: "${value}". Must be one of: ${GAME_STATUSES.join(", ")}`,
+    );
   }
   return ok(value as GameStatus);
 }

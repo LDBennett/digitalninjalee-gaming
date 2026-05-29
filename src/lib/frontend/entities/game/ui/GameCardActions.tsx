@@ -1,49 +1,142 @@
 "use client";
 
-import { Info, ListChevronsDownUp, ListChevronsUpDown, NotebookPen } from "lucide-react";
+import {
+  Info,
+  ListChevronsDownUp,
+  ListChevronsUpDown,
+  NotebookPen,
+} from "lucide-react";
 import { GameStatus } from "@/src/lib/backend/backlog/domain/models";
 
 type StatusAction = { label: string; status: GameStatus; color: string };
 
 export const STATUS_ACTIONS: Record<GameStatus, StatusAction[]> = {
   backlog: [
-    { label: "Start Playing",    status: "playing",   color: "text-green-400 hover:text-green-300" },
+    {
+      label: "Start Playing",
+      status: "playing",
+      color: "text-green-400 hover:text-green-300",
+    },
   ],
   playing: [
-    { label: "Completed 100%",   status: "completed",      color: "text-blue-400 hover:text-blue-300"   },
-    { label: "Main Story Done",  status: "main-complete",  color: "text-teal-400 hover:text-teal-300"   },
-    { label: "Make Ongoing",     status: "ongoing",        color: "text-cyan-400 hover:text-cyan-300"   },
-    { label: "Return to Backlog",status: "backlog",        color: "text-brand-400 hover:text-brand-300" },
-    { label: "Drop",             status: "dropped",        color: "text-gray-400 hover:text-gray-300"   },
+    {
+      label: "Completed 100%",
+      status: "completed",
+      color: "text-blue-400 hover:text-blue-300",
+    },
+    {
+      label: "Main Story Done",
+      status: "main-complete",
+      color: "text-teal-400 hover:text-teal-300",
+    },
+    {
+      label: "Make Ongoing",
+      status: "ongoing",
+      color: "text-cyan-400 hover:text-cyan-300",
+    },
+    {
+      label: "Return to Backlog",
+      status: "backlog",
+      color: "text-brand-400 hover:text-brand-300",
+    },
+    {
+      label: "Drop",
+      status: "dropped",
+      color: "text-gray-400 hover:text-gray-300",
+    },
   ],
   completed: [],
   dropped: [
-    { label: "Return to Backlog",status: "backlog",        color: "text-brand-400 hover:text-brand-300" },
+    {
+      label: "Return to Backlog",
+      status: "backlog",
+      color: "text-brand-400 hover:text-brand-300",
+    },
   ],
   "main-complete": [
-    { label: "Continue Playing", status: "playing",        color: "text-green-400 hover:text-green-300" },
-    { label: "Make Ongoing",     status: "ongoing",        color: "text-cyan-400 hover:text-cyan-300"   },
-    { label: "Mark 100%",        status: "completed",      color: "text-blue-400 hover:text-blue-300"   },
+    {
+      label: "Continue Playing",
+      status: "playing",
+      color: "text-green-400 hover:text-green-300",
+    },
+    {
+      label: "Make Ongoing",
+      status: "ongoing",
+      color: "text-cyan-400 hover:text-cyan-300",
+    },
+    {
+      label: "Mark 100%",
+      status: "completed",
+      color: "text-blue-400 hover:text-blue-300",
+    },
   ],
   ongoing: [
-    { label: "Complete",         status: "completed",      color: "text-blue-400 hover:text-blue-300"   },
-    { label: "Dropped",          status: "dropped",        color: "text-gray-400 hover:text-gray-300"   },
+    {
+      label: "Complete",
+      status: "completed",
+      color: "text-blue-400 hover:text-blue-300",
+    },
+    {
+      label: "Dropped",
+      status: "dropped",
+      color: "text-gray-400 hover:text-gray-300",
+    },
   ],
   interested: [
-    { label: "Start Playing",    status: "playing",        color: "text-green-400 hover:text-green-300" },
-    { label: "Bought It!",       status: "backlog",        color: "text-brand-400 hover:text-brand-300" },
-    { label: "Pre-Order",        status: "pre-ordered",    color: "text-yellow-400 hover:text-yellow-300"},
-    { label: "Keep an Eye On",   status: "keep-an-eye-on", color: "text-gray-400 hover:text-gray-300"   },
+    {
+      label: "Start Playing",
+      status: "playing",
+      color: "text-green-400 hover:text-green-300",
+    },
+    {
+      label: "Bought It!",
+      status: "backlog",
+      color: "text-brand-400 hover:text-brand-300",
+    },
+    {
+      label: "Pre-Order",
+      status: "pre-ordered",
+      color: "text-yellow-400 hover:text-yellow-300",
+    },
+    {
+      label: "Keep an Eye On",
+      status: "keep-an-eye-on",
+      color: "text-gray-400 hover:text-gray-300",
+    },
   ],
   "pre-ordered": [
-    { label: "Start Playing",    status: "playing",        color: "text-green-400 hover:text-green-300" },
-    { label: "It Released!",     status: "backlog",        color: "text-brand-400 hover:text-brand-300" },
-    { label: "Just Interested",  status: "interested",     color: "text-brand-400 hover:text-brand-300" },
-    { label: "Keep an Eye On",   status: "keep-an-eye-on", color: "text-gray-400 hover:text-gray-300"   },
+    {
+      label: "Start Playing",
+      status: "playing",
+      color: "text-green-400 hover:text-green-300",
+    },
+    {
+      label: "It Released!",
+      status: "backlog",
+      color: "text-brand-400 hover:text-brand-300",
+    },
+    {
+      label: "Just Interested",
+      status: "interested",
+      color: "text-brand-400 hover:text-brand-300",
+    },
+    {
+      label: "Keep an Eye On",
+      status: "keep-an-eye-on",
+      color: "text-gray-400 hover:text-gray-300",
+    },
   ],
   "keep-an-eye-on": [
-    { label: "Now Interested",   status: "interested",     color: "text-brand-400 hover:text-brand-300" },
-    { label: "Pre-Order",        status: "pre-ordered",    color: "text-yellow-400 hover:text-yellow-300"},
+    {
+      label: "Now Interested",
+      status: "interested",
+      color: "text-brand-400 hover:text-brand-300",
+    },
+    {
+      label: "Pre-Order",
+      status: "pre-ordered",
+      color: "text-yellow-400 hover:text-yellow-300",
+    },
   ],
 };
 
@@ -92,7 +185,11 @@ export function GameCardActions({
           onClick={onToggleDesc}
           className="flex items-center gap-2 bg-gray-800/90 px-2 py-1 rounded text-white hover:text-gray-300 text-xs transition-colors"
         >
-          {showDesc ? <ListChevronsDownUp size={16} /> : <ListChevronsUpDown size={16} />}
+          {showDesc ? (
+            <ListChevronsDownUp size={16} />
+          ) : (
+            <ListChevronsUpDown size={16} />
+          )}
           Description
         </button>
       )}
@@ -123,7 +220,9 @@ export function GameCardActions({
                   }}
                   className="bg-gray-800 px-2 py-0.5 border border-brand-600 rounded focus:outline-none text-gray-300 text-xs cursor-pointer"
                 >
-                  <option value="" disabled>Select...</option>
+                  <option value="" disabled>
+                    Select...
+                  </option>
                   {actions.map((action) => (
                     <option key={action.status} value={action.status}>
                       {action.label}

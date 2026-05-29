@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { GameDto } from '@/src/lib/backend/backlog/domain/models';
-import { gameKeys } from '@/src/lib/backend/backlog/repository';
-import { useAuthFetch } from '@/src/lib/frontend/shared/auth/useAuthFetch';
-import { useAuthStore } from '@/src/lib/frontend/shared/auth/auth.store';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { GameDto } from "@/src/lib/backend/backlog/domain/models";
+import { gameKeys } from "@/src/lib/backend/backlog/repository";
+import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
+import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
 
 export function useGameQuery(status?: string) {
   const queryClient = useQueryClient();
@@ -15,7 +15,7 @@ export function useGameQuery(status?: string) {
   const { data: games = [], isPending: gamesLoading } = useQuery<GameDto[]>({
     queryKey,
     queryFn: () =>
-      fetch(status ? `/api/games?status=${status}` : '/api/games', {
+      fetch(status ? `/api/games?status=${status}` : "/api/games", {
         headers: authHeaders(),
       }).then((r) => r.json()),
     enabled: !authLoading && !!session,

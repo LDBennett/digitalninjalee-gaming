@@ -31,7 +31,11 @@ export function GameCardList({
         {games.map((game, i) => renderCard(game, i))}
       </div>
       {page !== undefined && totalPages !== undefined && onPageChange && (
-        <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       )}
     </>
   );

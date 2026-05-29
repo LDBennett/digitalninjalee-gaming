@@ -1,16 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { searchRawgGames } from '@/src/lib/backend/sync';
-import { requireAuth } from '@/src/lib/backend/backlog/infrastructure';
+import { NextRequest, NextResponse } from "next/server";
+import { searchRawgGames } from "@/src/lib/backend/sync";
+import { requireAuth } from "@/src/lib/backend/backlog/infrastructure";
 
 export async function GET(req: NextRequest) {
   const auth = await requireAuth(req);
   if (!auth.ok) return auth.response;
 
-  const query = new URL(req.url).searchParams.get('q') ?? '';
+  const query = new URL(req.url).searchParams.get("q") ?? "";
   if (query.trim().length < 2) return NextResponse.json([]);
 
   const apiKey = process.env.RAWG_API_KEY;
-  if (!apiKey) return NextResponse.json({ error: 'RAWG_API_KEY is not configured' }, { status: 500 });
+  if (!apiKey)
+    return NextResponse.json(
+      { error: "RAWG_API_KEY is not configured" },
+      { status: 500 },
+    );
 
   try {
     const games = await searchRawgGames(query, apiKey);

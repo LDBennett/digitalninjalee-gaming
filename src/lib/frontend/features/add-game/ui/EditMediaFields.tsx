@@ -21,7 +21,8 @@ export function EditMediaFields({
     <div className="space-y-3">
       <div>
         <label className="block mb-1 font-medium text-gray-400 text-xs">
-          Background Image URL <span className="ml-1 text-gray-600">— from RAWG</span>
+          Background Image URL{" "}
+          <span className="ml-1 text-gray-600">— from RAWG</span>
         </label>
         <input
           type="url"
@@ -45,7 +46,8 @@ export function EditMediaFields({
       </div>
       <div>
         <label className="block mb-1 font-medium text-gray-400 text-xs">
-          Description <span className="ml-1 text-gray-600">— from IGDB / RAWG</span>
+          Description{" "}
+          <span className="ml-1 text-gray-600">— from IGDB / RAWG</span>
         </label>
         <textarea
           value={gameDescription}

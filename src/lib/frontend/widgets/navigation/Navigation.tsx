@@ -5,27 +5,33 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthButton } from "@/src/lib/frontend/shared/auth/AuthButton";
-import { Gift, Sparkles, SquarePlay, ClipboardList, Library } from "lucide-react";
+import {
+  Gift,
+  Sparkles,
+  SquarePlay,
+  ClipboardList,
+  Library,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 type NavItem = { href: string; label: string; Icon: LucideIcon };
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/",         label: "Dashboard", Icon: Sparkles      },
-  { href: "/playing",  label: "Playing",   Icon: SquarePlay    },
-  { href: "/backlog",  label: "Backlog",   Icon: ClipboardList },
-  { href: "/library",  label: "Library",   Icon: Library       },
-  { href: "/wishlist", label: "Wishlist",  Icon: Gift          },
+  { href: "/", label: "Dashboard", Icon: Sparkles },
+  { href: "/playing", label: "Playing", Icon: SquarePlay },
+  { href: "/backlog", label: "Backlog", Icon: ClipboardList },
+  { href: "/library", label: "Library", Icon: Library },
+  { href: "/wishlist", label: "Wishlist", Icon: Gift },
 ];
 
 // ── Mobile nav geometry ───────────────────────────────────────────────────────
-const CR = 26;            // active circle radius (52px diameter)
-const NAV_H = 64;         // nav bar height
+const CR = 26; // active circle radius (52px diameter)
+const NAV_H = 64; // nav bar height
 const TOTAL_H = CR + NAV_H;
-const NY = CR;            // nav bar top Y in SVG coords — circle center sits here
-const NW = 30;            // notch half-width (CR + 4px gap each side)
-const ND = CR;            // notch depth (accommodates the lower half of the circle)
-const SW = 10;            // bezier shoulder for smooth curve-in
+const NY = CR; // nav bar top Y in SVG coords — circle center sits here
+const NW = 30; // notch half-width (CR + 4px gap each side)
+const ND = CR; // notch depth (accommodates the lower half of the circle)
+const SW = 10; // bezier shoulder for smooth curve-in
 const NAV_BG = "#030712"; // gray-950
 
 function buildNotchedPath(w: number, cx: number): string {
@@ -60,7 +66,9 @@ export function Navigation() {
     return () => ro.disconnect();
   }, []);
 
-  const activeIdx = NAV_ITEMS.findIndex(({ href }) => isActivePath(href, pathname));
+  const activeIdx = NAV_ITEMS.findIndex(({ href }) =>
+    isActivePath(href, pathname),
+  );
   const idx = activeIdx === -1 ? 0 : activeIdx;
   const tabW = navWidth > 0 ? navWidth / NAV_ITEMS.length : 0;
   const cx = (idx + 0.5) * tabW;
@@ -70,7 +78,9 @@ export function Navigation() {
     <>
       {/* Mobile top header */}
       <header className="md:hidden fixed top-0 right-0 left-0 z-40 flex items-center justify-between bg-gray-950 border-gray-800 border-b px-4 h-12">
-        <span className="font-bold text-white text-base tracking-tight">DigitalNinjaLee</span>
+        <span className="font-bold text-white text-base tracking-tight">
+          DigitalNinjaLee
+        </span>
         <AuthButton />
       </header>
 
@@ -79,9 +89,13 @@ export function Navigation() {
         <div className="mb-8">
           <div className="flex items-center gap-3">
             <AuthButton />
-            <span className="font-bold text-white text-lg tracking-tight">DigitalNinjaLee</span>
+            <span className="font-bold text-white text-lg tracking-tight">
+              DigitalNinjaLee
+            </span>
           </div>
-          <p className="flex items-center gap-1 mt-3 text-gray-500 text-sm text-center">Game Backlog Bunker</p>
+          <p className="flex items-center gap-1 mt-3 text-gray-500 text-sm text-center">
+            Game Backlog Bunker
+          </p>
         </div>
         <div className="flex-1 space-y-1">
           {NAV_ITEMS.map(({ href, label, Icon }) => {
@@ -96,7 +110,10 @@ export function Navigation() {
                   <motion.div
                     layoutId="desktop-pill"
                     className="absolute inset-0 rounded-lg bg-brand-900/50 border border-brand-800/50"
-                    style={{ boxShadow: "0 0 12px 0 rgba(var(--color-brand-800), 0.35)" }}
+                    style={{
+                      boxShadow:
+                        "0 0 12px 0 rgba(var(--color-brand-800), 0.35)",
+                    }}
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
@@ -107,7 +124,9 @@ export function Navigation() {
                 >
                   <Icon size={18} />
                 </motion.span>
-                <span className={`relative z-10 transition-colors ${active ? "text-brand-300" : "text-gray-400 group-hover:text-white"}`}>
+                <span
+                  className={`relative z-10 transition-colors ${active ? "text-brand-300" : "text-gray-400 group-hover:text-white"}`}
+                >
                   {label}
                 </span>
               </Link>
@@ -148,8 +167,8 @@ export function Navigation() {
               animate={{ y: 0, scale: 1, opacity: 1 }}
               exit={{ y: CR + 20, scale: 0.5, opacity: 0 }}
               transition={{
-                y:       { type: "spring", stiffness: 700, damping: 18 },
-                scale:   { type: "spring", stiffness: 700, damping: 18 },
+                y: { type: "spring", stiffness: 700, damping: 18 },
+                scale: { type: "spring", stiffness: 700, damping: 18 },
                 opacity: { duration: 0.15 },
               }}
               className="absolute z-10"
@@ -166,7 +185,10 @@ export function Navigation() {
         )}
 
         {/* Nav items row — sits in the bottom NAV_H portion */}
-        <div className="absolute bottom-0 left-0 right-0 flex" style={{ height: NAV_H }}>
+        <div
+          className="absolute bottom-0 left-0 right-0 flex"
+          style={{ height: NAV_H }}
+        >
           {NAV_ITEMS.map(({ href, label, Icon }, i) => {
             const isActive = i === idx;
             return (

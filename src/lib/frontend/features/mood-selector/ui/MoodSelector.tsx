@@ -9,10 +9,16 @@ interface MoodSelectorProps {
   onToggle: (id: string) => void;
 }
 
-export function MoodSelector({ moods, selectedIds, onToggle }: MoodSelectorProps) {
+export function MoodSelector({
+  moods,
+  selectedIds,
+  onToggle,
+}: MoodSelectorProps) {
   return (
     <div>
-      <label className="block mb-2 font-medium text-gray-400 text-xs">Mood Tags</label>
+      <label className="block mb-2 font-medium text-gray-400 text-xs">
+        Mood Tags
+      </label>
       <div className="flex flex-wrap gap-2">
         {moods.map((mood) => (
           <button

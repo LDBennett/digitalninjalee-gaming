@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { GameDto } from '@/src/lib/backend/backlog/domain/models';
-import { RawgResult } from '@/src/lib/frontend/features/add-game/types';
+import { useEffect } from "react";
+import { GameDto } from "@/src/lib/backend/backlog/domain/models";
+import { RawgResult } from "@/src/lib/frontend/features/add-game/types";
 
 interface UseRawgSearchParams {
   title: string;
@@ -30,7 +30,10 @@ export function useRawgSearch({
     const timer = setTimeout(async () => {
       setSearchLoading(true);
       try {
-        const res = await fetch(`/api/rawg?q=${encodeURIComponent(title.trim())}`, { headers: authHeaders() });
+        const res = await fetch(
+          `/api/rawg?q=${encodeURIComponent(title.trim())}`,
+          { headers: authHeaders() },
+        );
         const data = await res.json();
         setRawgResults(Array.isArray(data) ? data : []);
         setShowDropdown(true);

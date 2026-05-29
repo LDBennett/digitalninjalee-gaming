@@ -1,13 +1,23 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { GameRepository, GameFilter, StatusCounts } from '@/src/lib/backend/backlog/repository/game.repo';
-import { GameState } from '@/src/lib/backend/backlog/domain/models/game.types';
-import { Result, ok, err } from '@/src/lib/backend/shared/result';
-import { gameRowToDomain, gameStateToRow, gameMoodJunctionRows } from '@/src/lib/backend/backlog/infrastructure/game.mapper';
-import { GameRowWithMoods } from '@/src/lib/backend/backlog/infrastructure/db.types';
+import { SupabaseClient } from "@supabase/supabase-js";
+import {
+  GameRepository,
+  GameFilter,
+  StatusCounts,
+} from "@/src/lib/backend/backlog/repository/game.repo";
+import { GameState } from "@/src/lib/backend/backlog/domain/models/game.types";
+import { Result, ok, err } from "@/src/lib/backend/shared/result";
+import {
+  gameRowToDomain,
+  gameStateToRow,
+  gameMoodJunctionRows,
+} from "@/src/lib/backend/backlog/infrastructure/game.mapper";
+import { GameRowWithMoods } from "@/src/lib/backend/backlog/infrastructure/db.types";
 
-const GAME_SELECT = '*, game_moods ( moods (*) )';
+const GAME_SELECT = "*, game_moods ( moods (*) )";
 
-export function createSupabaseGameRepository(client: SupabaseClient): GameRepository {
+export function createSupabaseGameRepository(
+  client: SupabaseClient,
+): GameRepository {
   return {
     async findAll(filter?: GameFilter): Promise<Result<GameState[], Error>> {
       const PAGE_SIZE = 1000;
@@ -16,16 +26,16 @@ export function createSupabaseGameRepository(client: SupabaseClient): GameReposi
 
       while (true) {
         let query = client
-          .from('games')
+          .from("games")
           .select(GAME_SELECT)
-          .order('priority_score', { ascending: false })
+          .order("priority_score", { ascending: false })
           .range(from, from + PAGE_SIZE - 1);
 
         if (filter?.status) {
           if (Array.isArray(filter.status)) {
-            query = query.in('status', filter.status);
+            query = query.in("status", filter.status);
           } else {
-            query = query.eq('status', filter.status);
+            query = query.eq("status", filter.status);
           }
         }
 
@@ -42,9 +52,9 @@ export function createSupabaseGameRepository(client: SupabaseClient): GameReposi
 
     async findById(id: string): Promise<Result<GameState, Error>> {
       const { data, error } = await client
-        .from('games')
+        .from("games")
         .select(GAME_SELECT)
-        .eq('id', id)
+        .eq("id", id)
         .single();
 
       if (error) return err(new Error(error.message));
@@ -58,8 +68,8 @@ export function createSupabaseGameRepository(client: SupabaseClient): GameReposi
 
       while (true) {
         const { data, error } = await client
-          .from('games')
-          .select('status')
+          .from("games")
+          .select("status")
           .range(from, from + PAGE_SIZE - 1);
 
         if (error) return err(new Error(error.message));
@@ -77,12 +87,14 @@ export function createSupabaseGameRepository(client: SupabaseClient): GameReposi
 
     async save(game: GameState): Promise<Result<void, Error>> {
       const row = gameStateToRow(game);
-      const { error: gameError } = await client.from('games').insert(row);
+      const { error: gameError } = await client.from("games").insert(row);
       if (gameError) return err(new Error(gameError.message));
 
       const junctionRows = gameMoodJunctionRows(game);
       if (junctionRows.length > 0) {
-        const { error: moodError } = await client.from('game_moods').insert(junctionRows);
+        const { error: moodError } = await client
+          .from("game_moods")
+          .insert(junctionRows);
         if (moodError) return err(new Error(moodError.message));
       }
 
@@ -91,14 +103,19 @@ export function createSupabaseGameRepository(client: SupabaseClient): GameReposi
 
     async update(game: GameState): Promise<Result<void, Error>> {
       const { id, ...fields } = gameStateToRow(game);
-      const { error: gameError } = await client.from('games').update(fields).eq('id', id);
+      const { error: gameError } = await client
+        .from("games")
+        .update(fields)
+        .eq("id", id);
       if (gameError) return err(new Error(gameError.message));
 
-      await client.from('game_moods').delete().eq('game_id', id);
+      await client.from("game_moods").delete().eq("game_id", id);
 
       const junctionRows = gameMoodJunctionRows(game);
       if (junctionRows.length > 0) {
-        const { error: moodError } = await client.from('game_moods').insert(junctionRows);
+        const { error: moodError } = await client
+          .from("game_moods")
+          .insert(junctionRows);
         if (moodError) return err(new Error(moodError.message));
       }
 
@@ -106,7 +123,7 @@ export function createSupabaseGameRepository(client: SupabaseClient): GameReposi
     },
 
     async delete(id: string): Promise<Result<void, Error>> {
-      const { error } = await client.from('games').delete().eq('id', id);
+      const { error } = await client.from("games").delete().eq("id", id);
       if (error) return err(new Error(error.message));
       return ok(undefined);
     },

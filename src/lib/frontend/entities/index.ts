@@ -1,2 +1,2 @@
-export * from './game';
-export * from './mood';
+export * from "./game";
+export * from "./mood";

@@ -29,11 +29,14 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
 
   const { mutate: executePick, isPending: loading } = useMutation({
     mutationFn: async (moods: string[]) => {
-      const status = selectedPool === "playing" ? "playing,ongoing" : selectedPool;
+      const status =
+        selectedPool === "playing" ? "playing,ongoing" : selectedPool;
       const params = new URLSearchParams({ status });
       if (moods.length) params.set("moods", moods.join(","));
       await new Promise((r) => setTimeout(r, 900));
-      const res = await fetch(`/api/games/random?${params}`, { headers: authHeaders() });
+      const res = await fetch(`/api/games/random?${params}`, {
+        headers: authHeaders(),
+      });
       return res.json() as Promise<{ game?: GameDto; message?: string }>;
     },
     onSuccess: (data) => {
@@ -50,7 +53,9 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
   };
 
   const toggleMood = (name: string) => {
-    setSelectedMoods((prev) => prev.includes(name) ? prev.filter((m) => m !== name) : [...prev, name]);
+    setSelectedMoods((prev) =>
+      prev.includes(name) ? prev.filter((m) => m !== name) : [...prev, name],
+    );
     setPickedGame(null);
     setNoGamesMsg("");
   };
@@ -76,19 +81,28 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
       <div className="bg-gray-900 shadow-2xl border border-gray-700 rounded-2xl w-full max-w-sm">
         <div className="flex justify-between items-center p-5 border-gray-800 border-b">
           <h2 className="font-semibold text-white text-base">🎲 Pick a Game</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-white text-2xl leading-none transition-colors">&times;</button>
+          <button
+            onClick={handleClose}
+            className="text-gray-400 hover:text-white text-2xl leading-none transition-colors"
+          >
+            &times;
+          </button>
         </div>
 
         <div className="space-y-5 p-5">
           <div>
-            <p className="mb-3 font-medium text-gray-500 text-xs uppercase tracking-wide">Pick from</p>
+            <p className="mb-3 font-medium text-gray-500 text-xs uppercase tracking-wide">
+              Pick from
+            </p>
             <div className="flex gap-2">
               {POOLS.map(({ value, label }) => (
                 <button
                   key={value}
                   onClick={() => selectPool(value)}
                   className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-150 ${
-                    selectedPool === value ? "bg-brand-700 text-white" : "bg-gray-800 text-gray-400 hover:text-gray-200"
+                    selectedPool === value
+                      ? "bg-brand-700 text-white"
+                      : "bg-gray-800 text-gray-400 hover:text-gray-200"
                   }`}
                 >
                   {label}
@@ -98,14 +112,18 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
           </div>
 
           <div>
-            <p className="mb-3 font-medium text-gray-500 text-xs uppercase tracking-wide">Filter by mood (optional)</p>
+            <p className="mb-3 font-medium text-gray-500 text-xs uppercase tracking-wide">
+              Filter by mood (optional)
+            </p>
             <div className="flex flex-wrap gap-2">
               {moods.map((mood) => (
                 <button
                   key={mood.id}
                   onClick={() => toggleMood(mood.name)}
                   className={`transition-all duration-150 ${
-                    selectedMoods.includes(mood.name) ? "ring-2 ring-white/40 scale-105" : "opacity-40 hover:opacity-70"
+                    selectedMoods.includes(mood.name)
+                      ? "ring-2 ring-white/40 scale-105"
+                      : "opacity-40 hover:opacity-70"
                   }`}
                 >
                   <MoodBadge mood={mood.name} />
@@ -123,12 +141,20 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
               <span className="flex justify-center items-center gap-2">
                 <span className="inline-block animate-spin">🎲</span> Picking…
               </span>
-            ) : "Pick For Me"}
+            ) : (
+              "Pick For Me"
+            )}
           </button>
 
-          {noGamesMsg && <p className="py-2 text-gray-500 text-sm text-center">{noGamesMsg}</p>}
+          {noGamesMsg && (
+            <p className="py-2 text-gray-500 text-sm text-center">
+              {noGamesMsg}
+            </p>
+          )}
 
-          {pickedGame && <RandomPickResult game={pickedGame} onPickAgain={pick} />}
+          {pickedGame && (
+            <RandomPickResult game={pickedGame} onPickAgain={pick} />
+          )}
         </div>
       </div>
     </div>

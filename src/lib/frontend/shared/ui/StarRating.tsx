@@ -21,17 +21,26 @@ export function StarRating({ value, onChange }: StarRatingProps) {
     return isLeftHalf ? star - 0.5 : star;
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>, star: number) => {
+  const handleMouseMove = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    star: number,
+  ) => {
     setHovered(resolveRating(e, star));
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>, star: number) => {
+  const handleClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    star: number,
+  ) => {
     const newRating = resolveRating(e, star);
     onChange(newRating === value ? null : newRating);
   };
 
   return (
-    <div className="flex items-center gap-1.5" onMouseLeave={() => setHovered(null)}>
+    <div
+      className="flex items-center gap-1.5"
+      onMouseLeave={() => setHovered(null)}
+    >
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((star) => {
           const filled = display >= star;

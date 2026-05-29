@@ -1,4 +1,4 @@
-import { Result, ok, err } from '@/src/lib/backend/shared/result';
+import { Result, ok, err } from "@/src/lib/backend/shared/result";
 import {
   GameState,
   GameStatus,
@@ -7,8 +7,8 @@ import {
   ReplayStatus,
   canTransitionTo,
   adjustPriorityScore,
-} from '@/src/lib/backend/backlog/domain/models/game.types';
-import { MoodState } from '@/src/lib/backend/backlog/domain/models/mood.types';
+} from "@/src/lib/backend/backlog/domain/models/game.types";
+import { MoodState } from "@/src/lib/backend/backlog/domain/models/mood.types";
 
 export interface NewGameProps {
   title: string;
@@ -26,7 +26,7 @@ export interface NewGameProps {
 }
 
 export function newGame(props: NewGameProps): Result<GameState, string> {
-  if (!props.title.trim()) return err('Game title cannot be empty');
+  if (!props.title.trim()) return err("Game title cannot be empty");
   return ok({
     id: props.id ?? crypto.randomUUID(),
     title: props.title.trim(),
@@ -45,18 +45,24 @@ export function newGame(props: NewGameProps): Result<GameState, string> {
   });
 }
 
-export function setReplayStatus(game: GameState, replayStatus: ReplayStatus): GameState {
+export function setReplayStatus(
+  game: GameState,
+  replayStatus: ReplayStatus,
+): GameState {
   return { ...game, replayStatus };
 }
 
-export function transitionGame(game: GameState, nextStatus: GameStatus): Result<GameState, string> {
+export function transitionGame(
+  game: GameState,
+  nextStatus: GameStatus,
+): Result<GameState, string> {
   if (!canTransitionTo(game.status, nextStatus)) {
     return err(`Cannot transition from "${game.status}" to "${nextStatus}"`);
   }
   return ok({
     ...game,
     status: nextStatus,
-    lastPlayedAt: nextStatus === 'playing' ? new Date() : game.lastPlayedAt,
+    lastPlayedAt: nextStatus === "playing" ? new Date() : game.lastPlayedAt,
   });
 }
 
@@ -70,35 +76,45 @@ export function updateGameDetails(
   personalNote?: string | null,
   rating?: number | null,
 ): Result<GameState, string> {
-  if (!title.trim()) return err('Game title cannot be empty');
+  if (!title.trim()) return err("Game title cannot be empty");
   return ok({
     ...game,
     title: title.trim(),
     platform,
     backgroundUrl,
-    ...(coverArtUrl !== undefined    && { coverArtUrl }),
+    ...(coverArtUrl !== undefined && { coverArtUrl }),
     ...(gameDescription !== undefined && { gameDescription }),
-    ...(personalNote !== undefined    && { personalNote }),
-    ...(rating !== undefined          && { rating }),
+    ...(personalNote !== undefined && { personalNote }),
+    ...(rating !== undefined && { rating }),
   });
 }
 
 export function adjustPriority(game: GameState, delta: number): GameState {
-  return { ...game, priorityScore: adjustPriorityScore(game.priorityScore, delta) };
+  return {
+    ...game,
+    priorityScore: adjustPriorityScore(game.priorityScore, delta),
+  };
 }
 
-export function replaceMoods(game: GameState, moods: ReadonlyArray<MoodState>): GameState {
+export function replaceMoods(
+  game: GameState,
+  moods: ReadonlyArray<MoodState>,
+): GameState {
   return { ...game, moods: [...moods] };
 }
 
-export function selectRandomGame(games: ReadonlyArray<GameState>): GameState | null {
+export function selectRandomGame(
+  games: ReadonlyArray<GameState>,
+): GameState | null {
   if (games.length === 0) return null;
   return games[Math.floor(Math.random() * games.length)];
 }
 
-export function buildStatusPayload(status: GameStatus): Record<string, unknown> {
+export function buildStatusPayload(
+  status: GameStatus,
+): Record<string, unknown> {
   const payload: Record<string, unknown> = { status };
-  if (status === 'completed' || status === 'main-complete') {
+  if (status === "completed" || status === "main-complete") {
     payload.last_played_at = new Date().toISOString();
   }
   return payload;

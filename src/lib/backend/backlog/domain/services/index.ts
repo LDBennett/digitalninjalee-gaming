@@ -1,5 +1,5 @@
-export type { NewGameProps } from './game.service';
-export type { GameStats } from './game.queries';
+export type { NewGameProps } from "./game.service";
+export type { GameStats } from "./game.queries";
 export {
   newGame,
   setReplayStatus,
@@ -9,7 +9,7 @@ export {
   replaceMoods,
   selectRandomGame,
   buildStatusPayload,
-} from './game.service';
+} from "./game.service";
 export {
   deriveStats,
   getTopPriority,
@@ -18,4 +18,4 @@ export {
   getRecentlyPlayed,
   filterByMood,
   filterByTitle,
-} from './game.queries';
+} from "./game.queries";

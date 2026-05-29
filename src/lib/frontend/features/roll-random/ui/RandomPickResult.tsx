@@ -22,7 +22,7 @@ export function RandomPickResult({ game, onPickAgain }: Props) {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="flex justify-center items-center bg-gradient-to-br from-brand-900 to-brand-900 w-full h-full">
+            <div className="flex justify-center items-center bg-linear-to-br from-brand-900 to-brand-900 w-full h-full">
               <span className="font-bold text-white/30 text-xl">
                 {game.title.charAt(0).toUpperCase()}
               </span>
@@ -30,7 +30,9 @@ export function RandomPickResult({ game, onPickAgain }: Props) {
           )}
         </div>
         <div className="min-w-0">
-          <p className="mb-0.5 font-medium text-brand-400 text-xs">Let's Play:</p>
+          <p className="mb-0.5 font-medium text-brand-400 text-xs">
+            Let's Play:
+          </p>
           <h3 className="font-bold text-white leading-snug">{game.title}</h3>
           <div className="mt-1.5">
             <PlatformBadge platform={game.platform} />
@@ -39,7 +41,9 @@ export function RandomPickResult({ game, onPickAgain }: Props) {
       </div>
       {gameMoods.length > 0 && (
         <div className="flex flex-wrap gap-1">
-          {gameMoods.map((mood) => <MoodBadge key={mood.id} mood={mood.name} />)}
+          {gameMoods.map((mood) => (
+            <MoodBadge key={mood.id} mood={mood.name} />
+          ))}
         </div>
       )}
       <button

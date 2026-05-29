@@ -1,7 +1,11 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
-import { GameDto, GameStatus, MoodDto } from "@/src/lib/backend/backlog/domain/models";
+import {
+  GameDto,
+  GameStatus,
+  MoodDto,
+} from "@/src/lib/backend/backlog/domain/models";
 import { AddGamePayload } from "@/src/lib/frontend/features/add-game/types";
 import { useAddGameForm } from "@/src/lib/frontend/features/add-game/hooks/useAddGameForm";
 import { GameTitleSearch } from "./GameTitleSearch";
@@ -27,11 +31,21 @@ export function AddGameModal({
   moods,
   defaultStatus = "backlog",
 }: AddGameModalProps) {
-  const form = useAddGameForm({ editGame, isOpen, defaultStatus, onSave, onClose });
+  const form = useAddGameForm({
+    editGame,
+    isOpen,
+    defaultStatus,
+    onSave,
+    onClose,
+  });
 
   if (!isOpen) return null;
 
-  const coverImage = form.backgroundUrl || form.coverArtUrl || editGame?.background_url || editGame?.cover_art_url;
+  const coverImage =
+    form.backgroundUrl ||
+    form.coverArtUrl ||
+    editGame?.background_url ||
+    editGame?.cover_art_url;
 
   return (
     <div className="z-50 fixed inset-0 flex justify-center items-center bg-black/80 backdrop-blur-sm p-4">
@@ -40,11 +54,20 @@ export function AddGameModal({
           <>
             <div
               className="absolute inset-0 scale-110"
-              style={{ backgroundImage: `url(${coverImage})`, backgroundSize: "cover", backgroundPosition: "center top", filter: "blur(6px)", opacity: 0.6 }}
+              style={{
+                backgroundImage: `url(${coverImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center top",
+                filter: "blur(6px)",
+                opacity: 0.6,
+              }}
             />
             <div
               className="absolute inset-0"
-              style={{ background: "linear-gradient(to bottom, rgba(17,24,39,0.35) 0%, rgba(17,24,39,0.88) 55%, rgba(17,24,39,0.96) 100%)" }}
+              style={{
+                background:
+                  "linear-gradient(to bottom, rgba(17,24,39,0.35) 0%, rgba(17,24,39,0.88) 55%, rgba(17,24,39,0.96) 100%)",
+              }}
             />
           </>
         )}
@@ -54,13 +77,22 @@ export function AddGameModal({
             <h2 className="font-semibold text-white text-base">
               {editGame ? "Edit Game" : "Add Game"}
             </h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl leading-none transition-colors">&times;</button>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-white text-2xl leading-none transition-colors"
+            >
+              &times;
+            </button>
           </div>
 
           <form onSubmit={form.handleSubmit} className="space-y-4 p-5">
             <GameTitleSearch
               value={form.title}
-              onChange={(val) => { form.setTitle(val); form.setRawgId(null); form.setBackgroundUrl(""); }}
+              onChange={(val) => {
+                form.setTitle(val);
+                form.setRawgId(null);
+                form.setBackgroundUrl("");
+              }}
               onSelect={form.handleRawgSelect}
               results={form.rawgResults}
               showDropdown={form.showDropdown}
@@ -108,7 +140,10 @@ export function AddGameModal({
               {editGame && onDelete && (
                 <button
                   type="button"
-                  onClick={async () => { await onDelete(editGame.id); onClose(); }}
+                  onClick={async () => {
+                    await onDelete(editGame.id);
+                    onClose();
+                  }}
                   className="flex items-center gap-1 bg-red-400 hover:bg-red-900/40 px-3 py-2 border border-gray-700 hover:border-red-800 rounded-lg font-medium text-white hover:text-red-400 text-sm transition-colors"
                 >
                   <Trash2 /> Delete

@@ -3,7 +3,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
-import { useMoods, useGameActions, useGameQuery, useGameFilters, useGamePriority } from "@/src/lib/frontend/features";
+import {
+  useMoods,
+  useGameActions,
+  useGameQuery,
+  useGameFilters,
+  useGamePriority,
+} from "@/src/lib/frontend/features";
 import { useClientPagination } from "@/src/lib/frontend/shared/hooks/useClientPagination";
 
 export function useBacklog() {
@@ -23,27 +29,49 @@ export function useBacklog() {
   );
   const games = useMemo(() => {
     const base = allGames.filter(
-      (g) => g.status === 'backlog' || g.replay_status === 'want-to-replay',
+      (g) => g.status === "backlog" || g.replay_status === "want-to-replay",
     );
-    return replayOnly ? base.filter((g) => g.replay_status === 'want-to-replay') : base;
+    return replayOnly
+      ? base.filter((g) => g.replay_status === "want-to-replay")
+      : base;
   }, [allGames, replayOnly]);
 
-  const { searchQuery, setSearchQuery, moodFilter, setMoodFilter,
-          sortBy, setSortBy, platformFilter, setPlatformFilter, filtered } =
-    useGameFilters(games);
-  const { page, setPage, totalPages, paginated } = useClientPagination(filtered);
+  const {
+    searchQuery,
+    setSearchQuery,
+    moodFilter,
+    setMoodFilter,
+    sortBy,
+    setSortBy,
+    platformFilter,
+    setPlatformFilter,
+    filtered,
+  } = useGameFilters(games);
+  const { page, setPage, totalPages, paginated } =
+    useClientPagination(filtered);
   const { handlePriorityChange } = useGamePriority(queryKey);
 
-  useEffect(() => { setPage(1); }, [moodFilter, setPage]);
-  useEffect(() => { setPage(1); }, [searchQuery, setPage]);
-  useEffect(() => { setPage(1); }, [sortBy, setPage]);
-  useEffect(() => { setPage(1); }, [platformFilter, setPage]);
+  useEffect(() => {
+    setPage(1);
+  }, [moodFilter, setPage]);
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, setPage]);
+  useEffect(() => {
+    setPage(1);
+  }, [sortBy, setPage]);
+  useEffect(() => {
+    setPage(1);
+  }, [platformFilter, setPage]);
 
   const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
     useGameActions({
       onAddSuccess: invalidate,
       onStatusSuccess: invalidate,
-      onEditSuccess: () => { setEditGame(null); invalidate(); },
+      onEditSuccess: () => {
+        setEditGame(null);
+        invalidate();
+      },
       onDeleteSuccess: invalidate,
     });
 
@@ -83,9 +111,12 @@ export function useBacklog() {
     handleEdit: handleEditSubmit,
     handleDelete: handleDeleteConfirm,
     handleStatusChange,
-    sortBy, setSortBy,
-    platformFilter, setPlatformFilter,
+    sortBy,
+    setSortBy,
+    platformFilter,
+    setPlatformFilter,
     wantToReplayCount,
-    handlePriorityChange: (id: string, delta: number) => handlePriorityChange(id, delta, games),
+    handlePriorityChange: (id: string, delta: number) =>
+      handlePriorityChange(id, delta, games),
   };
 }

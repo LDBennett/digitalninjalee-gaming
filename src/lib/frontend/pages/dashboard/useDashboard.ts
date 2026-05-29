@@ -2,8 +2,16 @@
 
 import { useState, useMemo } from "react";
 import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
-import { useMoods, useGameActions, useGameQuery } from "@/src/lib/frontend/features";
-import { getTopPriority, getPlayingGames, deriveStats } from "@/src/lib/backend/backlog/domain/services";
+import {
+  useMoods,
+  useGameActions,
+  useGameQuery,
+} from "@/src/lib/frontend/features";
+import {
+  getTopPriority,
+  getPlayingGames,
+  deriveStats,
+} from "@/src/lib/backend/backlog/domain/services";
 
 export function useDashboard() {
   const { session, authLoading } = useAuthStore();
@@ -25,8 +33,17 @@ export function useDashboard() {
   const playingGames = getPlayingGames(allGames);
 
   return {
-    stats, topPriority, playingGames, moods,
-    showAdd, setShowAdd, showPicker, setShowPicker,
-    loading: authLoading, isAuthenticated, handleAdd, handleStatusChange,
+    stats,
+    topPriority,
+    playingGames,
+    moods,
+    showAdd,
+    setShowAdd,
+    showPicker,
+    setShowPicker,
+    loading: authLoading,
+    isAuthenticated,
+    handleAdd,
+    handleStatusChange,
   };
 }

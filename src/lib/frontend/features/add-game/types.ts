@@ -1,4 +1,8 @@
-import { Platform, GameStatus, ReplayStatus } from "@/src/lib/backend/backlog/domain/models";
+import {
+  Platform,
+  GameStatus,
+  ReplayStatus,
+} from "@/src/lib/backend/backlog/domain/models";
 
 export interface AddGamePayload {
   title: string;

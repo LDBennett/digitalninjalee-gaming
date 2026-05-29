@@ -27,21 +27,28 @@ export function deriveStats(games: GameDto[]): GameStats {
     ongoing: counts["ongoing"] ?? 0,
     completed: (counts["completed"] ?? 0) + (counts["main-complete"] ?? 0),
     completedFull: counts["completed"] ?? 0,
-    wishlist: (counts["interested"] ?? 0) + (counts["pre-ordered"] ?? 0) + (counts["keep-an-eye-on"] ?? 0),
+    wishlist:
+      (counts["interested"] ?? 0) +
+      (counts["pre-ordered"] ?? 0) +
+      (counts["keep-an-eye-on"] ?? 0),
     total: games.length,
   };
 }
 
 export function getTopPriority(games: GameDto[], limit = 20): GameDto[] {
   return games
-    .filter((g) => g.status === "backlog" || g.replay_status === "want-to-replay")
+    .filter(
+      (g) => g.status === "backlog" || g.replay_status === "want-to-replay",
+    )
     .sort((a, b) => b.priority_score - a.priority_score)
     .slice(0, limit);
 }
 
 export function getBacklogGames(games: GameDto[], limit = 20): GameDto[] {
   return games
-    .filter((g) => g.status === "backlog" || g.replay_status === "want-to-replay")
+    .filter(
+      (g) => g.status === "backlog" || g.replay_status === "want-to-replay",
+    )
     .sort((a, b) => b.priority_score - a.priority_score)
     .slice(0, limit);
 }

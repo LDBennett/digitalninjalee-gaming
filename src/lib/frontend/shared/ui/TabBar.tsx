@@ -20,12 +20,22 @@ export function TabBar<T extends string>({
   className = "",
 }: TabBarProps<T>) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const drag = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
+  const drag = useRef({
+    active: false,
+    startX: 0,
+    scrollLeft: 0,
+    moved: false,
+  });
 
   const onMouseDown = (e: React.MouseEvent) => {
     const el = scrollRef.current;
     if (!el) return;
-    drag.current = { active: true, startX: e.pageX - el.offsetLeft, scrollLeft: el.scrollLeft, moved: false };
+    drag.current = {
+      active: true,
+      startX: e.pageX - el.offsetLeft,
+      scrollLeft: el.scrollLeft,
+      moved: false,
+    };
   };
 
   const onMouseMove = (e: React.MouseEvent) => {
@@ -37,7 +47,9 @@ export function TabBar<T extends string>({
     el.scrollLeft = drag.current.scrollLeft - delta;
   };
 
-  const stopDrag = () => { drag.current.active = false; };
+  const stopDrag = () => {
+    drag.current.active = false;
+  };
 
   return (
     <div className={`overflow-hidden ${className}`}>
@@ -56,7 +68,10 @@ export function TabBar<T extends string>({
             <button
               key={t}
               onClick={(e) => {
-                if (drag.current.moved) { e.preventDefault(); return; }
+                if (drag.current.moved) {
+                  e.preventDefault();
+                  return;
+                }
                 onChange(t);
               }}
               className={`flex flex-col items-center gap-1 px-5 py-3 -mb-px shrink-0 whitespace-nowrap text-sm font-medium border-b-2 transition-colors ${

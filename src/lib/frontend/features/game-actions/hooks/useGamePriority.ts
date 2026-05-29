@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useMutation, useQueryClient, QueryKey } from '@tanstack/react-query';
-import { GameDto } from '@/src/lib/backend/backlog/domain/models';
-import { useAuthFetch } from '@/src/lib/frontend/shared/auth/useAuthFetch';
+import { useMutation, useQueryClient, QueryKey } from "@tanstack/react-query";
+import { GameDto } from "@/src/lib/backend/backlog/domain/models";
+import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
 
 export function useGamePriority(queryKey: QueryKey) {
   const { authJsonFetch } = useAuthFetch();
@@ -10,7 +10,7 @@ export function useGamePriority(queryKey: QueryKey) {
 
   const mutation = useMutation({
     mutationFn: ({ id, newScore }: { id: string; newScore: number }) =>
-      authJsonFetch(`/api/games/${id}`, 'PUT', { priority_score: newScore }),
+      authJsonFetch(`/api/games/${id}`, "PUT", { priority_score: newScore }),
     onMutate: ({ id, newScore }) => {
       queryClient.setQueryData<GameDto[]>(queryKey, (prev = []) =>
         prev
@@ -20,7 +20,11 @@ export function useGamePriority(queryKey: QueryKey) {
     },
   });
 
-  const handlePriorityChange = (id: string, delta: number, games: GameDto[]) => {
+  const handlePriorityChange = (
+    id: string,
+    delta: number,
+    games: GameDto[],
+  ) => {
     const game = games.find((g) => g.id === id);
     if (!game) return;
     const newScore = Math.min(100, Math.max(1, game.priority_score + delta));

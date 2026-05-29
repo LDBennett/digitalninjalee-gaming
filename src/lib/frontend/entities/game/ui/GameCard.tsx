@@ -48,12 +48,12 @@ export function GameCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.98 }}
+      initial={{ opacity: 0, y: 30, scale: 0.98 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{
         duration: 0.25,
-        ease: "easeIn",
+        ease: "circOut",
         delay: Math.min(index, 5) * 0.03,
       }}
       className="relative bg-gray-900 border border-gray-800 hover:border-brand-800/70 rounded-xl min-h-35 overflow-hidden transition-all duration-200"

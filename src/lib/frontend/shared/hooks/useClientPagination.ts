@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 export function useClientPagination<T>(items: T[], pageSize = 20) {
   const [page, setPage] = useState(1);

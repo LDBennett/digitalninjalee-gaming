@@ -1,1 +1,1 @@
-export { MoodBadge, getMoodLabel } from './ui/MoodBadge';
+export { MoodBadge, getMoodLabel } from "./ui/MoodBadge";

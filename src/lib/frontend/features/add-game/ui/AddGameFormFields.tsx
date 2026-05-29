@@ -13,7 +13,10 @@ import {
   VALID_TRANSITIONS,
 } from "@/src/lib/backend/backlog/domain/models";
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
-import { PRIORITY_TIERS, scoreToTier } from "@/src/lib/backend/backlog/domain/models";
+import {
+  PRIORITY_TIERS,
+  scoreToTier,
+} from "@/src/lib/backend/backlog/domain/models";
 import { StarRating } from "@/src/lib/frontend/shared/ui/StarRating";
 import { MoodSelector } from "@/src/lib/frontend/features/mood-selector";
 import { EditMediaFields } from "./EditMediaFields";
@@ -71,19 +74,25 @@ export function AddGameFormFields({
     <>
       <div className="gap-3 grid grid-cols-2">
         <div>
-          <label className="block mb-1 font-medium text-gray-400 text-xs">Platform</label>
+          <label className="block mb-1 font-medium text-gray-400 text-xs">
+            Platform
+          </label>
           <select
             value={platform}
             onChange={(e) => setPlatform(e.target.value as Platform)}
             className="bg-gray-800 px-3 py-2 border border-gray-700 focus:border-brand-600 rounded-lg focus:outline-none w-full text-white text-sm"
           >
             {PLATFORMS.map((p) => (
-              <option key={p} value={p}>{PLATFORM_LABELS[p]}</option>
+              <option key={p} value={p}>
+                {PLATFORM_LABELS[p]}
+              </option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block mb-1 font-medium text-gray-400 text-xs">Status</label>
+          <label className="block mb-1 font-medium text-gray-400 text-xs">
+            Status
+          </label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as GameStatus)}
@@ -91,21 +100,29 @@ export function AddGameFormFields({
           >
             {editGame ? (
               <>
-                <option value={editGame.status}>{STATUS_LABELS[editGame.status]}</option>
+                <option value={editGame.status}>
+                  {STATUS_LABELS[editGame.status]}
+                </option>
                 {VALID_TRANSITIONS[editGame.status].map((s) => (
-                  <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                  <option key={s} value={s}>
+                    {STATUS_LABELS[s]}
+                  </option>
                 ))}
               </>
             ) : (
               <>
                 <optgroup label="Library (Owned)">
                   {LIBRARY_STATUSES.map((s) => (
-                    <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                    <option key={s} value={s}>
+                      {STATUS_LABELS[s]}
+                    </option>
                   ))}
                 </optgroup>
                 <optgroup label="Wishlist (Not Purchased)">
                   {WISHLIST_STATUSES.map((s) => (
-                    <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                    <option key={s} value={s}>
+                      {STATUS_LABELS[s]}
+                    </option>
                   ))}
                 </optgroup>
               </>
@@ -116,7 +133,9 @@ export function AddGameFormFields({
 
       {(LIBRARY_STATUSES as ReadonlyArray<string>).includes(status) && (
         <div>
-          <label className="block mb-1 font-medium text-gray-400 text-xs">Replay Status</label>
+          <label className="block mb-1 font-medium text-gray-400 text-xs">
+            Replay Status
+          </label>
           <select
             value={replayStatus ?? ""}
             onChange={(e) => {
@@ -133,7 +152,9 @@ export function AddGameFormFields({
       )}
 
       <div>
-        <label className="block mb-1.5 font-medium text-gray-400 text-xs">Priority</label>
+        <label className="block mb-1.5 font-medium text-gray-400 text-xs">
+          Priority
+        </label>
         <div className="gap-1.5 grid grid-cols-4">
           {PRIORITY_TIERS.map((tier) => {
             const isSelected = scoreToTier(priorityScore).id === tier.id;
@@ -166,15 +187,23 @@ export function AddGameFormFields({
         />
       )}
 
-      <MoodSelector moods={moods} selectedIds={selectedMoods} onToggle={toggleMood} />
+      <MoodSelector
+        moods={moods}
+        selectedIds={selectedMoods}
+        onToggle={toggleMood}
+      />
 
       <div>
-        <label className="block mb-1.5 font-medium text-gray-400 text-xs">Your Rating</label>
+        <label className="block mb-1.5 font-medium text-gray-400 text-xs">
+          Your Rating
+        </label>
         <StarRating value={rating} onChange={setRating} />
       </div>
 
       <div>
-        <label className="block mb-1 font-medium text-gray-400 text-xs">Personal Note</label>
+        <label className="block mb-1 font-medium text-gray-400 text-xs">
+          Personal Note
+        </label>
         <textarea
           value={personalNote}
           onChange={(e) => setPersonalNote(e.target.value)}

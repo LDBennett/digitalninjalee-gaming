@@ -9,7 +9,7 @@ export interface GameRow {
   game_description: string | null;
   last_played_at: string | null;
   created_at: string;
-  replay_status: 'want-to-replay' | 'replaying' | null;
+  replay_status: "want-to-replay" | "replaying" | null;
   personal_note: string | null;
   rating: number | null;
 }
@@ -24,7 +24,7 @@ export interface ExternalIdRow {
   source: string;
   external_id: string;
   last_synced_at: string;
-  sync_status: 'ok' | 'failed' | 'pending';
+  sync_status: "ok" | "failed" | "pending";
 }
 
 export interface GameRowWithMoods extends GameRow {

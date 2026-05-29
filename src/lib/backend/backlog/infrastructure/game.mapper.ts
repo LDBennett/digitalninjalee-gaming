@@ -1,16 +1,26 @@
-import { GameState, createPlatform, createGameStatus, createPriorityScore } from '@/src/lib/backend/backlog/domain/models/game.types';
-import { MoodState } from '@/src/lib/backend/backlog/domain/models/mood.types';
-import { GameRowWithMoods } from '@/src/lib/backend/backlog/infrastructure/db.types';
+import {
+  GameState,
+  createPlatform,
+  createGameStatus,
+  createPriorityScore,
+} from "@/src/lib/backend/backlog/domain/models/game.types";
+import { MoodState } from "@/src/lib/backend/backlog/domain/models/mood.types";
+import { GameRowWithMoods } from "@/src/lib/backend/backlog/infrastructure/db.types";
 
 export function gameRowToDomain(row: GameRowWithMoods): GameState {
   const platformResult = createPlatform(row.platform);
-  if (!platformResult.success) throw new Error(`DB contains invalid platform: ${row.platform}`);
+  if (!platformResult.success)
+    throw new Error(`DB contains invalid platform: ${row.platform}`);
 
   const statusResult = createGameStatus(row.status);
-  if (!statusResult.success) throw new Error(`DB contains invalid status: ${row.status}`);
+  if (!statusResult.success)
+    throw new Error(`DB contains invalid status: ${row.status}`);
 
   const scoreResult = createPriorityScore(row.priority_score);
-  if (!scoreResult.success) throw new Error(`DB contains invalid priority_score: ${row.priority_score}`);
+  if (!scoreResult.success)
+    throw new Error(
+      `DB contains invalid priority_score: ${row.priority_score}`,
+    );
 
   const moods: MoodState[] = (row.game_moods ?? [])
     .map((gm) => gm.moods)
@@ -35,7 +45,9 @@ export function gameRowToDomain(row: GameRowWithMoods): GameState {
   };
 }
 
-export function gameStateToRow(game: GameState): Omit<GameRowWithMoods, 'game_moods'> {
+export function gameStateToRow(
+  game: GameState,
+): Omit<GameRowWithMoods, "game_moods"> {
   return {
     id: game.id,
     title: game.title,
@@ -53,6 +65,8 @@ export function gameStateToRow(game: GameState): Omit<GameRowWithMoods, 'game_mo
   };
 }
 
-export function gameMoodJunctionRows(game: GameState): Array<{ game_id: string; mood_id: string }> {
+export function gameMoodJunctionRows(
+  game: GameState,
+): Array<{ game_id: string; mood_id: string }> {
   return game.moods.map((mood) => ({ game_id: game.id, mood_id: mood.id }));
 }

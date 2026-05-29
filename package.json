@@ -6,7 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
     "enrich:igdb": "tsx --env-file=.env.local scripts/igdb-enrich.ts",
     "enrich:rawg": "tsx --env-file=.env.local scripts/rawg-enrich.ts"
   },
@@ -30,6 +29,7 @@
     "eslint": "^10.4.0",
     "eslint-config-next": "16.2.6",
     "postcss": "^8.5.15",
+    "prettier": "^3.8.3",
     "supabase": "^2.101.0",
     "tailwindcss": "^4.3.0",
     "tsx": "^4.19.4",

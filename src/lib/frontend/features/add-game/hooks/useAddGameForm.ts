@@ -1,13 +1,17 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { GameDto, GameStatus, MoodDto } from '@/src/lib/backend/backlog/domain/models';
-import { AddGamePayload } from '@/src/lib/frontend/features/add-game/types';
-import { useAuthFetch } from '@/src/lib/frontend/shared/auth/useAuthFetch';
-import { useAuthStore } from '@/src/lib/frontend/shared/auth/auth.store';
-import { useAddGameFormState } from './useAddGameFormState';
-import { useRawgSearch } from './useRawgSearch';
-import { useGameDataFetch } from './useGameDataFetch';
+import { useEffect, useState } from "react";
+import {
+  GameDto,
+  GameStatus,
+  MoodDto,
+} from "@/src/lib/backend/backlog/domain/models";
+import { AddGamePayload } from "@/src/lib/frontend/features/add-game/types";
+import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
+import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
+import { useAddGameFormState } from "./useAddGameFormState";
+import { useRawgSearch } from "./useRawgSearch";
+import { useGameDataFetch } from "./useGameDataFetch";
 
 interface UseAddGameFormOptions {
   editGame?: GameDto | null;
@@ -32,9 +36,11 @@ export function useAddGameForm({
   const [allMoods, setAllMoods] = useState<MoodDto[]>([]);
   useEffect(() => {
     if (authLoading || !session) return;
-    fetch('/api/moods', { headers: authHeaders() })
+    fetch("/api/moods", { headers: authHeaders() })
       .then((r) => r.json())
-      .then((data) => { if (Array.isArray(data)) setAllMoods(data); })
+      .then((data) => {
+        if (Array.isArray(data)) setAllMoods(data);
+      })
       .catch(() => {});
   }, [authLoading, session]);
 
@@ -70,14 +76,14 @@ export function useAddGameForm({
     );
 
   const resetForm = () => {
-    state.setTitle('');
-    state.setPlatform('pc');
+    state.setTitle("");
+    state.setPlatform("pc");
     state.setStatus(defaultStatus);
     state.setPriorityScore(50);
-    state.setBackgroundUrl('');
-    state.setCoverArtUrl('');
-    state.setGameDescription('');
-    state.setPersonalNote('');
+    state.setBackgroundUrl("");
+    state.setCoverArtUrl("");
+    state.setGameDescription("");
+    state.setPersonalNote("");
     state.setRating(null);
     state.setRawgId(null);
     state.setIgdbId(null);
@@ -123,9 +129,9 @@ export function useAddGameForm({
   };
 
   const clearCoverArt = () => {
-    state.setBackgroundUrl('');
-    state.setCoverArtUrl('');
-    state.setGameDescription('');
+    state.setBackgroundUrl("");
+    state.setCoverArtUrl("");
+    state.setGameDescription("");
     state.setRawgId(null);
     state.setIgdbId(null);
     state.setIgdbLoaded(false);

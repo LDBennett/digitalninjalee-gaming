@@ -50,7 +50,9 @@ export function AuthButton() {
               className="bg-gray-900 shadow-xl p-6 border border-gray-800 rounded-xl w-72"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="mb-1 font-semibold text-white text-base">Sign out?</h2>
+              <h2 className="mb-1 font-semibold text-white text-base">
+                Sign out?
+              </h2>
               <p className="mb-5 text-gray-500 text-xs">
                 You&apos;ll be switched to read-only mode.
               </p>
@@ -62,7 +64,10 @@ export function AuthButton() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => { signOut(); setShowSignOutConfirm(false); }}
+                  onClick={() => {
+                    signOut();
+                    setShowSignOutConfirm(false);
+                  }}
                   className="flex-1 bg-red-900/60 hover:bg-red-800/60 px-3 py-2 rounded-lg font-medium text-red-300 text-sm transition-colors"
                 >
                   Sign Out

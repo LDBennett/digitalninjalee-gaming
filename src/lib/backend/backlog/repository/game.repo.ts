@@ -1,5 +1,5 @@
-import { Result } from '@/src/lib/backend/shared/result';
-import { GameState } from '@/src/lib/backend/backlog/domain/models/game.types';
+import { Result } from "@/src/lib/backend/shared/result";
+import { GameState } from "@/src/lib/backend/backlog/domain/models/game.types";
 
 export interface GameFilter {
   status?: string | string[];

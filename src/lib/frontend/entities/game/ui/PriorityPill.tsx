@@ -1,6 +1,9 @@
 "use client";
 
-import { scoreToTier, nextTierScore } from "@/src/lib/backend/backlog/domain/models";
+import {
+  scoreToTier,
+  nextTierScore,
+} from "@/src/lib/backend/backlog/domain/models";
 
 interface Props {
   score: number;
