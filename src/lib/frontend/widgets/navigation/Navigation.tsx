@@ -83,17 +83,33 @@ export function Navigation() {
           </div>
           <p className="flex items-center gap-1 mt-3 text-gray-500 text-sm text-center">Game Backlog Bunker</p>
         </div>
-        <div className="flex-1 space-y-3">
+        <div className="flex-1 space-y-1">
           {NAV_ITEMS.map(({ href, label, Icon }) => {
             const active = isActivePath(href, pathname);
             return (
               <Link
                 key={href}
                 href={href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${active ? "bg-brand-900/50 text-brand-300 border border-brand-800/50" : "text-gray-400 hover:text-white hover:bg-brand-700/50"}`}
+                className="relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium"
               >
-                <Icon size={18} />
-                {label}
+                {active && (
+                  <motion.div
+                    layoutId="desktop-pill"
+                    className="absolute inset-0 rounded-lg bg-brand-900/50 border border-brand-800/50"
+                    style={{ boxShadow: "0 0 12px 0 rgba(var(--color-brand-800), 0.35)" }}
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  />
+                )}
+                <motion.span
+                  animate={{ scale: active ? 1.2 : 1 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                  className={`relative z-10 transition-colors ${active ? "text-brand-300" : "text-gray-400"}`}
+                >
+                  <Icon size={18} />
+                </motion.span>
+                <span className={`relative z-10 transition-colors ${active ? "text-brand-300" : "text-gray-400 group-hover:text-white"}`}>
+                  {label}
+                </span>
               </Link>
             );
           })}
