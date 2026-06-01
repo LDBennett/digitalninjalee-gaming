@@ -127,13 +127,8 @@ export function BacklogView() {
 
       {showFilters && (
         <GameFiltersPanel
+          filters={{ moodFilter, setMoodFilter, sortBy, setSortBy, platformFilter, setPlatformFilter }}
           moods={moods}
-          moodFilter={moodFilter}
-          onMoodChange={setMoodFilter}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          platformFilter={platformFilter}
-          onPlatformChange={setPlatformFilter}
           className="mb-5"
         >
           <label className="inline-flex cursor-pointer items-center gap-2 select-none">

@@ -1,20 +1,13 @@
 "use client";
 
+import { useAddGameForm } from "../hooks/useAddGameForm";
+
 interface SelectedGamePreviewProps {
-  backgroundUrl: string;
-  coverArtUrl: string;
-  igdbLoading: boolean;
-  igdbLoaded: boolean;
-  onClear: () => void;
+  form: ReturnType<typeof useAddGameForm>;
 }
 
-export function SelectedGamePreview({
-  backgroundUrl,
-  coverArtUrl,
-  igdbLoading,
-  igdbLoaded,
-  onClear,
-}: SelectedGamePreviewProps) {
+export function SelectedGamePreview({ form }: SelectedGamePreviewProps) {
+  const { backgroundUrl, coverArtUrl, igdbLoading, igdbLoaded, clearCoverArt: onClear } = form;
   return (
     <div className="flex items-center gap-3 rounded-lg bg-gray-800 p-2">
       <img

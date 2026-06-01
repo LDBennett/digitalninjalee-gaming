@@ -2,8 +2,8 @@
 
 import {
   GameDto,
-  GameStatus,
   Platform,
+  GameStatus,
   ReplayStatus,
   PLATFORMS,
   PLATFORM_LABELS,
@@ -19,57 +19,38 @@ import {
 } from "@/src/lib/backend/backlog/domain/models";
 import { StarRating } from "@/src/lib/frontend/shared/ui/StarRating";
 import { MoodSelector } from "@/src/lib/frontend/features/mood-selector";
+import { useAddGameForm } from "../hooks/useAddGameForm";
 import { EditMediaFields } from "./EditMediaFields";
 
 interface AddGameFormFieldsProps {
+  form: ReturnType<typeof useAddGameForm>;
   editGame?: GameDto | null;
   moods: MoodDto[];
-  platform: Platform;
-  status: GameStatus;
-  replayStatus: ReplayStatus;
-  priorityScore: number;
-  backgroundUrl: string;
-  coverArtUrl: string;
-  gameDescription: string;
-  personalNote: string;
-  rating: number | null;
-  selectedMoods: string[];
-  setPlatform: (v: Platform) => void;
-  setStatus: (v: GameStatus) => void;
-  setReplayStatus: (v: ReplayStatus) => void;
-  setPriorityScore: (v: number) => void;
-  setBackgroundUrl: (v: string) => void;
-  setCoverArtUrl: (v: string) => void;
-  setGameDescription: (v: string) => void;
-  setPersonalNote: (v: string) => void;
-  setRating: (v: number | null) => void;
-  toggleMood: (id: string) => void;
 }
 
-export function AddGameFormFields({
-  editGame,
-  moods,
-  platform,
-  status,
-  replayStatus,
-  priorityScore,
-  backgroundUrl,
-  coverArtUrl,
-  gameDescription,
-  personalNote,
-  rating,
-  selectedMoods,
-  setPlatform,
-  setStatus,
-  setReplayStatus,
-  setPriorityScore,
-  setBackgroundUrl,
-  setCoverArtUrl,
-  setGameDescription,
-  setPersonalNote,
-  setRating,
-  toggleMood,
-}: AddGameFormFieldsProps) {
+export function AddGameFormFields({ form, editGame, moods }: AddGameFormFieldsProps) {
+  const {
+    platform,
+    status,
+    replayStatus,
+    priorityScore,
+    backgroundUrl,
+    coverArtUrl,
+    gameDescription,
+    personalNote,
+    rating,
+    selectedMoods,
+    setPlatform,
+    setStatus,
+    setReplayStatus,
+    setPriorityScore,
+    setBackgroundUrl,
+    setCoverArtUrl,
+    setGameDescription,
+    setPersonalNote,
+    setRating,
+    toggleMood,
+  } = form;
   return (
     <>
       <div className="grid grid-cols-2 gap-3">
@@ -177,14 +158,7 @@ export function AddGameFormFields({
       </div>
 
       {editGame && (
-        <EditMediaFields
-          backgroundUrl={backgroundUrl}
-          coverArtUrl={coverArtUrl}
-          gameDescription={gameDescription}
-          onBackgroundUrlChange={setBackgroundUrl}
-          onCoverArtUrlChange={setCoverArtUrl}
-          onDescriptionChange={setGameDescription}
-        />
+        <EditMediaFields form={form} />
       )}
 
       <MoodSelector

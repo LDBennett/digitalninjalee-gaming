@@ -12,7 +12,7 @@ interface Props {
 export function RandomPickResult({ game, onPickAgain }: Props) {
   const gameMoods = game.moods ?? [];
   return (
-    <div className="slide-up space-y-3 rounded-xl border border-gray-700 bg-gray-800/60 p-4">
+    <div className="space-y-3 rounded-xl border border-gray-700 bg-gray-800/60 p-4">
       <div className="flex gap-3">
         <div className="h-20 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-700">
           {game.cover_art_url || game.background_url ? (

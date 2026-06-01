@@ -1,22 +1,20 @@
 "use client";
 
+import { useAddGameForm } from "../hooks/useAddGameForm";
+
 interface EditMediaFieldsProps {
-  backgroundUrl: string;
-  coverArtUrl: string;
-  gameDescription: string;
-  onBackgroundUrlChange: (v: string) => void;
-  onCoverArtUrlChange: (v: string) => void;
-  onDescriptionChange: (v: string) => void;
+  form: ReturnType<typeof useAddGameForm>;
 }
 
-export function EditMediaFields({
-  backgroundUrl,
-  coverArtUrl,
-  gameDescription,
-  onBackgroundUrlChange,
-  onCoverArtUrlChange,
-  onDescriptionChange,
-}: EditMediaFieldsProps) {
+export function EditMediaFields({ form }: EditMediaFieldsProps) {
+  const {
+    backgroundUrl,
+    coverArtUrl,
+    gameDescription,
+    setBackgroundUrl: onBackgroundUrlChange,
+    setCoverArtUrl: onCoverArtUrlChange,
+    setGameDescription: onDescriptionChange,
+  } = form;
   return (
     <div className="space-y-3">
       <div>

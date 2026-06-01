@@ -102,38 +102,13 @@ export function AddGameModal({
             />
 
             {!editGame && form.backgroundUrl && (
-              <SelectedGamePreview
-                backgroundUrl={form.backgroundUrl}
-                coverArtUrl={form.coverArtUrl}
-                igdbLoading={form.igdbLoading}
-                igdbLoaded={form.igdbLoaded}
-                onClear={form.clearCoverArt}
-              />
+              <SelectedGamePreview form={form} />
             )}
 
             <AddGameFormFields
+              form={form}
               editGame={editGame}
               moods={moods}
-              platform={form.platform}
-              status={form.status}
-              replayStatus={form.replayStatus}
-              priorityScore={form.priorityScore}
-              backgroundUrl={form.backgroundUrl}
-              coverArtUrl={form.coverArtUrl}
-              gameDescription={form.gameDescription}
-              personalNote={form.personalNote}
-              rating={form.rating}
-              selectedMoods={form.selectedMoods}
-              setPlatform={form.setPlatform}
-              setStatus={form.setStatus}
-              setReplayStatus={form.setReplayStatus}
-              setPriorityScore={form.setPriorityScore}
-              setBackgroundUrl={form.setBackgroundUrl}
-              setCoverArtUrl={form.setCoverArtUrl}
-              setGameDescription={form.setGameDescription}
-              setPersonalNote={form.setPersonalNote}
-              setRating={form.setRating}
-              toggleMood={form.toggleMood}
             />
 
             <div className="flex justify-between gap-3 pt-1">

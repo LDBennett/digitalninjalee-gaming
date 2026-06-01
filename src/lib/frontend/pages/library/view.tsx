@@ -102,13 +102,8 @@ export function LibraryView() {
         </div>
         {showFilters && (
           <GameFiltersPanel
+            filters={{ moodFilter, setMoodFilter, sortBy, setSortBy, platformFilter, setPlatformFilter }}
             moods={moods}
-            moodFilter={moodFilter}
-            onMoodChange={setMoodFilter}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            platformFilter={platformFilter}
-            onPlatformChange={setPlatformFilter}
             className="mb-5"
           />
         )}

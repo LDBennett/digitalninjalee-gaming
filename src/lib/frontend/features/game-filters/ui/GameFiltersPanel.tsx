@@ -6,7 +6,7 @@ import {
 } from "@/src/lib/backend/backlog/domain/models";
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import { MoodFilter } from "./MoodFilter";
-import { SortOption } from "../hooks/useGameFilters";
+import { useGameFilters } from "../hooks/useGameFilters";
 
 const PLATFORM_FILTER_OPTIONS: { value: Platform; label: string }[] = [
   { value: "pc", label: PLATFORM_LABELS.pc },
@@ -14,6 +14,8 @@ const PLATFORM_FILTER_OPTIONS: { value: Platform; label: string }[] = [
   { value: "playstation", label: PLATFORM_LABELS.playstation },
   { value: "switch", label: PLATFORM_LABELS.switch },
 ];
+
+type SortOption = ReturnType<typeof useGameFilters>["sortBy"];
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: "priority-desc", label: "Priority: High → Low" },
@@ -23,28 +25,14 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ];
 
 interface GameFiltersPanelProps {
+  filters: Pick<ReturnType<typeof useGameFilters>, "moodFilter" | "setMoodFilter" | "sortBy" | "setSortBy" | "platformFilter" | "setPlatformFilter">;
   moods: MoodDto[];
-  moodFilter: string | null;
-  onMoodChange: (v: string | null) => void;
-  sortBy: SortOption;
-  onSortChange: (v: SortOption) => void;
-  platformFilter: Platform | null;
-  onPlatformChange: (v: Platform | null) => void;
   className?: string;
   children?: React.ReactNode;
 }
 
-export function GameFiltersPanel({
-  moods,
-  moodFilter,
-  onMoodChange,
-  sortBy,
-  onSortChange,
-  platformFilter,
-  onPlatformChange,
-  className,
-  children,
-}: GameFiltersPanelProps) {
+export function GameFiltersPanel({ filters, moods, className, children }: GameFiltersPanelProps) {
+  const { moodFilter, setMoodFilter, sortBy, setSortBy, platformFilter, setPlatformFilter } = filters;
   return (
     <div
       className={`space-y-4 rounded-xl border border-gray-800 bg-gray-900/60 p-4 ${className ?? ""}`}
@@ -56,7 +44,7 @@ export function GameFiltersPanel({
           </label>
           <select
             value={sortBy}
-            onChange={(e) => onSortChange(e.target.value as SortOption)}
+            onChange={(e) => setSortBy(e.target.value as SortOption)}
             className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none"
           >
             {SORT_OPTIONS.map((o) => (
@@ -73,7 +61,7 @@ export function GameFiltersPanel({
           </label>
           <div className="flex flex-wrap gap-1.5">
             <button
-              onClick={() => onPlatformChange(null)}
+              onClick={() => setPlatformFilter(null)}
               className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
                 platformFilter === null
                   ? "bg-brand-700 text-white"
@@ -86,7 +74,7 @@ export function GameFiltersPanel({
               <button
                 key={p.value}
                 onClick={() =>
-                  onPlatformChange(platformFilter === p.value ? null : p.value)
+                  setPlatformFilter(platformFilter === p.value ? null : p.value)
                 }
                 className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
                   platformFilter === p.value
@@ -105,7 +93,7 @@ export function GameFiltersPanel({
         <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
           Mood
         </label>
-        <MoodFilter moods={moods} value={moodFilter} onChange={onMoodChange} />
+        <MoodFilter moods={moods} value={moodFilter} onChange={setMoodFilter} />
       </div>
 
       {children && <div>{children}</div>}

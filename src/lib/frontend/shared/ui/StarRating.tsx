@@ -54,11 +54,11 @@ export function StarRating({ value, onChange }: StarRatingProps) {
               className="text-yellow-400 transition-transform hover:scale-110"
             >
               {filled ? (
-                <Star size={20} fill="currentColor" strokeWidth={1} />
+                <Star size={30} fill="currentColor" strokeWidth={1} />
               ) : half ? (
-                <StarHalf size={20} fill="currentColor" strokeWidth={1} />
+                <StarHalf size={30} fill="currentColor" strokeWidth={1} />
               ) : (
-                <Star size={20} className="text-gray-600" strokeWidth={1} />
+                <Star size={30} className="text-gray-600" strokeWidth={1} />
               )}
             </button>
           );
