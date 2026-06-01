@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   requireAuth,
+  optionalAuth,
   createSupabaseGameRepository,
   createSupabaseMoodRepository,
 } from "@/src/lib/backend/backlog/infrastructure";
@@ -14,8 +15,7 @@ import {
 } from "@/src/lib/backend/backlog/domain/models";
 
 export async function GET(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth.ok) return auth.response;
+  const auth = await optionalAuth(req);
 
   const statusParam = new URL(req.url).searchParams.get("status") ?? undefined;
   const repo = createSupabaseGameRepository(auth.client);

@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${inter.className} min-h-screen bg-gray-950 text-white`}
       >
         <ClientLayout>
-          <div className="flex min-h-screen">
+          <div className="flex min-h-screen items-start">
             <Navigation />
             <main className="flex-1 overflow-auto p-4 pt-16 pb-28 md:p-8 md:pt-8 md:pb-8">
               {children}

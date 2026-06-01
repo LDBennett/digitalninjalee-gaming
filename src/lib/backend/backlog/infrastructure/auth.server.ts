@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
-import { createServerClient } from "@/src/lib/infrastructure/supabase/supabaseClient";
+import {
+  createServerClient,
+  createServiceClient,
+} from "@/src/lib/infrastructure/supabase/supabaseClient";
 
 export async function requireAuth(
   req: NextRequest,
@@ -21,4 +24,19 @@ export async function requireAuth(
     };
   }
   return { ok: true, client, user };
+}
+
+export async function optionalAuth(
+  req: NextRequest,
+): Promise<{ client: SupabaseClient; user: User | null }> {
+  const token =
+    req.headers.get("Authorization")?.replace("Bearer ", "") ?? null;
+  if (token) {
+    const client = createServerClient(token);
+    const {
+      data: { user },
+    } = await client.auth.getUser();
+    if (user) return { client, user };
+  }
+  return { client: createServiceClient(), user: null };
 }

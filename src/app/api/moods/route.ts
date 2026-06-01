@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  requireAuth,
+  optionalAuth,
   createSupabaseMoodRepository,
 } from "@/src/lib/backend/backlog/infrastructure";
 
 export async function GET(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth.ok) return auth.response;
+  const auth = await optionalAuth(req);
 
   const repo = createSupabaseMoodRepository(auth.client);
   const result = await repo.findAll();

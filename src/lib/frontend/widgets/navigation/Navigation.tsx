@@ -32,18 +32,22 @@ const NY = CR; // nav bar top Y in SVG coords — circle center sits here
 const NW = 30; // notch half-width (CR + 4px gap each side)
 const ND = CR; // notch depth (accommodates the lower half of the circle)
 const SW = 10; // bezier shoulder for smooth curve-in
+const NR = 16; // top corner radius
 const NAV_BG = "#030712"; // gray-950
 
 function buildNotchedPath(w: number, cx: number): string {
   const d = NY + ND; // notch deepest Y
   return [
-    `M 0 ${NY}`,
+    `M ${NR} ${NY}`,
     `L ${cx - NW - SW} ${NY}`,
     `C ${cx - NW} ${NY} ${cx - NW} ${d} ${cx} ${d}`,
     `C ${cx + NW} ${d} ${cx + NW} ${NY} ${cx + NW + SW} ${NY}`,
-    `L ${w} ${NY}`,
+    `L ${w - NR} ${NY}`,
+    `A ${NR} ${NR} 0 0 1 ${w} ${NY + NR}`,
     `L ${w} ${TOTAL_H}`,
     `L 0 ${TOTAL_H}`,
+    `L 0 ${NY + NR}`,
+    `A ${NR} ${NR} 0 0 1 ${NR} ${NY}`,
     `Z`,
   ].join(" ");
 }
@@ -85,17 +89,19 @@ export function Navigation() {
       </header>
 
       {/* Desktop sidebar */}
-      <nav className="hidden min-h-screen w-56 shrink-0 flex-col border-r border-gray-800 bg-gray-950 p-4 pe-6 md:flex">
+      <nav className="sticky top-4 my-4 ml-4 hidden w-56 shrink-0 flex-col self-start overflow-y-auto rounded-2xl border border-gray-800 bg-gray-900/95 p-4 pe-6 shadow-2xl shadow-black/60 backdrop-blur-sm md:flex">
         <div className="mb-8">
           <div className="flex items-center gap-3">
             <AuthButton />
-            <span className="text-lg font-bold tracking-tight text-white">
-              DigitalNinjaLee
-            </span>
+            <div>
+              <span className="text-lg font-bold tracking-tight text-white">
+                DigitalNinjaLee
+              </span>
+              <span className="flex items-center gap-1 text-center text-xs text-gray-500">
+                Backlog Bunker
+              </span>
+            </div>
           </div>
-          <p className="mt-3 flex items-center gap-1 text-center text-sm text-gray-500">
-            Game Backlog Bunker
-          </p>
         </div>
         <div className="flex-1 space-y-1">
           {NAV_ITEMS.map(({ href, label, Icon }) => {
@@ -147,10 +153,16 @@ export function Navigation() {
             width={navWidth}
             height={TOTAL_H}
             viewBox={`0 0 ${navWidth} ${TOTAL_H}`}
-            className="absolute inset-0"
+            className="absolute inset-0 overflow-visible"
           >
+            <defs>
+              <filter id="mobile-nav-shadow" x="-5%" y="-40%" width="110%" height="150%">
+                <feDropShadow dx="0" dy="-4" stdDeviation="8" floodColor="#000000" floodOpacity="0.55" />
+              </filter>
+            </defs>
             <motion.path
               fill={NAV_BG}
+              filter="url(#mobile-nav-shadow)"
               initial={false}
               animate={{ d: buildNotchedPath(navWidth, cx) }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
@@ -196,7 +208,7 @@ export function Navigation() {
                 key={href}
                 href={href}
                 className={`flex flex-1 flex-col items-center justify-start gap-1 text-[10px] font-medium transition-colors ${isActive ? "text-brand-400" : "text-gray-500 hover:text-gray-300"}`}
-                style={{ paddingTop: isActive ? CR + 6 : 16 }}
+                style={{ paddingTop: isActive ? CR + 9 : 16 }}
               >
                 {!isActive && <Icon size={18} />}
                 {label}

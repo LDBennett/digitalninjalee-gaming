@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  requireAuth,
+  optionalAuth,
   createSupabaseGameRepository,
 } from "@/src/lib/backend/backlog/infrastructure";
 import { selectRandomGame } from "@/src/lib/backend/backlog/domain/services";
 import { gameStateToDto } from "@/src/lib/backend/backlog/domain/models";
 
 export async function GET(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth.ok) return auth.response;
+  const auth = await optionalAuth(req);
 
   const { searchParams } = new URL(req.url);
   const moodNames = searchParams.get("moods")?.split(",").filter(Boolean) ?? [];

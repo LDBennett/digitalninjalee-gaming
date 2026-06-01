@@ -59,6 +59,7 @@ export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }
       selectedPool === "playing" ? "playing,ongoing" : selectedPool;
     const params = new URLSearchParams({ status });
     const res = await fetch(`/api/games?${params}`, { headers: authHeaders() });
+    if (!res.ok) return;
     const data: GameDto[] = await res.json();
 
     let pool = data;

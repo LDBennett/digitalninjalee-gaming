@@ -13,9 +13,12 @@ export function useMoods() {
   const { data: moods = [], isPending: moodsLoading } = useQuery<MoodDto[]>({
     queryKey: moodKeys.all,
     queryFn: () =>
-      fetch("/api/moods", { headers: authHeaders() }).then((r) => r.json()),
+      fetch("/api/moods", { headers: authHeaders() }).then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      }),
     staleTime: Infinity,
-    enabled: !authLoading && !!session,
+    enabled: !authLoading,
   });
   return { moods, moodsLoading };
 }
