@@ -2,13 +2,12 @@
 import { useState } from "react";
 import { useBacklog } from "./useBacklog";
 import { useScrollToTop } from "@/src/lib/frontend/shared/hooks/useScrollToTop";
-import { useUIStore } from "@/src/lib/frontend/shared/store/ui.store";
 import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { RandomPicker } from "@/src/lib/frontend/features/roll-random";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
-import { EmptyState, SearchInput } from "@/src/lib/frontend/shared";
-import { Dices, DicesIcon, Plus, SlidersHorizontal } from "lucide-react";
+import { EmptyState, PageHeader, SearchInput } from "@/src/lib/frontend/shared";
+import { SlidersHorizontal } from "lucide-react";
 
 export function BacklogView() {
   const {
@@ -44,7 +43,6 @@ export function BacklogView() {
     wantToReplayCount,
   } = useBacklog();
 
-  const { truncatedButtonText } = useUIStore();
   const topRef = useScrollToTop(page);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -64,42 +62,15 @@ export function BacklogView() {
 
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Backlog</h1>
-          <p className="mt-0.5 text-sm text-gray-500">
-            {replayOnly
-              ? `${filtered.length} game${filtered.length !== 1 ? "s" : ""} to replay${moodFilter ? ` · ${moodFilter}` : ""}`
-              : `${filtered.length} game${filtered.length !== 1 ? "s" : ""}${wantToReplayCount > 0 ? ` · ${wantToReplayCount} to replay` : ""}${moodFilter ? ` · ${moodFilter}` : ""}`}
-          </p>
-        </div>
-        {isAuthenticated && (
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => setShowPicker(true)}
-              className={`"flex from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 transition-all" flex-1 items-center justify-center gap-2 bg-linear-to-r text-center text-sm font-semibold text-white shadow-lg sm:flex-none ${truncatedButtonText ? "rounded-full p-2" : "rounded-lg px-4 py-2"}`}
-            >
-              {truncatedButtonText ? (
-                <Dices size={16} />
-              ) : (
-                <div className="flex items-center gap-2">
-                  <DicesIcon size={16} />
-                  Random
-                </div>
-              )}
-            </button>
-            <button
-              onClick={() => setShowAdd(true)}
-              className="from-brand-800 hover:from-brand-700 to-brand-600 hover:to-brand-500 rounded-lg bg-linear-to-r px-4 py-2 text-center text-sm font-semibold text-white shadow-lg transition-all"
-            >
-              <div className="flex items-center gap-1">
-                <Plus size={16} />
-                {truncatedButtonText ? "Game" : "Add Game"}
-              </div>
-            </button>
-          </div>
-        )}
-      </div>
+      <PageHeader
+        subtitle={
+          replayOnly
+            ? `${filtered.length} game${filtered.length !== 1 ? "s" : ""} to replay${moodFilter ? ` · ${moodFilter}` : ""}`
+            : `${filtered.length} game${filtered.length !== 1 ? "s" : ""}${wantToReplayCount > 0 ? ` · ${wantToReplayCount} to replay` : ""}${moodFilter ? ` · ${moodFilter}` : ""}`
+        }
+        onRandom={() => setShowPicker(true)}
+        onAddGame={() => setShowAdd(true)}
+      />
 
       <div className="mb-5 flex gap-2">
         <SearchInput

@@ -9,8 +9,7 @@ import {
 } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { RandomPicker } from "@/src/lib/frontend/features/roll-random";
-import { EmptyState, TabBar } from "@/src/lib/frontend/shared";
-import { Dices } from "lucide-react";
+import { EmptyState, PageHeader, TabBar } from "@/src/lib/frontend/shared";
 
 type DashboardTab = "playing" | "backlog";
 const TAB_LABELS: Record<DashboardTab, string> = {
@@ -44,24 +43,10 @@ export function DashboardView() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="mt-0.5 text-sm text-gray-500">
-            {stats.total} games tracked
-          </p>
-        </div>
-        {isAuthenticated && (
-          <div className="flex gap-3">
-            <button
-              onClick={() => setShowPicker(true)}
-              className="from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 flex flex-1 items-center justify-center gap-2 rounded-lg bg-linear-to-r px-4 py-2 text-center text-sm font-semibold text-white shadow-lg transition-all sm:flex-none"
-            >
-              <Dices /> Random Game
-            </button>
-          </div>
-        )}
-      </div>
+      <PageHeader
+        subtitle={`${stats.total} games tracked`}
+        onRandom={() => setShowPicker(true)}
+      />
       <GameStatsGrid stats={stats} />
       <TabBar
         tabs={["playing", "backlog"] as DashboardTab[]}

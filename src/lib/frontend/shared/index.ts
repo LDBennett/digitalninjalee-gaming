@@ -1,4 +1,5 @@
 export { EmptyState } from "./ui/EmptyState";
+export { PageHeader } from "./ui/PageHeader";
 export { Pagination } from "./ui/Pagination";
 export { SearchInput } from "./ui/SearchInput";
 export { StarRating } from "./ui/StarRating";

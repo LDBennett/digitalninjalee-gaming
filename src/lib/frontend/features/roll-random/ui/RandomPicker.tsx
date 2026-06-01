@@ -21,11 +21,12 @@ interface RandomPickerProps {
   isOpen: boolean;
   onClose: () => void;
   moods: MoodDto[];
+  defaultPool?: Pool;
 }
 
-export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
+export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }: RandomPickerProps) {
   const { authHeaders } = useAuthFetch();
-  const [selectedPool, setSelectedPool] = useState<Pool>("backlog");
+  const [selectedPool, setSelectedPool] = useState<Pool>(defaultPool);
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [pickedGame, setPickedGame] = useState<GameDto | null>(null);
   const [candidates, setCandidates] = useState<GameDto[]>([]);
@@ -103,7 +104,7 @@ export function RandomPicker({ isOpen, onClose, moods }: RandomPickerProps) {
     setCandidates([]);
     setSelectedMoods([]);
     setNoGamesMsg("");
-    setSelectedPool("backlog");
+    setSelectedPool(defaultPool);
     setSpinPhase("idle");
     onClose();
   };

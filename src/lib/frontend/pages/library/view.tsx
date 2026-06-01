@@ -10,8 +10,8 @@ import {
 } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
-import { EmptyState, SearchInput, TabBar } from "@/src/lib/frontend/shared";
-import { Plus, SlidersHorizontal } from "lucide-react";
+import { EmptyState, PageHeader, SearchInput, TabBar } from "@/src/lib/frontend/shared";
+import { SlidersHorizontal } from "lucide-react";
 
 const TABS: LibraryTab[] = [
   "all",
@@ -63,17 +63,7 @@ export function LibraryView() {
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
       <div className="mb-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white">Library</h1>
-          {isAuthenticated && (
-            <button
-              onClick={() => setShowAdd(true)}
-              className="from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 flex shrink-0 items-center justify-center gap-2 rounded-lg bg-linear-to-r px-4 py-2 text-center text-sm font-semibold text-white shadow-lg transition-all sm:flex-none"
-            >
-              <Plus size={15} /> Add Game
-            </button>
-          )}
-        </div>
+        <PageHeader onAddGame={() => setShowAdd(true)} />
         <TabBar
           tabs={TABS}
           value={tab}

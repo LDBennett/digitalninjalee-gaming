@@ -8,8 +8,7 @@ import {
   GameCardSkeleton,
 } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
-import { EmptyState, TabBar } from "@/src/lib/frontend/shared";
-import { Plus } from "lucide-react";
+import { EmptyState, PageHeader, TabBar } from "@/src/lib/frontend/shared";
 
 const TABS: WishlistTab[] = [
   "all",
@@ -45,23 +44,7 @@ export function WishlistView() {
 
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
-      <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Wishlist</h1>
-          <p className="mt-0.5 text-sm text-gray-500">
-            Games I want to buy or keep an eye on. Track upcoming releases and
-            pre-orders.
-          </p>
-        </div>
-        {isAuthenticated && (
-          <button
-            onClick={() => setShowAdd(true)}
-            className="from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 flex shrink-0 items-center justify-center gap-2 rounded-lg bg-linear-to-r px-4 py-2 text-center text-sm font-semibold text-white shadow-lg transition-all sm:flex-none"
-          >
-            <Plus size={15} /> Add Game
-          </button>
-        )}
-      </div>
+      <PageHeader onAddGame={() => setShowAdd(true)} />
 
       <TabBar
         tabs={TABS}
