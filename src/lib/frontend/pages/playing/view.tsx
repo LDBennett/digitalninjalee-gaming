@@ -7,7 +7,8 @@ import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
 import { EmptyState, SearchInput, TabBar } from "@/src/lib/frontend/shared";
-import { SlidersHorizontal } from "lucide-react";
+import { Dices, DicesIcon, SlidersHorizontal } from "lucide-react";
+import { RandomPicker } from "../../features";
 
 const TAB_VALUES: PlayingTab[] = ["playing", "ongoing", "replaying"];
 const TAB_LABELS: Record<PlayingTab, string> = {
@@ -55,6 +56,9 @@ export function PlayingView() {
     handleStatusChange,
     handleEdit,
     handleDelete,
+    showPicker,
+    setShowPicker,
+    truncatedButtonText,
   } = usePlaying();
 
   const topRef = useScrollToTop(page);
@@ -81,13 +85,32 @@ export function PlayingView() {
 
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Currently Playing</h1>
-        <p className="mt-0.5 text-sm text-gray-500">
-          {filtered.length} {countLabel}
-          {filtered.length !== 1 ? "s" : ""}
-          {moodFilter ? ` · ${moodFilter}` : ""}
-        </p>
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Backlog</h1>
+          <p className="mt-0.5 text-sm text-gray-500">
+            {filtered.length} {countLabel}
+            {filtered.length !== 1 ? "s" : ""}
+            {moodFilter ? ` · ${moodFilter}` : ""}
+          </p>
+        </div>
+        {isAuthenticated && (
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setShowPicker(true)}
+              className={`"flex from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 transition-all" flex-1 items-center justify-center gap-2 bg-linear-to-r text-center text-sm font-semibold text-white shadow-lg sm:flex-none ${truncatedButtonText ? "rounded-full p-2" : "rounded-lg px-4 py-2"}`}
+            >
+              {truncatedButtonText ? (
+                <Dices size={16} />
+              ) : (
+                <div className="flex items-center gap-2">
+                  <DicesIcon size={16} />
+                  Random
+                </div>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       <TabBar
@@ -120,7 +143,14 @@ export function PlayingView() {
 
       {showFilters && (
         <GameFiltersPanel
-          filters={{ moodFilter, setMoodFilter, sortBy, setSortBy, platformFilter, setPlatformFilter }}
+          filters={{
+            moodFilter,
+            setMoodFilter,
+            sortBy,
+            setSortBy,
+            platformFilter,
+            setPlatformFilter,
+          }}
           moods={moods}
           className="mb-5"
         />
@@ -158,6 +188,11 @@ export function PlayingView() {
           moods={moods}
         />
       )}
+      <RandomPicker
+        isOpen={showPicker}
+        onClose={() => setShowPicker(false)}
+        moods={moods}
+      />
     </div>
   );
 }
