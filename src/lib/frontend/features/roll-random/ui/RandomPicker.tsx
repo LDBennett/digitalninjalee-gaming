@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { GameDto, MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
 import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
-import { Button } from "@/src/lib/frontend/shared";
+import { Button, Modal } from "@/src/lib/frontend/shared";
 import { GameCarousel } from "./GameCarousel";
 import { RandomPickResult } from "./RandomPickResult";
 
@@ -111,24 +111,11 @@ export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }
     onClose();
   };
 
-  if (!isOpen) return null;
-
   const isSpinning = spinPhase === "spinning";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-sm rounded-2xl border border-gray-700 bg-gray-900 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-800 p-5">
-          <h2 className="text-base font-semibold text-white">🎲 Pick a Game</h2>
-          <button
-            onClick={handleClose}
-            className="text-2xl leading-none text-gray-400 transition-colors hover:text-white"
-          >
-            &times;
-          </button>
-        </div>
-
-        <div className="space-y-5 p-5">
+    <Modal isOpen={isOpen} onClose={handleClose} title="🎲 Pick a Game" maxWidth="max-w-sm">
+      <div className="space-y-5 p-5">
           <div>
             <p className="mb-3 text-xs font-medium tracking-wide text-gray-500 uppercase">
               Pick from
@@ -218,8 +205,7 @@ export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -56,7 +56,7 @@ export function AuthButton() {
                 Sign out?
               </h2>
               <p className="mb-5 text-xs text-gray-500">
-                You&apos;ll be switched to read-only mode.
+                You'll be switched to read-only mode.
               </p>
               <div className="flex gap-2">
                 <Button

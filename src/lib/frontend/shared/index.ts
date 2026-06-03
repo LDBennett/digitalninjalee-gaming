@@ -1,4 +1,6 @@
 export { cn } from "./lib/cn";
+export { Modal } from "./ui/Modal";
+export type { ModalProps } from "./ui/Modal";
 export { Button } from "./ui/Button";
 export type { ButtonProps, ButtonVariant, ButtonSize, ButtonShape } from "./ui/Button";
 export { Badge } from "./ui/Badge";

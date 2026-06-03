@@ -8,7 +8,7 @@ import {
 } from "@/src/lib/backend/backlog/domain/models";
 import { AddGamePayload } from "@/src/lib/frontend/features/add-game/types";
 import { useAddGameForm } from "@/src/lib/frontend/features/add-game/hooks/useAddGameForm";
-import { Button } from "@/src/lib/frontend/shared";
+import { Button, Modal } from "@/src/lib/frontend/shared";
 import { GameTitleSearch } from "./GameTitleSearch";
 import { SelectedGamePreview } from "./SelectedGamePreview";
 import { AddGameFormFields } from "./AddGameFormFields";
@@ -40,8 +40,6 @@ export function AddGameModal({
     onClose,
   });
 
-  if (!isOpen) return null;
-
   const coverImage =
     form.backgroundUrl ||
     form.coverArtUrl ||
@@ -49,9 +47,14 @@ export function AddGameModal({
     editGame?.cover_art_url;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-      <div className="relative max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-2xl border border-gray-700 bg-gray-900 shadow-2xl">
-        {coverImage && (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={editGame ? "Edit Game" : "Add Game"}
+      maxWidth="max-w-2xl"
+      scrollable
+      overlay={
+        coverImage && (
           <>
             <div
               className="absolute inset-0 scale-110"
@@ -71,86 +74,68 @@ export function AddGameModal({
               }}
             />
           </>
+        )
+      }
+    >
+      <form onSubmit={form.handleSubmit} className="space-y-4 p-5">
+        <GameTitleSearch
+          value={form.title}
+          onChange={(val) => {
+            form.setTitle(val);
+            form.setRawgId(null);
+            form.setBackgroundUrl("");
+          }}
+          onSelect={form.handleRawgSelect}
+          results={form.rawgResults}
+          showDropdown={form.showDropdown}
+          onDropdownChange={form.setShowDropdown}
+          searchLoading={form.searchLoading}
+          isEditing={!!editGame}
+        />
+
+        {!editGame && form.backgroundUrl && (
+          <SelectedGamePreview form={form} />
         )}
 
-        <div className="relative max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between border-b border-gray-800 p-5">
-            <h2 className="text-base font-semibold text-white">
-              {editGame ? "Edit Game" : "Add Game"}
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-2xl leading-none text-gray-400 transition-colors hover:text-white"
-            >
-              &times;
-            </button>
-          </div>
+        <AddGameFormFields form={form} editGame={editGame} moods={moods} />
 
-          <form onSubmit={form.handleSubmit} className="space-y-4 p-5">
-            <GameTitleSearch
-              value={form.title}
-              onChange={(val) => {
-                form.setTitle(val);
-                form.setRawgId(null);
-                form.setBackgroundUrl("");
+        <div className="flex justify-between gap-3 pt-1">
+          {editGame && onDelete && (
+            <Button
+              variant="danger"
+              icon={<Trash2 size={16} />}
+              onClick={async () => {
+                await onDelete(editGame.id);
+                onClose();
               }}
-              onSelect={form.handleRawgSelect}
-              results={form.rawgResults}
-              showDropdown={form.showDropdown}
-              onDropdownChange={form.setShowDropdown}
-              searchLoading={form.searchLoading}
-              isEditing={!!editGame}
-            />
-
-            {!editGame && form.backgroundUrl && (
-              <SelectedGamePreview form={form} />
+              className="font-medium"
+            >
+              Delete
+            </Button>
+          )}
+          <div className="ml-auto flex items-center gap-2">
+            {!editGame && (
+              <Button
+                variant="gray-dark"
+                onClick={form.handleSubmitAndAdd}
+                disabled={form.saving || !form.title.trim()}
+                className="font-medium"
+              >
+                {form.saving ? "Saving…" : "Save & Add Another"}
+              </Button>
             )}
-
-            <AddGameFormFields
-              form={form}
-              editGame={editGame}
-              moods={moods}
-            />
-
-            <div className="flex justify-between gap-3 pt-1">
-              {editGame && onDelete && (
-                <Button
-                  variant="danger"
-                  icon={<Trash2 size={16} />}
-                  onClick={async () => {
-                    await onDelete(editGame.id);
-                    onClose();
-                  }}
-                  className="font-medium"
-                >
-                  Delete
-                </Button>
-              )}
-              <div className="ml-auto flex items-center gap-2">
-                {!editGame && (
-                  <Button
-                    variant="gray-dark"
-                    onClick={form.handleSubmitAndAdd}
-                    disabled={form.saving || !form.title.trim()}
-                    className="font-medium"
-                  >
-                    {form.saving ? "Saving…" : "Save & Add Another"}
-                  </Button>
-                )}
-                <Button
-                  type="submit"
-                  variant="brand"
-                  size="md"
-                  disabled={form.saving || !form.title.trim()}
-                  className="font-medium px-5"
-                >
-                  {form.saving ? "Saving…" : editGame ? "Update" : "Add Game"}
-                </Button>
-              </div>
-            </div>
-          </form>
+            <Button
+              type="submit"
+              variant="brand"
+              size="md"
+              disabled={form.saving || !form.title.trim()}
+              className="font-medium px-5"
+            >
+              {form.saving ? "Saving…" : editGame ? "Update" : "Add Game"}
+            </Button>
+          </div>
         </div>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }

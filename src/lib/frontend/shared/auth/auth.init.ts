@@ -4,19 +4,20 @@ import { getBrowserClient } from "@/src/lib/infrastructure/supabase/supabaseClie
 import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
 import { AuthError } from "@supabase/supabase-js";
 
-export function signIn(
+export async function signIn(
   email: string,
   password: string,
 ): Promise<AuthError | null> {
-  return getBrowserClient()
-    .auth.signInWithPassword({ email, password })
-    .then(({ error }) => error);
+  const { error } = await getBrowserClient().auth.signInWithPassword({
+    email,
+    password,
+  });
+  return error;
 }
 
-export function signOut(): Promise<void> {
-  return getBrowserClient()
-    .auth.signOut()
-    .then(() => undefined);
+export async function signOut(): Promise<void> {
+  await getBrowserClient().auth.signOut();
+  return undefined;
 }
 
 export function initAuth(): void {
