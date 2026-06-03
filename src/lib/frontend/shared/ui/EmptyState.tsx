@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "./Button";
+
 interface Props {
   heading: string;
   hint?: string;
@@ -13,12 +15,9 @@ export function EmptyState({ heading, hint, actionLabel, onAction }: Props) {
       <p className="mb-2 text-lg text-gray-500">{heading}</p>
       {hint && <p className="mb-4 text-sm text-gray-600">{hint}</p>}
       {actionLabel && onAction && (
-        <button
-          onClick={onAction}
-          className="bg-brand-700 hover:bg-brand-600 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
-        >
+        <Button variant="brand" onClick={onAction}>
           {actionLabel}
-        </button>
+        </Button>
       )}
     </div>
   );

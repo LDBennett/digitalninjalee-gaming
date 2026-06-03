@@ -8,6 +8,7 @@ import {
 } from "@/src/lib/backend/backlog/domain/models";
 import { AddGamePayload } from "@/src/lib/frontend/features/add-game/types";
 import { useAddGameForm } from "@/src/lib/frontend/features/add-game/hooks/useAddGameForm";
+import { Button } from "@/src/lib/frontend/shared";
 import { GameTitleSearch } from "./GameTitleSearch";
 import { SelectedGamePreview } from "./SelectedGamePreview";
 import { AddGameFormFields } from "./AddGameFormFields";
@@ -113,35 +114,38 @@ export function AddGameModal({
 
             <div className="flex justify-between gap-3 pt-1">
               {editGame && onDelete && (
-                <button
-                  type="button"
+                <Button
+                  variant="danger"
+                  icon={<Trash2 size={16} />}
                   onClick={async () => {
                     await onDelete(editGame.id);
                     onClose();
                   }}
-                  className="flex items-center gap-1 rounded-lg border border-gray-700 bg-red-400 px-3 py-2 text-sm font-medium text-white transition-colors hover:border-red-800 hover:bg-red-900/40 hover:text-red-400"
+                  className="font-medium"
                 >
-                  <Trash2 /> Delete
-                </button>
+                  Delete
+                </Button>
               )}
               <div className="ml-auto flex items-center gap-2">
                 {!editGame && (
-                  <button
-                    type="button"
+                  <Button
+                    variant="gray-dark"
                     onClick={form.handleSubmitAndAdd}
                     disabled={form.saving || !form.title.trim()}
-                    className="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="font-medium"
                   >
                     {form.saving ? "Saving…" : "Save & Add Another"}
-                  </button>
+                  </Button>
                 )}
-                <button
+                <Button
                   type="submit"
+                  variant="brand"
+                  size="md"
                   disabled={form.saving || !form.title.trim()}
-                  className="bg-brand-700 hover:bg-brand-600 rounded-lg px-5 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                  className="font-medium px-5"
                 >
                   {form.saving ? "Saving…" : editGame ? "Update" : "Add Game"}
-                </button>
+                </Button>
               </div>
             </div>
           </form>

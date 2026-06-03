@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "./Button";
+
 interface Props {
   page: number;
   totalPages: number;
@@ -13,13 +15,15 @@ export function Pagination({ page, totalPages, onPageChange }: Props) {
 
   return (
     <div className="mt-6 flex items-center justify-center gap-2">
-      <button
+      <Button
+        variant="gray"
+        size="sm"
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
-        className="rounded-lg px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-gray-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+        className="font-medium"
       >
         ← Prev
-      </button>
+      </Button>
       <select
         value={page}
         onChange={(e) => onPageChange(Number(e.target.value))}
@@ -32,13 +36,15 @@ export function Pagination({ page, totalPages, onPageChange }: Props) {
         ))}
       </select>
       / {totalPages}
-      <button
+      <Button
+        variant="gray"
+        size="sm"
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
-        className="rounded-lg px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-gray-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+        className="font-medium"
       >
         Next →
-      </button>
+      </Button>
     </div>
   );
 }

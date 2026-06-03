@@ -3,6 +3,7 @@
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
 import { PlatformBadge } from "@/src/lib/frontend/entities/game";
+import { Button } from "@/src/lib/frontend/shared";
 
 interface Props {
   game: GameDto;
@@ -46,12 +47,9 @@ export function RandomPickResult({ game, onPickAgain }: Props) {
           ))}
         </div>
       )}
-      <button
-        onClick={onPickAgain}
-        className="w-full py-1 text-xs text-gray-500 transition-colors hover:text-white"
-      >
+      <Button variant="ghost" size="xs" fullWidth onClick={onPickAgain}>
         Pick again →
-      </button>
+      </Button>
     </div>
   );
 }

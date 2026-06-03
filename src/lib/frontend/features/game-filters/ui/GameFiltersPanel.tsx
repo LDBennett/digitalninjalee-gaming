@@ -5,6 +5,7 @@ import {
   PLATFORM_LABELS,
 } from "@/src/lib/backend/backlog/domain/models";
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
+import { Select } from "@/src/lib/frontend/shared";
 import { MoodFilter } from "./MoodFilter";
 import { useGameFilters } from "../hooks/useGameFilters";
 
@@ -42,17 +43,17 @@ export function GameFiltersPanel({ filters, moods, className, children }: GameFi
           <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
             Sort By
           </label>
-          <select
+          <Select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white focus:outline-none"
+            fullWidth
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div>

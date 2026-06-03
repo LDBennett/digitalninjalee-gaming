@@ -1,6 +1,7 @@
 "use client";
 
 import { Platform } from "@/src/lib/backend/backlog/domain/models";
+import { Badge } from "@/src/lib/frontend/shared";
 
 const PLATFORM_STYLES: Record<
   Platform,
@@ -20,10 +21,8 @@ const PLATFORM_STYLES: Record<
 export function PlatformBadge({ platform }: { platform: Platform }) {
   const style = PLATFORM_STYLES[platform];
   return (
-    <span
-      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
-    >
+    <Badge bg={style.bg} text={style.text}>
       {style.label}
-    </span>
+    </Badge>
   );
 }

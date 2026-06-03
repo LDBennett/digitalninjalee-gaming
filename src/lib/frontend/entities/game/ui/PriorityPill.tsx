@@ -4,6 +4,7 @@ import {
   scoreToTier,
   nextTierScore,
 } from "@/src/lib/backend/backlog/domain/models";
+import { Badge } from "@/src/lib/frontend/shared";
 
 interface Props {
   score: number;
@@ -14,12 +15,14 @@ interface Props {
 export function PriorityPill({ score, gameId, onPriorityChange }: Props) {
   const tier = scoreToTier(score);
   return (
-    <button
+    <Badge
+      bg={tier.pillBg}
+      text={tier.pillText}
       onClick={() => onPriorityChange(gameId, nextTierScore(score) - score)}
       title="Click to raise priority tier"
-      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium transition-colors ${tier.pillBg} ${tier.pillText}`}
+      className="transition-colors"
     >
       {tier.label}
-    </button>
+    </Badge>
   );
 }

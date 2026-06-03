@@ -4,6 +4,7 @@ import {
   GameStatus,
   STATUS_LABELS,
 } from "@/src/lib/backend/backlog/domain/models";
+import { Badge } from "@/src/lib/frontend/shared";
 
 const STATUS_BADGE: Record<GameStatus, { bg: string; text: string }> = {
   backlog: { bg: "bg-gray-800", text: "text-gray-400" },
@@ -22,10 +23,8 @@ export { STATUS_BADGE };
 export function GameStatusBadge({ status }: { status: GameStatus }) {
   const badge = STATUS_BADGE[status];
   return (
-    <span
-      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${badge.bg} ${badge.text}`}
-    >
+    <Badge bg={badge.bg} text={badge.text}>
       {STATUS_LABELS[status]}
-    </span>
+    </Badge>
   );
 }

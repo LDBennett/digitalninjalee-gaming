@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { GameDto, MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
 import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
+import { Button } from "@/src/lib/frontend/shared";
 import { GameCarousel } from "./GameCarousel";
 import { RandomPickResult } from "./RandomPickResult";
 
@@ -172,13 +173,16 @@ export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }
             </div>
           </div>
 
-          <button
+          <Button
+            variant="brand-gradient"
+            fullWidth
+            size="lg"
             onClick={pick}
             disabled={isSpinning}
-            className="from-brand-700 hover:from-brand-600 to-brand-700 hover:to-brand-600 w-full rounded-xl bg-linear-to-r py-3 text-sm font-semibold text-white shadow-lg transition-all disabled:opacity-60"
+            className="rounded-xl disabled:opacity-60"
           >
             Pick For Me
-          </button>
+          </Button>
 
           {noGamesMsg && (
             <p className="py-2 text-center text-sm text-gray-500">

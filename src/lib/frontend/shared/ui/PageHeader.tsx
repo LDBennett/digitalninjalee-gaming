@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Dices, Plus } from "lucide-react";
 import { useAuthStore } from "../auth/auth.store";
+import { Button } from "./Button";
 
 type ButtonType = "random" | "add";
 
@@ -51,20 +52,24 @@ export function PageHeader({ subtitle, onRandom, onAddGame }: Props) {
       </div>
       <div className="flex gap-3">
         {config.buttons.includes("random") && onRandom && (
-          <button
+          <Button
+            variant="brand-gradient"
             onClick={onRandom}
-            className="from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 flex shrink-0 items-center justify-center gap-2 rounded-lg bg-linear-to-r px-4 py-2 text-center text-sm font-semibold text-white shadow-lg transition-all"
+            icon={<Dices size={16} />}
+            className="shrink-0"
           >
-            <Dices size={16} /> Random
-          </button>
+            Random
+          </Button>
         )}
         {user && config.buttons.includes("add") && onAddGame && (
-          <button
+          <Button
+            variant="brand-gradient"
             onClick={onAddGame}
-            className="from-brand-950 hover:from-brand-800 to-brand-800 hover:to-brand-600 flex shrink-0 items-center justify-center gap-2 rounded-lg bg-linear-to-r px-4 py-2 text-center text-sm font-semibold text-white shadow-lg transition-all"
+            icon={<Plus size={15} />}
+            className="shrink-0"
           >
-            <Plus size={15} /> Add Game
-          </button>
+            Add Game
+          </Button>
         )}
       </div>
     </div>

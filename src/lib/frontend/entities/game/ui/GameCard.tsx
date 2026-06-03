@@ -6,6 +6,7 @@ import { Pencil } from "lucide-react";
 import { GameDto, GameStatus } from "@/src/lib/backend/backlog/domain/models";
 import { scoreToTier } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
+import { Button } from "@/src/lib/frontend/shared";
 import { PlatformBadge } from "./PlatformBadge";
 import { RatingStars } from "./RatingStars";
 import { GameStatusBadge } from "./GameStatusBadge";
@@ -97,13 +98,15 @@ export function GameCard({
             </h3>
             <div className="flex shrink-0 items-center gap-2">
               {onEdit && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  icon={<Pencil size={13} />}
                   onClick={() => onEdit(game)}
+                  aria-label="Edit game"
                   title="Edit game"
-                  className="hover:text-brand-400 text-gray-600 transition-colors"
-                >
-                  <Pencil size={13} />
-                </button>
+                  className="hover:text-brand-400 text-gray-600 p-0"
+                />
               )}
               {showPriority && onPriorityChange && (
                 <PriorityPill

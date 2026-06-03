@@ -1,6 +1,7 @@
 "use client";
 
 import { useAddGameForm } from "../hooks/useAddGameForm";
+import { Input } from "@/src/lib/frontend/shared";
 
 interface EditMediaFieldsProps {
   form: ReturnType<typeof useAddGameForm>;
@@ -22,24 +23,26 @@ export function EditMediaFields({ form }: EditMediaFieldsProps) {
           Background Image URL{" "}
           <span className="ml-1 text-gray-600">— from RAWG</span>
         </label>
-        <input
+        <Input
           type="url"
           value={backgroundUrl}
           onChange={(e) => onBackgroundUrlChange(e.target.value)}
           placeholder="https://..."
-          className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none"
+          fullWidth
+          className="placeholder-gray-600"
         />
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium text-gray-400">
           Cover Art URL <span className="ml-1 text-gray-600">— from IGDB</span>
         </label>
-        <input
+        <Input
           type="url"
           value={coverArtUrl}
           onChange={(e) => onCoverArtUrlChange(e.target.value)}
           placeholder="https://images.igdb.com/..."
-          className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none"
+          fullWidth
+          className="placeholder-gray-600"
         />
       </div>
       <div>

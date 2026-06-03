@@ -2,6 +2,7 @@
 
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge, getMoodLabel } from "@/src/lib/frontend/entities/mood";
+import { Select } from "@/src/lib/frontend/shared";
 
 interface MoodFilterProps {
   moods: MoodDto[];
@@ -20,12 +21,13 @@ export function MoodFilter({
     <div className={className}>
       {/* Mobile: dropdown */}
       <div className="sm:hidden">
-        <select
+        <Select
           id="mood-filter"
           name="mood-filter"
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value || null)}
-          className="focus:border-brand-600 w-full rounded-lg border border-gray-800 bg-gray-900 px-3 py-2 text-sm text-white focus:outline-none"
+          fullWidth
+          className="border-gray-800 bg-gray-900"
         >
           <option value="">All moods</option>
           {moods.map((mood) => (
@@ -33,7 +35,7 @@ export function MoodFilter({
               {getMoodLabel(mood.name)}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {/* Desktop: pills */}

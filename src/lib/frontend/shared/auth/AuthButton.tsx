@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
 import { signIn, signOut } from "@/src/lib/frontend/shared/auth/auth.init";
+import { Button } from "@/src/lib/frontend/shared/ui/Button";
+import { Input } from "@/src/lib/frontend/shared/ui/Input";
 
 export function AuthButton() {
   const { user } = useAuthStore();
@@ -57,21 +59,23 @@ export function AuthButton() {
                 You&apos;ll be switched to read-only mode.
               </p>
               <div className="flex gap-2">
-                <button
+                <Button
+                  variant="gray"
                   onClick={() => setShowSignOutConfirm(false)}
-                  className="flex-1 rounded-lg bg-gray-800 px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-700"
+                  className="flex-1 font-medium"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="danger"
                   onClick={() => {
                     signOut();
                     setShowSignOutConfirm(false);
                   }}
-                  className="flex-1 rounded-lg bg-red-900/60 px-3 py-2 text-sm font-medium text-red-300 transition-colors hover:bg-red-800/60"
+                  className="flex-1 font-medium"
                 >
                   Sign Out
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -107,29 +111,30 @@ export function AuthButton() {
               Game Vault is personal — sign in to make changes.
             </p>
             <div className="space-y-3">
-              <input
+              <Input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none"
+                fullWidth
               />
-              <input
+              <Input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSignIn()}
-                className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none"
+                error={error ?? undefined}
+                fullWidth
               />
-              {error && <p className="text-xs text-red-400">{error}</p>}
-              <button
+              <Button
+                variant="brand"
                 onClick={handleSignIn}
                 disabled={loading || !email || !password}
-                className="bg-brand-700 hover:bg-brand-600 w-full rounded-lg px-3 py-2 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                fullWidth
               >
                 {loading ? "Signing in…" : "Sign in"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

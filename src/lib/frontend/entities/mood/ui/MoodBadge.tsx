@@ -1,5 +1,7 @@
 "use client";
 
+import { Badge } from "@/src/lib/frontend/shared";
+
 type MoodName =
   | "action"
   | "chill"
@@ -104,10 +106,8 @@ export function MoodBadge({ mood }: { mood: string }) {
   const style = MOOD_STYLES[mood as MoodName];
   if (!style) return null;
   return (
-    <span
-      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
-    >
+    <Badge bg={style.bg} text={style.text}>
       {style.label}
-    </span>
+    </Badge>
   );
 }

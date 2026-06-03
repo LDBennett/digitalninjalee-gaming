@@ -1,6 +1,7 @@
 "use client";
 
 import { RawgResult } from "@/src/lib/frontend/features/add-game/types";
+import { Input } from "@/src/lib/frontend/shared";
 
 interface GameTitleSearchProps {
   value: string;
@@ -34,7 +35,7 @@ export function GameTitleSearch({
         )}
       </label>
       <div className="relative">
-        <input
+        <Input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -42,7 +43,8 @@ export function GameTitleSearch({
           onFocus={() => results.length > 0 && onDropdownChange(true)}
           placeholder="Game title..."
           required
-          className="focus:border-brand-600 w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 pr-8 text-sm text-white placeholder-gray-600 focus:outline-none"
+          fullWidth
+          className="pr-8 placeholder-gray-600"
         />
         {searchLoading && (
           <span className="absolute top-1/2 right-3 -translate-y-1/2 text-xs text-gray-500">
