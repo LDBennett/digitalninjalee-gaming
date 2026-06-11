@@ -122,7 +122,7 @@ async function main() {
       const cleanedTitle = (game.title as string)
         .replace(/\s*\(.*?\)\s*$/, "")
         .trim();
-      const igdbData = await igdb.fetchGame(cleanedTitle);
+      const igdbData = await igdb.fetchGameByTitle(cleanedTitle);
 
       if (!igdbData) {
         await supabase.from("game_external_ids").upsert(

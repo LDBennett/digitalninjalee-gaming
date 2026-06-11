@@ -1,13 +1,13 @@
 "use client";
 
-import { RawgResult } from "@/src/lib/frontend/features/add-game/types";
+import { IgdbSearchResult } from "@/src/lib/frontend/features/add-game/types";
 import { Input } from "@/src/lib/frontend/shared";
 
 interface GameTitleSearchProps {
   value: string;
   onChange: (value: string) => void;
-  onSelect: (game: RawgResult) => void;
-  results: RawgResult[];
+  onSelect: (game: IgdbSearchResult) => void;
+  results: IgdbSearchResult[];
   showDropdown: boolean;
   onDropdownChange: (show: boolean) => void;
   searchLoading: boolean;

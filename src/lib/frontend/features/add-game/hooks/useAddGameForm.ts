@@ -10,7 +10,7 @@ import { AddGamePayload } from "@/src/lib/frontend/features/add-game/types";
 import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
 import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
 import { useAddGameFormState } from "./useAddGameFormState";
-import { useRawgSearch } from "./useRawgSearch";
+import { useIgdbSearch } from "./useIgdbSearch";
 import { useGameDataFetch } from "./useGameDataFetch";
 
 interface UseAddGameFormOptions {
@@ -44,27 +44,26 @@ export function useAddGameForm({
       .catch(() => {});
   }, [authLoading, session]);
 
-  useRawgSearch({
+  useIgdbSearch({
     title: state.title,
+    igdbId: state.igdbId,
     editGame,
     authHeaders,
-    setRawgResults: state.setRawgResults,
+    setIgdbResults: state.setIgdbResults,
     setShowDropdown: state.setShowDropdown,
     setSearchLoading: state.setSearchLoading,
   });
 
-  const { handleRawgSelect } = useGameDataFetch({
+  const { handleIgdbSelect } = useGameDataFetch({
     allMoods,
     authHeaders,
-    gameDescription: state.gameDescription,
     setTitle: state.setTitle,
     setBackgroundUrl: state.setBackgroundUrl,
-    setRawgId: state.setRawgId,
-    setRawgResults: state.setRawgResults as (v: never[]) => void,
-    setShowDropdown: state.setShowDropdown,
-    setIgdbLoading: state.setIgdbLoading,
-    setIgdbLoaded: state.setIgdbLoaded,
     setCoverArtUrl: state.setCoverArtUrl,
+    setIgdbResults: state.setIgdbResults as (v: never[]) => void,
+    setShowDropdown: state.setShowDropdown,
+    setEnrichLoading: state.setEnrichLoading,
+    setEnrichLoaded: state.setEnrichLoaded,
     setGameDescription: state.setGameDescription,
     setIgdbId: state.setIgdbId,
     setSelectedMoods: state.setSelectedMoods,
@@ -85,14 +84,13 @@ export function useAddGameForm({
     state.setGameDescription("");
     state.setPersonalNote("");
     state.setRating(null);
-    state.setRawgId(null);
     state.setIgdbId(null);
     state.setSelectedMoods([]);
     state.setReplayStatus(null);
-    state.setRawgResults([]);
+    state.setIgdbResults([]);
     state.setShowDropdown(false);
-    state.setIgdbLoading(false);
-    state.setIgdbLoaded(false);
+    state.setEnrichLoading(false);
+    state.setEnrichLoaded(false);
   };
 
   const doSave = async () => {
@@ -108,7 +106,7 @@ export function useAddGameForm({
       game_description: state.gameDescription.trim() || null,
       personal_note: state.personalNote.trim() || null,
       rating: state.rating,
-      rawg_id: state.rawgId,
+      rawg_id: null,
       igdb_id: state.igdbId,
       mood_ids: state.selectedMoods,
       replay_status: state.replayStatus,
@@ -132,14 +130,13 @@ export function useAddGameForm({
     state.setBackgroundUrl("");
     state.setCoverArtUrl("");
     state.setGameDescription("");
-    state.setRawgId(null);
     state.setIgdbId(null);
-    state.setIgdbLoaded(false);
+    state.setEnrichLoaded(false);
   };
 
   return {
     ...state,
-    handleRawgSelect,
+    handleIgdbSelect,
     toggleMood,
     handleSubmit,
     handleSubmitAndAdd,

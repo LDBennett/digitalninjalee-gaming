@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { initAuth } from "@/src/lib/frontend/shared/auth/auth.init";
+import { LoginModal } from "@/src/lib/frontend/shared/auth/ui/LoginModal";
+import { SignOutConfirmModal } from "@/src/lib/frontend/shared/auth/ui/SignOutConfirmModal";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -22,6 +24,10 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <LoginModal />
+      <SignOutConfirmModal />
+    </QueryClientProvider>
   );
 }

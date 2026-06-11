@@ -2,28 +2,30 @@
 
 import { useEffect } from "react";
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { RawgResult } from "@/src/lib/frontend/features/add-game/types";
+import { IgdbSearchResult } from "@/src/lib/frontend/features/add-game/types";
 
-interface UseRawgSearchParams {
+interface UseIgdbSearchParams {
   title: string;
+  igdbId: number | null;
   editGame: GameDto | null | undefined;
   authHeaders: () => Record<string, string>;
-  setRawgResults: (results: RawgResult[]) => void;
+  setIgdbResults: (results: IgdbSearchResult[]) => void;
   setShowDropdown: (show: boolean) => void;
   setSearchLoading: (loading: boolean) => void;
 }
 
-export function useRawgSearch({
+export function useIgdbSearch({
   title,
+  igdbId,
   editGame,
   authHeaders,
-  setRawgResults,
+  setIgdbResults,
   setShowDropdown,
   setSearchLoading,
-}: UseRawgSearchParams) {
+}: UseIgdbSearchParams) {
   useEffect(() => {
-    if (editGame || title.trim().length < 2) {
-      setRawgResults([]);
+    if (editGame || igdbId || title.trim().length < 2) {
+      setIgdbResults([]);
       setShowDropdown(false);
       return;
     }
@@ -31,16 +33,16 @@ export function useRawgSearch({
       setSearchLoading(true);
       try {
         const res = await fetch(
-          `/api/rawg?q=${encodeURIComponent(title.trim())}`,
+          `/api/igdb/search?q=${encodeURIComponent(title.trim())}`,
           { headers: authHeaders() },
         );
         const data = await res.json();
-        setRawgResults(Array.isArray(data) ? data : []);
+        setIgdbResults(Array.isArray(data) ? data : []);
         setShowDropdown(true);
       } finally {
         setSearchLoading(false);
       }
     }, 400);
     return () => clearTimeout(timer);
-  }, [title, editGame]);
+  }, [title, igdbId, editGame]);
 }
