@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { createIgdbClient, mapIgdbToMoods } from "@/src/lib/backend/sync";
 import { requireAuth } from "@/src/lib/backend/backlog/infrastructure";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const auth = await requireAuth(req);
   if (!auth.ok) return auth.response;
 
-  const query = new URL(req.url).searchParams.get("q") ?? "";
-  if (query.trim().length < 2) return NextResponse.json(null);
+  const { id } = await params;
+  const numericId = Number(id);
+  if (!numericId) return NextResponse.json(null, { status: 400 });
 
   const clientId = process.env.IGDB_CLIENT_ID;
   const clientSecret = process.env.IGDB_CLIENT_SECRET;
@@ -20,7 +24,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const client = await createIgdbClient(clientId, clientSecret);
-    const data = await client.fetchGameByTitle(query.trim());
+    const data = await client.fetchGame(numericId);
     return NextResponse.json(
       data ? { ...data, suggestedMoods: mapIgdbToMoods(data) } : null,
     );

@@ -7,7 +7,7 @@ import {
   Platform,
   ReplayStatus,
 } from "@/src/lib/backend/backlog/domain/models";
-import { RawgResult } from "@/src/lib/frontend/features/add-game/types";
+import { IgdbSearchResult } from "@/src/lib/frontend/features/add-game/types";
 
 export function useAddGameFormState(
   editGame: GameDto | null | undefined,
@@ -23,16 +23,15 @@ export function useAddGameFormState(
   const [gameDescription, setGameDescription] = useState("");
   const [personalNote, setPersonalNote] = useState("");
   const [rating, setRating] = useState<number | null>(null);
-  const [rawgId, setRawgId] = useState<number | null>(null);
   const [igdbId, setIgdbId] = useState<number | null>(null);
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [replayStatus, setReplayStatus] = useState<ReplayStatus>(null);
   const [saving, setSaving] = useState(false);
-  const [rawgResults, setRawgResults] = useState<RawgResult[]>([]);
+  const [igdbResults, setIgdbResults] = useState<IgdbSearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [igdbLoading, setIgdbLoading] = useState(false);
-  const [igdbLoaded, setIgdbLoaded] = useState(false);
+  const [enrichLoading, setEnrichLoading] = useState(false);
+  const [enrichLoaded, setEnrichLoaded] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -46,7 +45,6 @@ export function useAddGameFormState(
       setGameDescription(editGame.game_description ?? "");
       setPersonalNote(editGame.personal_note ?? "");
       setRating(editGame.rating ?? null);
-      setRawgId(null);
       setIgdbId(null);
       setSelectedMoods(editGame.moods?.map((m) => m.id) ?? []);
       setReplayStatus(editGame.replay_status ?? null);
@@ -60,15 +58,14 @@ export function useAddGameFormState(
       setGameDescription("");
       setPersonalNote("");
       setRating(null);
-      setRawgId(null);
       setIgdbId(null);
       setSelectedMoods([]);
       setReplayStatus(null);
     }
-    setRawgResults([]);
+    setIgdbResults([]);
     setShowDropdown(false);
-    setIgdbLoading(false);
-    setIgdbLoaded(false);
+    setEnrichLoading(false);
+    setEnrichLoaded(false);
   }, [editGame, isOpen, defaultStatus]);
 
   return {
@@ -90,8 +87,6 @@ export function useAddGameFormState(
     setPersonalNote,
     rating,
     setRating,
-    rawgId,
-    setRawgId,
     igdbId,
     setIgdbId,
     selectedMoods,
@@ -100,15 +95,15 @@ export function useAddGameFormState(
     setReplayStatus,
     saving,
     setSaving,
-    rawgResults,
-    setRawgResults,
+    igdbResults,
+    setIgdbResults,
     showDropdown,
     setShowDropdown,
     searchLoading,
     setSearchLoading,
-    igdbLoading,
-    setIgdbLoading,
-    igdbLoaded,
-    setIgdbLoaded,
+    enrichLoading,
+    setEnrichLoading,
+    enrichLoaded,
+    setEnrichLoaded,
   };
 }

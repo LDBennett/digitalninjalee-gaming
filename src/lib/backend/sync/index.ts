@@ -5,9 +5,11 @@ export {
   createRawgClient,
   searchRawgGames,
 } from "./rawg.adapter";
-export type { IgdbGameData } from "./igdb.adapter";
+export type { IgdbSearchResult, IgdbGameData } from "./igdb.adapter";
 export {
   mapIgdbToMoods,
+  searchIgdbGames,
   fetchIgdbGameData,
+  fetchIgdbGameDataByTitle,
   createIgdbClient,
 } from "./igdb.adapter";

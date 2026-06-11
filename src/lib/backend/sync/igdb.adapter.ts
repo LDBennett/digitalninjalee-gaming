@@ -1,11 +1,19 @@
 // IGDB API (via Twitch developer credentials)
 // Docs: https://api-docs.igdb.com/
 
+export interface IgdbSearchResult {
+  id: number;
+  name: string;
+  coverUrl: string | null;
+  released: string | null;
+}
+
 export interface IgdbGameData {
   igdbId: number;
   name: string;
   summary: string | null;
   coverArtUrl: string | null;
+  backgroundUrl: string | null;
   genreIds: number[];
   themeIds: number[];
   gameModeIds: number[];
@@ -80,14 +88,127 @@ async function getAccessToken(
   return data.access_token;
 }
 
+function igdbImageUrl(imageId: string, size: string): string {
+  return `https://images.igdb.com/igdb/image/upload/${size}/${imageId}.jpg`;
+}
+
+export async function searchIgdbGames(
+  query: string,
+  clientId: string,
+  accessToken: string,
+): Promise<IgdbSearchResult[]> {
+  const sanitized = query.replace(/"/g, "");
+  const body = [
+    "fields name,cover.image_id,first_release_date;",
+    `search "${sanitized}";`,
+    "limit 6;",
+    "where version_parent = null;",
+  ].join(" ");
+
+  const res = await fetch("https://api.igdb.com/v4/games", {
+    method: "POST",
+    headers: {
+      "Client-ID": clientId,
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "text/plain",
+    },
+    body,
+  });
+
+  if (!res.ok)
+    throw new Error(`IGDB API responded with ${res.status} ${res.statusText}`);
+
+  const results = (await res.json()) as Array<Record<string, unknown>>;
+
+  return results.map((g) => {
+    const cover = g.cover as { image_id: string } | null | undefined;
+    const released = g.first_release_date as number | undefined;
+    return {
+      id: g.id as number,
+      name: g.name as string,
+      coverUrl: cover?.image_id
+        ? igdbImageUrl(cover.image_id, "t_cover_small")
+        : null,
+      released: released
+        ? new Date(released * 1000).toISOString().slice(0, 10)
+        : null,
+    };
+  });
+}
+
 export async function fetchIgdbGameData(
+  id: number,
+  clientId: string,
+  accessToken: string,
+): Promise<IgdbGameData | null> {
+  const body = [
+    "fields name,summary,cover.image_id,artworks.image_id,screenshots.image_id,genres,themes,game_modes;",
+    `where id = ${id};`,
+    "limit 1;",
+  ].join(" ");
+
+  const res = await fetch("https://api.igdb.com/v4/games", {
+    method: "POST",
+    headers: {
+      "Client-ID": clientId,
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "text/plain",
+    },
+    body,
+  });
+
+  if (!res.ok)
+    throw new Error(`IGDB API responded with ${res.status} ${res.statusText}`);
+
+  const results = (await res.json()) as Array<Record<string, unknown>>;
+  if (!results.length) return null;
+
+  const game = results[0];
+  const cover = game.cover as { image_id: string } | null | undefined;
+  const artworks = game.artworks as Array<{ image_id: string }> | undefined;
+  const screenshots = game.screenshots as
+    | Array<{ image_id: string }>
+    | undefined;
+
+  const backgroundImageId =
+    artworks?.[0]?.image_id ?? screenshots?.[0]?.image_id ?? null;
+
+  return {
+    igdbId: game.id as number,
+    name: game.name as string,
+    summary: (game.summary as string) ?? null,
+    coverArtUrl: cover?.image_id
+      ? igdbImageUrl(cover.image_id, "t_cover_big")
+      : null,
+    backgroundUrl: backgroundImageId
+      ? igdbImageUrl(backgroundImageId, "t_screenshot_big")
+      : null,
+    genreIds: (game.genres as number[]) ?? [],
+    themeIds: (game.themes as number[]) ?? [],
+    gameModeIds: (game.game_modes as number[]) ?? [],
+  };
+}
+
+export async function createIgdbClient(clientId: string, clientSecret: string) {
+  const accessToken = await getAccessToken(clientId, clientSecret);
+  return {
+    searchGames: (query: string) =>
+      searchIgdbGames(query, clientId, accessToken),
+    fetchGame: (id: number) => fetchIgdbGameData(id, clientId, accessToken),
+    fetchGameByTitle: (title: string) =>
+      fetchIgdbGameDataByTitle(title, clientId, accessToken),
+  };
+}
+
+// Legacy title-based lookup kept for script use
+export async function fetchIgdbGameDataByTitle(
   title: string,
   clientId: string,
   accessToken: string,
 ): Promise<IgdbGameData | null> {
   const sanitized = title.replace(/"/g, "");
   const body = [
-    "fields name,summary,cover.image_id,genres,themes,game_modes;",
+    "fields name,summary,cover.image_id,artworks.image_id,screenshots.image_id,genres,themes,game_modes;",
     `search "${sanitized}";`,
     "limit 1;",
   ].join(" ");
@@ -110,25 +231,26 @@ export async function fetchIgdbGameData(
 
   const game = results[0];
   const cover = game.cover as { image_id: string } | null | undefined;
+  const artworks = game.artworks as Array<{ image_id: string }> | undefined;
+  const screenshots = game.screenshots as
+    | Array<{ image_id: string }>
+    | undefined;
+
+  const backgroundImageId =
+    artworks?.[0]?.image_id ?? screenshots?.[0]?.image_id ?? null;
 
   return {
     igdbId: game.id as number,
     name: game.name as string,
     summary: (game.summary as string) ?? null,
     coverArtUrl: cover?.image_id
-      ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${cover.image_id}.jpg`
+      ? igdbImageUrl(cover.image_id, "t_cover_big")
+      : null,
+    backgroundUrl: backgroundImageId
+      ? igdbImageUrl(backgroundImageId, "t_screenshot_big")
       : null,
     genreIds: (game.genres as number[]) ?? [],
     themeIds: (game.themes as number[]) ?? [],
     gameModeIds: (game.game_modes as number[]) ?? [],
-  };
-}
-
-// Returns a bound client so the OAuth token is fetched once per session.
-export async function createIgdbClient(clientId: string, clientSecret: string) {
-  const accessToken = await getAccessToken(clientId, clientSecret);
-  return {
-    fetchGame: (title: string) =>
-      fetchIgdbGameData(title, clientId, accessToken),
   };
 }

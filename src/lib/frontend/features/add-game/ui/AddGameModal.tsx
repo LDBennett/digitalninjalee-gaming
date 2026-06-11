@@ -82,18 +82,18 @@ export function AddGameModal({
           value={form.title}
           onChange={(val) => {
             form.setTitle(val);
-            form.setRawgId(null);
+            form.setIgdbId(null);
             form.setBackgroundUrl("");
           }}
-          onSelect={form.handleRawgSelect}
-          results={form.rawgResults}
+          onSelect={form.handleIgdbSelect}
+          results={form.igdbResults}
           showDropdown={form.showDropdown}
           onDropdownChange={form.setShowDropdown}
           searchLoading={form.searchLoading}
           isEditing={!!editGame}
         />
 
-        {!editGame && form.backgroundUrl && (
+        {!editGame && (form.coverArtUrl || form.backgroundUrl) && (
           <SelectedGamePreview form={form} />
         )}
 

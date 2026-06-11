@@ -7,7 +7,7 @@ interface SelectedGamePreviewProps {
 }
 
 export function SelectedGamePreview({ form }: SelectedGamePreviewProps) {
-  const { backgroundUrl, coverArtUrl, igdbLoading, igdbLoaded, clearCoverArt: onClear } = form;
+  const { backgroundUrl, coverArtUrl, enrichLoading, enrichLoaded, clearCoverArt: onClear } = form;
   return (
     <div className="flex items-center gap-3 rounded-lg bg-gray-800 p-2">
       <img
@@ -16,14 +16,12 @@ export function SelectedGamePreview({ form }: SelectedGamePreviewProps) {
         className="h-10 w-10 shrink-0 rounded object-cover"
       />
       <p className="flex-1 truncate text-xs text-gray-400">
-        {igdbLoading ? (
-          <span className="text-gray-500">Fetching IGDB data…</span>
-        ) : igdbLoaded ? (
-          <span className="text-green-400">
-            Cover art + description from IGDB
-          </span>
+        {enrichLoading ? (
+          <span className="text-gray-500">Fetching game data…</span>
+        ) : enrichLoaded ? (
+          <span className="text-green-400">Game data loaded from IGDB</span>
         ) : (
-          "Cover art loaded from RAWG"
+          "Select a game to load data"
         )}
       </p>
       <button

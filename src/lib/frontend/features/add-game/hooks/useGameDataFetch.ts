@@ -1,94 +1,75 @@
 "use client";
 
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
-import { RawgResult } from "@/src/lib/frontend/features/add-game/types";
+import { IgdbSearchResult } from "@/src/lib/frontend/features/add-game/types";
 
 interface UseGameDataFetchParams {
   allMoods: MoodDto[];
   authHeaders: () => Record<string, string>;
-  gameDescription: string;
   setTitle: (v: string) => void;
   setBackgroundUrl: (v: string) => void;
-  setRawgId: (v: number | null) => void;
-  setRawgResults: (v: never[]) => void;
-  setShowDropdown: (v: boolean) => void;
-  setIgdbLoading: (v: boolean) => void;
-  setIgdbLoaded: (v: boolean) => void;
   setCoverArtUrl: (v: string) => void;
+  setIgdbResults: (v: never[]) => void;
+  setShowDropdown: (v: boolean) => void;
+  setEnrichLoading: (v: boolean) => void;
+  setEnrichLoaded: (v: boolean) => void;
   setGameDescription: (v: string) => void;
   setIgdbId: (v: number | null) => void;
   setSelectedMoods: (fn: (prev: string[]) => string[]) => void;
 }
 
 export function useGameDataFetch(params: UseGameDataFetchParams) {
-  const handleRawgSelect = async (game: RawgResult) => {
+  const handleIgdbSelect = async (game: IgdbSearchResult) => {
     const {
       allMoods,
       authHeaders,
-      gameDescription,
       setTitle,
       setBackgroundUrl,
-      setRawgId,
-      setRawgResults,
-      setShowDropdown,
-      setIgdbLoading,
-      setIgdbLoaded,
       setCoverArtUrl,
+      setIgdbResults,
+      setShowDropdown,
+      setEnrichLoading,
+      setEnrichLoaded,
       setGameDescription,
       setIgdbId,
       setSelectedMoods,
     } = params;
 
     setTitle(game.name);
-    setBackgroundUrl(game.coverUrl ?? "");
-    setRawgId(game.id);
-    setRawgResults([]);
+    setCoverArtUrl(game.coverUrl ?? "");
+    setIgdbResults([]);
     setShowDropdown(false);
-    setIgdbLoading(true);
-    setIgdbLoaded(false);
+    setEnrichLoading(true);
+    setEnrichLoaded(false);
 
-    const [igdbResult, rawgDetailResult] = await Promise.allSettled([
-      fetch(`/api/igdb?q=${encodeURIComponent(game.name)}`, {
+    try {
+      const res = await fetch(`/api/igdb/${game.id}`, {
         headers: authHeaders(),
-      }).then((r) => r.json()),
-      fetch(`/api/rawg/${game.id}`, { headers: authHeaders() }).then((r) =>
-        r.json(),
-      ),
-    ]);
+      });
+      const igdb = await res.json();
 
-    const moodNameToId = new Map<string, string>(
-      allMoods.map((m) => [m.name, m.id]),
-    );
-    const suggestedMoodNames = new Set<string>();
+      if (igdb) {
+        if (igdb.coverArtUrl) setCoverArtUrl(igdb.coverArtUrl);
+        if (igdb.backgroundUrl) setBackgroundUrl(igdb.backgroundUrl);
+        if (igdb.summary) setGameDescription(igdb.summary);
+        if (igdb.igdbId) setIgdbId(igdb.igdbId);
 
-    if (igdbResult.status === "fulfilled" && igdbResult.value) {
-      const igdb = igdbResult.value;
-      if (igdb.coverArtUrl) setCoverArtUrl(igdb.coverArtUrl);
-      if (igdb.summary) setGameDescription(igdb.summary);
-      if (igdb.igdbId) setIgdbId(igdb.igdbId);
-      for (const name of (igdb.suggestedMoods as string[] | undefined) ?? [])
-        suggestedMoodNames.add(name);
+        const moodNameToId = new Map<string, string>(
+          allMoods.map((m) => [m.name, m.id]),
+        );
+        const newMoodIds = ((igdb.suggestedMoods as string[] | undefined) ?? [])
+          .map((name) => moodNameToId.get(name))
+          .filter((id): id is string => id !== undefined);
+
+        if (newMoodIds.length > 0) {
+          setSelectedMoods((prev) => [...new Set([...prev, ...newMoodIds])]);
+        }
+      }
+    } finally {
+      setEnrichLoaded(true);
+      setEnrichLoading(false);
     }
-
-    if (rawgDetailResult.status === "fulfilled" && rawgDetailResult.value) {
-      const rawg = rawgDetailResult.value;
-      if (!gameDescription && rawg.description)
-        setGameDescription(rawg.description);
-      for (const name of (rawg.suggestedMoods as string[] | undefined) ?? [])
-        suggestedMoodNames.add(name);
-    }
-
-    const newMoodIds = [...suggestedMoodNames]
-      .map((name) => moodNameToId.get(name))
-      .filter((id): id is string => id !== undefined);
-
-    if (newMoodIds.length > 0) {
-      setSelectedMoods((prev) => [...new Set([...prev, ...newMoodIds])]);
-    }
-
-    setIgdbLoaded(true);
-    setIgdbLoading(false);
   };
 
-  return { handleRawgSelect };
+  return { handleIgdbSelect };
 }

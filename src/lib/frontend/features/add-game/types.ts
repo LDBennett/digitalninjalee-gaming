@@ -3,6 +3,9 @@ import {
   GameStatus,
   ReplayStatus,
 } from "@/src/lib/backend/backlog/domain/models";
+import type { IgdbSearchResult } from "@/src/lib/backend/sync";
+
+export type { IgdbSearchResult };
 
 export interface AddGamePayload {
   title: string;
@@ -18,11 +21,4 @@ export interface AddGamePayload {
   igdb_id: number | null;
   mood_ids: string[];
   replay_status: ReplayStatus;
-}
-
-export interface RawgResult {
-  id: number;
-  name: string;
-  coverUrl: string | null;
-  released: string | null;
 }
