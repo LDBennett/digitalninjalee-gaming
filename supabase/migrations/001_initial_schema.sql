@@ -14,7 +14,7 @@ EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
 -- Games table
-CREATE TABLE games (
+CREATE TABLE IF NOT EXISTS games (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
   external_id TEXT,
@@ -29,13 +29,13 @@ CREATE TABLE games (
 );
 
 -- Moods lookup table
-CREATE TABLE moods (
+CREATE TABLE IF NOT EXISTS moods (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT UNIQUE NOT NULL
 );
 
 -- Many-to-many join: games <-> moods
-CREATE TABLE game_moods (
+CREATE TABLE IF NOT EXISTS game_moods (
   game_id UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
   mood_id UUID NOT NULL REFERENCES moods(id) ON DELETE CASCADE,
   PRIMARY KEY (game_id, mood_id)
@@ -64,16 +64,25 @@ INSERT INTO moods (name) VALUES
   ('roguelike'),
   ('strategy'),
   ('adventure'),
-  ('fighting');
+  ('fighting')
+ON CONFLICT (name) DO NOTHING;
 
 -- Row Level Security (open policies for personal use — add Supabase Auth later to lock it down)
 ALTER TABLE games ENABLE ROW LEVEL SECURITY;
 ALTER TABLE moods ENABLE ROW LEVEL SECURITY;
 ALTER TABLE game_moods ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "public_games"     ON games     FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "public_moods"     ON moods     FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "public_game_moods" ON game_moods FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+DO $$ BEGIN
+  CREATE POLICY "public_games"      ON games     FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "public_moods"      ON moods     FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN null; END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "public_game_moods" ON game_moods FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- GRANTs are required when tables are created via SQL (not the Supabase Table Editor GUI)
 -- anon: read-only
