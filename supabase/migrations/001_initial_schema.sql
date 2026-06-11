@@ -1,10 +1,17 @@
 -- Run this in your Supabase project: Dashboard > SQL Editor > New Query
 
 -- Enum types
-CREATE TYPE platform_type AS ENUM ('pc', 'xbox', 'playstation', 'switch', 'other');
+DO $$ BEGIN
+  CREATE TYPE platform_type AS ENUM ('pc', 'xbox', 'playstation', 'switch', 'other');
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
+
 -- Library statuses (owned): backlog, playing, completed, main-complete, ongoing, dropped
 -- Wishlist statuses (not purchased): interested, pre-ordered, keep-an-eye-on
-CREATE TYPE game_status AS ENUM ('backlog', 'playing', 'completed', 'dropped', 'main-complete', 'ongoing', 'interested', 'pre-ordered', 'keep-an-eye-on');
+DO $$ BEGIN
+  CREATE TYPE game_status AS ENUM ('backlog', 'playing', 'completed', 'dropped', 'main-complete', 'ongoing', 'interested', 'pre-ordered', 'keep-an-eye-on');
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
 
 -- Games table
 CREATE TABLE games (
