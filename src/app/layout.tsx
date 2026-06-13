@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ClientLayout } from "./ClientLayout";
 import { Navigation } from "@/src/lib/frontend/widgets/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
   title: {
@@ -26,6 +28,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      {GA_ID && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="ga-init" strategy="afterInteractive">{`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}');
+          `}</Script>
+        </>
+      )}
       <body
         className={`${inter.className} min-h-screen bg-gray-950 text-white`}
       >
