@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
-import {
-  createServerClient,
-  createServiceClient,
-} from "@/src/lib/infrastructure/supabase/supabaseClient";
+import { createServerClient } from "@/src/lib/infrastructure/supabase/supabaseClient";
 
 export async function requireAuth(
   req: NextRequest,
@@ -38,5 +35,5 @@ export async function optionalAuth(
     } = await client.auth.getUser();
     if (user) return { client, user };
   }
-  return { client: createServiceClient(), user: null };
+  return { client: createServerClient(null), user: null };
 }
