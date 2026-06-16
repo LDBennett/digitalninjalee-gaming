@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
 import { signIn } from "@/src/lib/frontend/shared/auth/auth.init";
 import { Button } from "@/src/lib/frontend/shared/ui/Button";
@@ -16,12 +17,21 @@ export function LoginModal() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState(false);
   const turnstileRef = useRef<TurnstileInstance>(null);
 
   const resetTurnstile = () => {
     setTurnstileToken(null);
+    setTurnstileError(false);
     turnstileRef.current?.reset();
   };
+
+  const handleTurnstileError = () => {
+    setTurnstileToken(null);
+    setTurnstileError(true);
+  };
+
+  const isTurnstilePending = !!SITE_KEY && !turnstileToken && !turnstileError;
 
   const handleClose = () => {
     resetTurnstile();
@@ -96,8 +106,8 @@ export function LoginModal() {
             <Turnstile
               ref={turnstileRef}
               siteKey={SITE_KEY}
-              onSuccess={setTurnstileToken}
-              onError={resetTurnstile}
+              onSuccess={(token) => { setTurnstileToken(token); setTurnstileError(false); }}
+              onError={handleTurnstileError}
               onExpire={resetTurnstile}
               options={{ theme: "dark", size: "invisible" }}
             />
@@ -105,13 +115,17 @@ export function LoginModal() {
           <Button
             variant="brand"
             onClick={handleSignIn}
-            disabled={
-              loading || !email || !password || (!!SITE_KEY && !turnstileToken)
-            }
+            disabled={loading || !email || !password || isTurnstilePending || (!!SITE_KEY && turnstileError)}
+            icon={isTurnstilePending ? <Loader2 className="size-4 animate-spin" /> : undefined}
             fullWidth
           >
-            {loading ? "Signing in…" : "Sign in"}
+            {loading ? "Signing in…" : isTurnstilePending ? "Verifying…" : "Sign in"}
           </Button>
+          {turnstileError && (
+            <p className="text-center text-xs text-red-400">
+              Verification failed. Please try again.
+            </p>
+          )}
         </div>
       </div>
     </div>
