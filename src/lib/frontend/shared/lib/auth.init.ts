@@ -1,7 +1,7 @@
 "use client";
 
 import { getBrowserClient } from "@/src/lib/infrastructure/supabase/supabaseClient";
-import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
+import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import { AuthError } from "@supabase/supabase-js";
 
 export async function signIn(

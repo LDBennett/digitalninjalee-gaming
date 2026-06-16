@@ -8,7 +8,7 @@ import {
   GameCardSkeleton,
 } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
-import { EmptyState, PageHeader, TabBar } from "@/src/lib/frontend/shared";
+import { EmptyState, PageHeader, TabBar, useAuthStore } from "@/src/lib/frontend/shared";
 
 const TABS: WishlistTab[] = [
   "all",
@@ -40,6 +40,7 @@ export function WishlistView() {
     handlePriorityChange,
   } = useWishlist();
 
+  const { openLoginModal } = useAuthStore();
   const topRef = useScrollToTop(page);
 
   return (
@@ -86,13 +87,11 @@ export function WishlistView() {
                 key={game.id}
                 game={game}
                 index={i}
-                onEdit={isAuthenticated ? setEditGame : undefined}
-                onStatusChange={
-                  isAuthenticated ? handleStatusChange : undefined
-                }
-                onPriorityChange={
-                  isAuthenticated ? handlePriorityChange : undefined
-                }
+                onEdit={setEditGame}
+                onStatusChange={handleStatusChange}
+                onPriorityChange={handlePriorityChange}
+                isAuthenticated={isAuthenticated}
+                onSignIn={openLoginModal}
                 showPriority
                 showStatusBadge
               />

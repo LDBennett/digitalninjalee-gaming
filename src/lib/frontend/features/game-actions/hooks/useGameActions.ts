@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
+import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
 import { GameStatus } from "@/src/lib/backend/backlog/domain/models";
 
 export interface GameActionsOptions {

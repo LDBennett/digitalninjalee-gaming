@@ -6,7 +6,7 @@ import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { RandomPicker } from "@/src/lib/frontend/features/roll-random";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
-import { EmptyState, PageHeader, SearchInput } from "@/src/lib/frontend/shared";
+import { EmptyState, PageHeader, SearchInput, useAuthStore } from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
 
 export function BacklogView() {
@@ -43,6 +43,7 @@ export function BacklogView() {
     wantToReplayCount,
   } = useBacklog();
 
+  const { openLoginModal } = useAuthStore();
   const topRef = useScrollToTop(page);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -148,11 +149,11 @@ export function BacklogView() {
             game={game}
             index={i}
             rank={(page - 1) * 20 + i + 1}
-            onEdit={isAuthenticated ? setEditGame : undefined}
-            onStatusChange={isAuthenticated ? handleStatusChange : undefined}
-            onPriorityChange={
-              isAuthenticated ? handlePriorityChange : undefined
-            }
+            onEdit={setEditGame}
+            onStatusChange={handleStatusChange}
+            onPriorityChange={handlePriorityChange}
+            isAuthenticated={isAuthenticated}
+            onSignIn={openLoginModal}
             showPriority
           />
         )}

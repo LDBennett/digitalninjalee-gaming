@@ -3,8 +3,8 @@
 import { useRef, useState } from "react";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { Loader2 } from "lucide-react";
-import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
-import { signIn } from "@/src/lib/frontend/shared/auth/auth.init";
+import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
+import { signIn } from "@/src/lib/frontend/shared/lib/auth.init";
 import { Button } from "@/src/lib/frontend/shared/ui/Button";
 import { Input } from "@/src/lib/frontend/shared/ui/Input";
 

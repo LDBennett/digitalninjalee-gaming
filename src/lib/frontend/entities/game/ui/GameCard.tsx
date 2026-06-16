@@ -6,7 +6,7 @@ import { Pencil } from "lucide-react";
 import { GameDto, GameStatus } from "@/src/lib/backend/backlog/domain/models";
 import { scoreToTier } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
-import { Button } from "@/src/lib/frontend/shared";
+import { Button, GatedElement } from "@/src/lib/frontend/shared";
 import { PlatformBadge } from "./PlatformBadge";
 import { RatingStars } from "./GameCard.RatingStars";
 import { GameStatusBadge } from "./GameStatusBadge";
@@ -21,6 +21,8 @@ interface GameCardProps {
   onEdit?: (game: GameDto) => void;
   onStatusChange?: (id: string, status: GameStatus) => void;
   onPriorityChange?: (id: string, delta: number) => void;
+  isAuthenticated?: boolean;
+  onSignIn?: () => void;
   showPriority?: boolean;
   showActions?: boolean;
   showStatusBadge?: boolean;
@@ -33,6 +35,8 @@ export function GameCard({
   onEdit,
   onStatusChange,
   onPriorityChange,
+  isAuthenticated,
+  onSignIn,
   showPriority = false,
   showActions = true,
   showStatusBadge = false,
@@ -98,22 +102,26 @@ export function GameCard({
             </h3>
             <div className="flex shrink-0 items-center gap-2">
               {onEdit && (
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  icon={<Pencil size={13} />}
-                  onClick={() => onEdit(game)}
-                  aria-label="Edit game"
-                  title="Edit game"
-                  className="hover:text-brand-400 text-gray-600 p-0"
-                />
+                <GatedElement isAuthenticated={isAuthenticated ?? true} onSignIn={onSignIn ?? (() => {})}>
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    icon={<Pencil size={13} />}
+                    onClick={() => onEdit(game)}
+                    aria-label="Edit game"
+                    title="Edit game"
+                    className="hover:text-brand-400 text-gray-600 p-0"
+                  />
+                </GatedElement>
               )}
               {showPriority && onPriorityChange && (
-                <PriorityPill
-                  score={game.priority_score}
-                  gameId={game.id}
-                  onPriorityChange={onPriorityChange}
-                />
+                <GatedElement isAuthenticated={isAuthenticated ?? true} onSignIn={onSignIn ?? (() => {})}>
+                  <PriorityPill
+                    score={game.priority_score}
+                    gameId={game.id}
+                    onPriorityChange={onPriorityChange}
+                  />
+                </GatedElement>
               )}
             </div>
           </div>
@@ -163,6 +171,8 @@ export function GameCard({
             onToggleNote={() => setShowNote((p) => !p)}
             onToggleStatusSelect={() => setShowStatusSelect((p) => !p)}
             onStatusChange={onStatusChange}
+            isAuthenticated={isAuthenticated}
+            onSignIn={onSignIn}
           />
         </div>
       </div>

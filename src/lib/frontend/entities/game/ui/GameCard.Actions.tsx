@@ -7,6 +7,7 @@ import {
   NotebookPen,
 } from "lucide-react";
 import { GameStatus } from "@/src/lib/backend/backlog/domain/models";
+import { GatedElement } from "@/src/lib/frontend/shared";
 
 type StatusAction = { label: string; status: GameStatus; color: string };
 
@@ -153,6 +154,8 @@ interface Props {
   onToggleNote: () => void;
   onToggleStatusSelect: () => void;
   onStatusChange?: (id: string, status: GameStatus) => void;
+  isAuthenticated?: boolean;
+  onSignIn?: () => void;
 }
 
 export function GameCardActions({
@@ -168,6 +171,8 @@ export function GameCardActions({
   onToggleNote,
   onToggleStatusSelect,
   onStatusChange,
+  isAuthenticated,
+  onSignIn,
 }: Props) {
   const actions = STATUS_ACTIONS[gameStatus] ?? [];
 
@@ -231,13 +236,15 @@ export function GameCardActions({
                 </select>
               </div>
             ) : (
-              <button
-                onClick={onToggleStatusSelect}
-                className="hover:text-brand-400 flex items-center gap-1 align-bottom text-xs text-gray-500 transition-colors"
-              >
-                <Info size={16} />
-                Status
-              </button>
+              <GatedElement isAuthenticated={isAuthenticated ?? true} onSignIn={onSignIn ?? (() => {})}>
+                <button
+                  onClick={onToggleStatusSelect}
+                  className="hover:text-brand-400 flex items-center gap-1 align-bottom text-xs text-gray-500 transition-colors"
+                >
+                  <Info size={16} />
+                  Status
+                </button>
+              </GatedElement>
             )}
           </>
         )}

@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { GameDto, MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
-import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
+import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
 import { Button, Modal } from "@/src/lib/frontend/shared";
 import { GameCarousel } from "./RandomPicker.Carousel";
 import { RandomPickResult } from "./RandomPickResult";
