@@ -9,8 +9,8 @@ import {
 import { AddGamePayload } from "@/src/lib/frontend/features/add-game/types";
 import { useAddGameForm } from "@/src/lib/frontend/features/add-game/hooks/useAddGameForm";
 import { Button, Modal } from "@/src/lib/frontend/shared";
-import { GameTitleSearch } from "./GameTitleSearch";
-import { SelectedGamePreview } from "./SelectedGamePreview";
+import { GameTitleSearch } from "./AddGameModal.TitleSearch";
+import { SelectedGamePreview } from "./AddGameModal.Preview";
 import { AddGameFormFields } from "./AddGameFormFields";
 
 interface AddGameModalProps {

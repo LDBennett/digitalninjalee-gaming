@@ -8,13 +8,13 @@ import { scoreToTier } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
 import { Button } from "@/src/lib/frontend/shared";
 import { PlatformBadge } from "./PlatformBadge";
-import { RatingStars } from "./RatingStars";
+import { RatingStars } from "./GameCard.RatingStars";
 import { GameStatusBadge } from "./GameStatusBadge";
-import { GameReplayBadge } from "./GameReplayBadge";
+import { GameReplayBadge } from "./GameCard.ReplayBadge";
 import { PriorityPill } from "./PriorityPill";
-import { GameCoverArt } from "./GameCoverArt";
-import { GameCardActions } from "./GameCardActions";
-import { GameCardExpandable } from "./GameCardExpandable";
+import { GameCoverArt } from "./GameCard.CoverArt";
+import { GameCardActions } from "./GameCard.Actions";
+import { GameCardExpandable } from "./GameCard.Expandable";
 
 interface GameCardProps {
   game: GameDto;
