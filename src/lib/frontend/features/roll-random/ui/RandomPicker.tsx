@@ -7,7 +7,7 @@ import { GameDto, MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
 import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
 import { Button, Modal } from "@/src/lib/frontend/shared";
-import { GameCarousel } from "./GameCarousel";
+import { GameCarousel } from "./RandomPicker.Carousel";
 import { RandomPickResult } from "./RandomPickResult";
 
 type Pool = "backlog" | "playing";
