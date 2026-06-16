@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient, QueryKey } from "@tanstack/react-query";
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { useAuthFetch } from "@/src/lib/frontend/shared/auth/useAuthFetch";
+import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
 
 export function useGamePriority(queryKey: QueryKey) {
   const { authJsonFetch } = useAuthFetch();

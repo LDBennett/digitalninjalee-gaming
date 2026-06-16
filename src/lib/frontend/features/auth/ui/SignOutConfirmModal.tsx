@@ -1,7 +1,7 @@
 "use client";
 
-import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
-import { signOut } from "@/src/lib/frontend/shared/auth/auth.init";
+import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
+import { signOut } from "@/src/lib/frontend/shared/lib/auth.init";
 import { Button } from "@/src/lib/frontend/shared/ui/Button";
 
 export function SignOutConfirmModal() {

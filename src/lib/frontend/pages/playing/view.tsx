@@ -6,7 +6,7 @@ import { useScrollToTop } from "@/src/lib/frontend/shared/hooks/useScrollToTop";
 import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
-import { EmptyState, PageHeader, SearchInput, TabBar } from "@/src/lib/frontend/shared";
+import { EmptyState, PageHeader, SearchInput, TabBar, useAuthStore } from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
 import { RandomPicker } from "../../features";
 
@@ -60,6 +60,7 @@ export function PlayingView() {
     setShowPicker,
   } = usePlaying();
 
+  const { openLoginModal } = useAuthStore();
   const topRef = useScrollToTop(page);
   const [showFilters, setShowFilters] = useState(false);
   const activeFilterCount = [
@@ -145,8 +146,10 @@ export function PlayingView() {
             key={game.id}
             game={game}
             index={i}
-            onEdit={isAuthenticated ? setEditGame : undefined}
-            onStatusChange={isAuthenticated ? handleStatusChange : undefined}
+            onEdit={setEditGame}
+            onStatusChange={handleStatusChange}
+            isAuthenticated={isAuthenticated}
+            onSignIn={openLoginModal}
           />
         )}
         page={page}

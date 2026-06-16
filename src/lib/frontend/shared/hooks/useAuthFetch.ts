@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
+import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 
 export function useAuthFetch() {
   const { session } = useAuthStore();

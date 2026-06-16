@@ -9,7 +9,7 @@ import {
 } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { RandomPicker } from "@/src/lib/frontend/features/roll-random";
-import { EmptyState, PageHeader, TabBar } from "@/src/lib/frontend/shared";
+import { EmptyState, PageHeader, TabBar, useAuthStore } from "@/src/lib/frontend/shared";
 
 type DashboardTab = "playing" | "backlog";
 const TAB_LABELS: Record<DashboardTab, string> = {
@@ -33,6 +33,8 @@ export function DashboardView() {
     handleAdd,
     handleStatusChange,
   } = useDashboard();
+
+  const { openLoginModal } = useAuthStore();
 
   if (loading)
     return (
@@ -89,7 +91,9 @@ export function DashboardView() {
               game={game}
               index={i}
               showPriority
-              onStatusChange={isAuthenticated ? handleStatusChange : undefined}
+              onStatusChange={handleStatusChange}
+              isAuthenticated={isAuthenticated}
+              onSignIn={openLoginModal}
             />
           )}
           spacing="space-y-3"

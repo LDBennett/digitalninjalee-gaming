@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AuthButton } from "@/src/lib/frontend/shared/auth/AuthButton";
+import { NavigationAuthIcon } from "./Navigation.AuthIcon";
+import { NavigationAuthStatus } from "./Navigation.AuthStatus";
 import {
   Gift,
   Sparkles,
@@ -85,22 +86,19 @@ export function Navigation() {
         <span className="text-base font-bold tracking-tight text-white">
           DigitalNinjaLee
         </span>
-        <AuthButton />
+        <NavigationAuthIcon />
       </header>
 
       {/* Desktop sidebar */}
       <nav className="sticky top-4 my-4 ml-4 hidden w-56 shrink-0 flex-col self-start overflow-y-auto rounded-2xl border border-gray-800 bg-gray-900/95 p-4 pe-6 shadow-2xl shadow-black/60 backdrop-blur-sm md:flex">
         <div className="mb-8">
-          <div className="flex items-center gap-3">
-            <AuthButton />
-            <div>
-              <span className="text-lg font-bold tracking-tight text-white">
-                DigitalNinjaLee
-              </span>
-              <span className="flex items-center gap-1 text-center text-xs text-gray-500">
-                Backlog Bunker
-              </span>
-            </div>
+          <div>
+            <span className="text-lg font-bold tracking-tight text-white">
+              DigitalNinjaLee
+            </span>
+            <span className="flex items-center gap-1 text-center text-xs text-gray-500">
+              Backlog Bunker
+            </span>
           </div>
         </div>
         <div className="flex-1 space-y-1">
@@ -138,6 +136,9 @@ export function Navigation() {
               </Link>
             );
           })}
+        </div>
+        <div className="mt-4 pt-4 border-t border-gray-800">
+          <NavigationAuthStatus />
         </div>
       </nav>
 

@@ -7,7 +7,7 @@ import {
   ALL_WISHLIST_STATUSES,
   WISHLIST_TAB_LABELS,
 } from "@/src/lib/backend/backlog/domain/models";
-import { useAuthStore } from "@/src/lib/frontend/shared/auth/auth.store";
+import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import {
   useMoods,
   useGameActions,
