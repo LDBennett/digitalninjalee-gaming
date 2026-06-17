@@ -102,7 +102,10 @@ export function GameCard({
             </h3>
             <div className="flex shrink-0 items-center gap-2">
               {onEdit && (
-                <GatedElement isAuthenticated={isAuthenticated ?? true} onSignIn={onSignIn ?? (() => {})}>
+                <GatedElement
+                  isAuthenticated={isAuthenticated ?? true}
+                  onSignIn={onSignIn ?? (() => {})}
+                >
                   <Button
                     variant="ghost"
                     size="xs"
@@ -110,12 +113,15 @@ export function GameCard({
                     onClick={() => onEdit(game)}
                     aria-label="Edit game"
                     title="Edit game"
-                    className="hover:text-brand-400 text-gray-600 p-0"
+                    className="hover:text-brand-400 p-0 text-gray-600"
                   />
                 </GatedElement>
               )}
               {showPriority && onPriorityChange && (
-                <GatedElement isAuthenticated={isAuthenticated ?? true} onSignIn={onSignIn ?? (() => {})}>
+                <GatedElement
+                  isAuthenticated={isAuthenticated ?? true}
+                  onSignIn={onSignIn ?? (() => {})}
+                >
                   <PriorityPill
                     score={game.priority_score}
                     gameId={game.id}

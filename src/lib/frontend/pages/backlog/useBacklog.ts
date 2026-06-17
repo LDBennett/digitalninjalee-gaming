@@ -17,7 +17,6 @@ export function useBacklog() {
   const { moods } = useMoods();
   const isAuthenticated = session !== null;
 
-  const [showPicker, setShowPicker] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [editGame, setEditGame] = useState<GameDto | null>(null);
   const [replayOnly, setReplayOnly] = useState(false);
@@ -101,8 +100,6 @@ export function useBacklog() {
     setSearchQuery,
     showAdd,
     setShowAdd,
-    showPicker,
-    setShowPicker,
     editGame,
     setEditGame,
     loading: authLoading,

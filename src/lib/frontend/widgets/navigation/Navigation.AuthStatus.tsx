@@ -1,59 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { Ghost, LogIn } from "lucide-react";
 import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
-import { Button } from "@/src/lib/frontend/shared";
 
 export function NavigationAuthStatus() {
   const { user, openLoginModal, openSignOutConfirm } = useAuthStore();
-  const [hovered, setHovered] = useState(false);
 
   if (user) {
     return (
-      <motion.button
-        onHoverStart={() => setHovered(true)}
-        onHoverEnd={() => setHovered(false)}
+      <button
         onClick={openSignOutConfirm}
-        animate={{ width: hovered ? 120 : 36 }}
-        transition={{ duration: 0.22, ease: "easeInOut" }}
-        className="flex h-9 cursor-pointer items-center overflow-hidden rounded-full bg-gray-800 hover:bg-gray-700"
-        aria-label="Signed in — click to sign out"
+        className="mx-auto block cursor-pointer"
+        title="Sign out"
+        aria-label="Sign out"
       >
-        <div className="relative flex h-9 w-9 shrink-0 items-center justify-center">
-          <img
-            src="/logos/dnl-logo--green.png"
-            alt=""
-            className="h-6 w-8 rounded-full"
-          />
-          <span className="absolute top-1 right-1 h-2 w-2 rounded-full border-2 border-gray-800 bg-green-500" />
-        </div>
-        <AnimatePresence>
-          {hovered && (
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.12 }}
-              className="pr-3 text-xs whitespace-nowrap text-gray-300"
-            >
-              Logged In
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </motion.button>
+        <span className="block h-2 w-2 rounded-full bg-green-500" />
+      </button>
     );
   }
 
   return (
-    <div className="flex items-center justify-between rounded-lg border border-gray-700 bg-gray-800/40 px-3 py-2">
-      <div className="flex items-center gap-2">
-        <span className="h-2 w-2 rounded-full bg-gray-500" />
-        <span className="text-sm text-gray-400">Guest</span>
+    <div className="group relative flex justify-center">
+      <button
+        onClick={openLoginModal}
+        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white"
+        title="Sign in"
+        aria-label="Sign in"
+      >
+        <Ghost size={15} />
+      </button>
+
+      <div
+        onClick={openLoginModal}
+        className="pointer-events-none absolute top-1/2 left-full z-200 ml-3 flex -translate-y-1/2 cursor-pointer items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 whitespace-nowrap opacity-0 shadow-xl transition-opacity duration-200 group-hover:pointer-events-auto group-hover:opacity-100"
+      >
+        <Ghost size={13} className="shrink-0 text-gray-500" />
+        <span className="text-xs font-medium text-gray-300">
+          Ghost Mode · <span className="text-brand-400">Sign In</span>
+        </span>
       </div>
-      <Button size="xs" variant="brand" onClick={openLoginModal}>
-        Sign in
-      </Button>
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { useBacklog } from "./useBacklog";
 import { useScrollToTop } from "@/src/lib/frontend/shared/hooks/useScrollToTop";
 import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
-import { RandomPicker } from "@/src/lib/frontend/features/roll-random";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
 import { EmptyState, PageHeader, SearchInput, useAuthStore } from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
@@ -27,8 +26,6 @@ export function BacklogView() {
     setSearchQuery,
     showAdd,
     setShowAdd,
-    showPicker,
-    setShowPicker,
     editGame,
     setEditGame,
     loading,
@@ -69,8 +66,6 @@ export function BacklogView() {
             ? `${filtered.length} game${filtered.length !== 1 ? "s" : ""} to replay${moodFilter ? ` · ${moodFilter}` : ""}`
             : `${filtered.length} game${filtered.length !== 1 ? "s" : ""}${wantToReplayCount > 0 ? ` · ${wantToReplayCount} to replay` : ""}${moodFilter ? ` · ${moodFilter}` : ""}`
         }
-        onRandom={() => setShowPicker(true)}
-        onAddGame={() => setShowAdd(true)}
       />
 
       <div className="mb-5 flex gap-2">
@@ -173,11 +168,6 @@ export function BacklogView() {
         editGame={editGame}
         moods={moods}
         defaultStatus="backlog"
-      />
-      <RandomPicker
-        isOpen={showPicker}
-        onClose={() => setShowPicker(false)}
-        moods={moods}
       />
     </div>
   );
