@@ -25,18 +25,24 @@ export async function OPTIONS(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const client = createServiceClient();
+  try {
+    const client = createServiceClient();
 
-  const { data, error } = await client
-    .from("games")
-    .select("id, title, platform, status, cover_art_url, background_url, rating, priority_score")
-    .or("status.in.(playing,ongoing),replay_status.eq.replaying")
-    .order("priority_score", { ascending: false })
-    .limit(5);
+    const { data, error } = await client
+      .from("games")
+      .select("id, title, platform, status, cover_art_url, background_url, rating, priority_score")
+      .or("status.in.(playing,ongoing),replay_status.eq.replaying")
+      .order("priority_score", { ascending: false })
+      .limit(5);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500, headers: corsHeaders(req) });
+    if (error) {
+      console.error("[now-playing] Supabase error:", error);
+      return NextResponse.json({ error: error.message }, { status: 500, headers: corsHeaders(req) });
+    }
+
+    return NextResponse.json({ games: data ?? [] }, { headers: corsHeaders(req) });
+  } catch (err) {
+    console.error("[now-playing] Uncaught error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500, headers: corsHeaders(req) });
   }
-
-  return NextResponse.json({ games: data ?? [] }, { headers: corsHeaders(req) });
 }
