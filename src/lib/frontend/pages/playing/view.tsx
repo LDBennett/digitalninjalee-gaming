@@ -8,7 +8,6 @@ import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
 import { EmptyState, PageHeader, SearchInput, TabBar, useAuthStore } from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
-import { RandomPicker } from "../../features";
 
 const TAB_VALUES: PlayingTab[] = ["playing", "ongoing", "replaying"];
 const TAB_LABELS: Record<PlayingTab, string> = {
@@ -56,8 +55,6 @@ export function PlayingView() {
     handleStatusChange,
     handleEdit,
     handleDelete,
-    showPicker,
-    setShowPicker,
   } = usePlaying();
 
   const { openLoginModal } = useAuthStore();
@@ -87,7 +84,6 @@ export function PlayingView() {
     <div ref={topRef} className="mx-auto max-w-5xl">
       <PageHeader
         subtitle={`${filtered.length} ${countLabel}${filtered.length !== 1 ? "s" : ""}${moodFilter ? ` · ${moodFilter}` : ""}`}
-        onRandom={() => setShowPicker(true)}
       />
 
       <TabBar
@@ -167,12 +163,6 @@ export function PlayingView() {
           moods={moods}
         />
       )}
-      <RandomPicker
-        isOpen={showPicker}
-        onClose={() => setShowPicker(false)}
-        moods={moods}
-        defaultPool="playing"
-      />
     </div>
   );
 }

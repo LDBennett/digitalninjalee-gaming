@@ -44,6 +44,11 @@
   background: #4b5563;
 }
 
+body {
+  background-image: linear-gradient(160deg, #0b1e2d 0%, #030712 45%);
+  background-attachment: fixed;
+}
+
 button {
   cursor: pointer;
 }

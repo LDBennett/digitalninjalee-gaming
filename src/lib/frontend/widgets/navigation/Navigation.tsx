@@ -89,55 +89,50 @@ export function Navigation() {
         <NavigationAuthIcon />
       </header>
 
-      {/* Desktop sidebar */}
-      <nav className="sticky top-4 my-4 ml-4 hidden w-56 shrink-0 flex-col self-start overflow-y-auto rounded-2xl border border-gray-800 bg-gray-900/95 p-4 pe-6 shadow-2xl shadow-black/60 backdrop-blur-sm md:flex">
-        <div className="mb-8">
-          <div>
-            <span className="text-lg font-bold tracking-tight text-white">
-              DigitalNinjaLee
-            </span>
-            <span className="flex items-center gap-1 text-center text-xs text-gray-500">
-              Backlog Bunker
-            </span>
-          </div>
+      {/* Desktop sidebar — fixed icon rail */}
+      <nav className="sticky top-4 z-10 ml-4 mt-4 mb-4 hidden h-[90vh] w-14 shrink-0 flex-col self-start overflow-visible rounded-2xl border border-gray-800 bg-gray-900/95 py-4 shadow-2xl shadow-black/60 backdrop-blur-sm md:flex">
+        {/* Logo */}
+        <div className="mb-6 flex justify-center">
+          <img src="/logos/dnl-logo--white.png" alt="DNL" className="h-6 w-8" />
         </div>
-        <div className="flex-1 space-y-1">
+
+        {/* Nav items */}
+        <div className="flex flex-1 flex-col items-center gap-1">
           {NAV_ITEMS.map(({ href, label, Icon }) => {
             const active = isActivePath(href, pathname);
             return (
-              <Link
-                key={href}
-                href={href}
-                className="relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium"
-              >
-                {active && (
-                  <motion.div
-                    layoutId="desktop-pill"
-                    className="bg-brand-900/50 border-brand-800/50 absolute inset-0 rounded-lg border"
-                    style={{
-                      boxShadow:
-                        "0 0 12px 0 rgba(var(--color-brand-800), 0.35)",
-                    }}
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  />
-                )}
-                <motion.span
-                  animate={{ scale: active ? 1.2 : 1 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                  className={`relative z-10 transition-colors ${active ? "text-brand-300" : "text-gray-400"}`}
+              <div key={href} className="group relative flex w-full justify-center">
+                <Link
+                  href={href}
+                  className="relative flex items-center justify-center rounded-lg p-2.5"
                 >
-                  <Icon size={18} />
-                </motion.span>
-                <span
-                  className={`relative z-10 transition-colors ${active ? "text-brand-300" : "text-gray-400 group-hover:text-white"}`}
-                >
+                  {active && (
+                    <motion.div
+                      layoutId="desktop-pill"
+                      className="bg-brand-900/50 border-brand-800/50 absolute inset-0 rounded-lg border"
+                      style={{ boxShadow: "0 0 12px 0 rgba(var(--color-brand-800), 0.35)" }}
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <motion.span
+                    animate={{ scale: active ? 1.2 : 1 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                    className={`relative z-10 transition-colors ${active ? "text-brand-300" : "text-gray-400 group-hover:text-white"}`}
+                  >
+                    <Icon size={18} />
+                  </motion.span>
+                </Link>
+                {/* Tooltip */}
+                <span className="pointer-events-none absolute top-1/2 left-full z-999999 ml-3 -translate-y-1/2 whitespace-nowrap rounded-md border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
                   {label}
                 </span>
-              </Link>
+              </div>
             );
           })}
         </div>
-        <div className="mt-4 pt-4 border-t border-gray-800">
+
+        {/* Auth status at bottom */}
+        <div className="mt-4 flex justify-center">
           <NavigationAuthStatus />
         </div>
       </nav>
@@ -157,8 +152,20 @@ export function Navigation() {
             className="absolute inset-0 overflow-visible"
           >
             <defs>
-              <filter id="mobile-nav-shadow" x="-5%" y="-40%" width="110%" height="150%">
-                <feDropShadow dx="0" dy="-4" stdDeviation="8" floodColor="#000000" floodOpacity="0.55" />
+              <filter
+                id="mobile-nav-shadow"
+                x="-5%"
+                y="-40%"
+                width="110%"
+                height="150%"
+              >
+                <feDropShadow
+                  dx="0"
+                  dy="-4"
+                  stdDeviation="8"
+                  floodColor="#000000"
+                  floodOpacity="0.55"
+                />
               </filter>
             </defs>
             <motion.path

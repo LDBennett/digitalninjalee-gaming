@@ -45,7 +45,7 @@ export function WishlistView() {
 
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
-      <PageHeader onAddGame={() => setShowAdd(true)} />
+      <PageHeader />
 
       <TabBar
         tabs={TABS}

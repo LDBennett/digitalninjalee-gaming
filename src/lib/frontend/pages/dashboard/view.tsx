@@ -2,39 +2,43 @@
 
 import { useState } from "react";
 import { useDashboard } from "./useDashboard";
-import {
-  GameCard,
-  GameCardList,
-  GameStatsGrid,
-} from "@/src/lib/frontend/entities/game";
+import { GameStatsGrid } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
-import { RandomPicker } from "@/src/lib/frontend/features/roll-random";
-import { EmptyState, PageHeader, TabBar, useAuthStore } from "@/src/lib/frontend/shared";
+import { PageHeader, useAuthStore } from "@/src/lib/frontend/shared";
+import { DashboardHeroCard } from "./ui/Dashboard.HeroCard";
+import { DashboardBacklogQueue } from "./ui/Dashboard.BacklogQueue";
 
-type DashboardTab = "playing" | "backlog";
-const TAB_LABELS: Record<DashboardTab, string> = {
-  playing: "Currently Playing",
-  backlog: "Backlog",
+type StatFilter = "backlog" | "completed" | "wishlist";
+
+const QUEUE_CONFIG: Record<StatFilter, { heading: string; dataKey: "topPriority" | "lastCompleted" | "topWishlist" }> = {
+  backlog: { heading: "Backlog: Top Priority", dataKey: "topPriority" },
+  completed: { heading: "Recently Completed", dataKey: "lastCompleted" },
+  wishlist: { heading: "Top Wishlist", dataKey: "topWishlist" },
 };
 
 export function DashboardView() {
-  const [activeTab, setActiveTab] = useState<DashboardTab>("playing");
+  const [activeFilter, setActiveFilter] = useState<StatFilter>("backlog");
+
   const {
     stats,
     topPriority,
     playingGames,
+    topWishlist,
+    lastCompleted,
+    handleStatusChange,
     moods,
     showAdd,
     setShowAdd,
-    showPicker,
-    setShowPicker,
     loading,
     isAuthenticated,
     handleAdd,
-    handleStatusChange,
   } = useDashboard();
 
   const { openLoginModal } = useAuthStore();
+
+  const queueData = { topPriority: topPriority.slice(0, 5), lastCompleted, topWishlist };
+  const { heading, dataKey } = QUEUE_CONFIG[activeFilter];
+  const queueGames = queueData[dataKey];
 
   if (loading)
     return (
@@ -44,70 +48,30 @@ export function DashboardView() {
     );
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <PageHeader
-        subtitle={`${stats.total} games tracked`}
-        onRandom={() => setShowPicker(true)}
+    <div className="mx-auto max-w-6xl">
+      <PageHeader subtitle={`${stats.total} games tracked`} />
+      <GameStatsGrid
+        stats={stats}
+        activeFilter={activeFilter}
+        onFilter={(key) => setActiveFilter(key as StatFilter)}
       />
-      <GameStatsGrid stats={stats} />
-      <TabBar
-        tabs={["playing", "backlog"] as DashboardTab[]}
-        value={activeTab}
-        onChange={setActiveTab}
-        labels={TAB_LABELS}
-        className="mb-6"
-      />
-      {activeTab === "playing" && (
-        <GameCardList
-          games={playingGames}
-          emptyState={<EmptyState heading="No recent activity" />}
-          renderCard={(game, i) => (
-            <GameCard
-              key={game.id}
-              game={game}
-              index={i}
-              showActions={false}
-              showStatusBadge
-            />
-          )}
-          spacing="space-y-3"
-        />
-      )}
-      {activeTab === "backlog" && (
-        <GameCardList
-          games={topPriority}
-          emptyState={
-            <EmptyState
-              heading="Your backlog is empty"
-              actionLabel={
-                isAuthenticated ? "Add your first game →" : undefined
-              }
-              onAction={isAuthenticated ? () => setShowAdd(true) : undefined}
-            />
-          }
-          renderCard={(game, i) => (
-            <GameCard
-              key={game.id}
-              game={game}
-              index={i}
-              showPriority
-              onStatusChange={handleStatusChange}
-              isAuthenticated={isAuthenticated}
-              onSignIn={openLoginModal}
-            />
-          )}
-          spacing="space-y-3"
-        />
-      )}
+      <div className="mt-6 grid grid-cols-1 items-stretch gap-6 lg:grid-cols-5">
+        <div className="h-full lg:col-span-3">
+          <DashboardHeroCard
+            playingGames={playingGames}
+            handleStatusChange={handleStatusChange}
+            isAuthenticated={isAuthenticated}
+            onSignIn={openLoginModal}
+          />
+        </div>
+        <div className="h-full lg:col-span-2">
+          <DashboardBacklogQueue games={queueGames} heading={heading} />
+        </div>
+      </div>
       <AddGameModal
         isOpen={showAdd}
         onClose={() => setShowAdd(false)}
         onSave={handleAdd}
-        moods={moods}
-      />
-      <RandomPicker
-        isOpen={showPicker}
-        onClose={() => setShowPicker(false)}
         moods={moods}
       />
     </div>

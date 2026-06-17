@@ -64,7 +64,7 @@ export function LibraryView() {
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
       <div className="mb-6">
-        <PageHeader onAddGame={() => setShowAdd(true)} />
+        <PageHeader />
         <TabBar
           tabs={TABS}
           value={tab}

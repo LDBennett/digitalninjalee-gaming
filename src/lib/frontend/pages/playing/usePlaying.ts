@@ -11,7 +11,6 @@ import {
   useGameFilters,
 } from "@/src/lib/frontend/features";
 import { useClientPagination } from "@/src/lib/frontend/shared/hooks/useClientPagination";
-import { useUIStore } from "../../shared";
 
 export type PlayingTab = "playing" | "ongoing" | "replaying";
 
@@ -22,9 +21,6 @@ export function usePlaying() {
 
   const [activeTab, setActiveTabState] = useState<PlayingTab>("playing");
   const [editGame, setEditGame] = useState<GameDto | null>(null);
-  const [showPicker, setShowPicker] = useState(false);
-
-  const { truncatedButtonText } = useUIStore();
 
   const { games: allGames, invalidate } = useGameQuery();
   const playingGames = useMemo(
@@ -124,9 +120,6 @@ export function usePlaying() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
-    showPicker,
-    setShowPicker,
-    truncatedButtonText,
     handleEdit: handleEditSubmit,
     handleDelete: handleDeleteConfirm,
   };
