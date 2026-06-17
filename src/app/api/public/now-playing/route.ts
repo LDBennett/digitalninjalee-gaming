@@ -7,13 +7,17 @@ const ALLOWED_ORIGINS = new Set([
   ...(process.env.NODE_ENV === "development" ? ["http://localhost:4321", "http://localhost:3000"] : []),
 ]);
 
-function corsHeaders(req: NextRequest) {
+function corsHeaders(req: NextRequest): Record<string, string> {
   const origin = req.headers.get("origin") ?? "";
-  return {
-    "Access-Control-Allow-Origin": ALLOWED_ORIGINS.has(origin) ? origin : "",
+  const headers: Record<string, string> = {
     "Access-Control-Allow-Methods": "GET, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
+    Vary: "Origin",
   };
+  if (ALLOWED_ORIGINS.has(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+  return headers;
 }
 
 export async function OPTIONS(req: NextRequest) {
