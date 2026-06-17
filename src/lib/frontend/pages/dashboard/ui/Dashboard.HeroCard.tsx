@@ -2,39 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Star, StarHalf } from "lucide-react";
-import { GameStatusBadge, PlatformBadge } from "@/src/lib/frontend/entities/game";
+import { ChevronLeft, ChevronRight, NotebookText, X } from "lucide-react";
+import { GameStatusBadge, PlatformBadge, RatingStars } from "@/src/lib/frontend/entities/game";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
-import { EmptyState, GatedElement, Button } from "@/src/lib/frontend/shared";
+import { Button, EmptyState } from "@/src/lib/frontend/shared";
 import type { useDashboard } from "../useDashboard";
 
-type Props = Pick<
-  ReturnType<typeof useDashboard>,
-  "playingGames" | "handleStatusChange" | "isAuthenticated"
-> & { onSignIn: () => void };
+type Props = Pick<ReturnType<typeof useDashboard>, "playingGames">;
 
-function InlineRatingStars({ rating }: { rating: number }) {
-  return (
-    <div className="inline-flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((star) => {
-        const filled = rating >= star;
-        const half = !filled && rating >= star - 0.5;
-        return filled ? (
-          <Star key={star} size={12} className="text-yellow-400" fill="currentColor" strokeWidth={1} />
-        ) : half ? (
-          <StarHalf key={star} size={12} className="text-yellow-400" fill="currentColor" strokeWidth={1} />
-        ) : (
-          <Star key={star} size={12} className="text-gray-700" strokeWidth={1} />
-        );
-      })}
-      <span className="ml-1 text-[11px] font-medium text-yellow-400/80">{rating}</span>
-    </div>
-  );
-}
-
-export function DashboardHeroCard({ playingGames, handleStatusChange, isAuthenticated, onSignIn }: Props) {
+export function DashboardHeroCard({ playingGames }: Props) {
   const [idx, setIdx] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [notesOpen, setNotesOpen] = useState(false);
 
   const total = playingGames.length;
   const game = playingGames[Math.min(idx, total - 1)] ?? null;
@@ -45,13 +24,18 @@ export function DashboardHeroCard({ playingGames, handleStatusChange, isAuthenti
   };
 
   useEffect(() => {
-    if (total <= 1) return;
+    if (total <= 1 || notesOpen) return;
     const id = setInterval(() => {
       setDirection(1);
       setIdx((i) => (i + 1) % total);
     }, 8000);
     return () => clearInterval(id);
-  }, [idx, total]);
+  }, [idx, total, notesOpen]);
+
+  // Close notes panel when the carousel moves to a different game
+  useEffect(() => {
+    setNotesOpen(false);
+  }, [idx]);
 
   const coverImage = game ? (game.background_url || game.cover_art_url) : null;
 
@@ -63,7 +47,7 @@ export function DashboardHeroCard({ playingGames, handleStatusChange, isAuthenti
         </div>
       ) : (
         <>
-          {/* Background layer — animates with game */}
+          {/* Background layer */}
           <AnimatePresence initial={false} mode="sync">
             <motion.div
               key={`bg-${idx}`}
@@ -75,13 +59,11 @@ export function DashboardHeroCard({ playingGames, handleStatusChange, isAuthenti
             >
               {coverImage ? (
                 <>
-                  <div
-                    className="absolute inset-0 scale-105"
-                    style={{
-                      backgroundImage: `url(${coverImage})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center top",
-                    }}
+                  <img
+                    src={coverImage}
+                    alt=""
+                    aria-hidden
+                    className="absolute inset-0 h-full w-full scale-105 object-cover object-top"
                   />
                   <div
                     className="absolute inset-0"
@@ -97,7 +79,7 @@ export function DashboardHeroCard({ playingGames, handleStatusChange, isAuthenti
             </motion.div>
           </AnimatePresence>
 
-          {/* Content layer — slides with direction */}
+          {/* Content layer */}
           <AnimatePresence initial={false} mode="wait" custom={direction}>
             <motion.div
               key={`content-${idx}`}
@@ -120,7 +102,7 @@ export function DashboardHeroCard({ playingGames, handleStatusChange, isAuthenti
                 <div className="mb-3 flex flex-wrap items-center gap-2">
                   <PlatformBadge platform={game.platform} />
                   <GameStatusBadge status={game.status} />
-                  {game.rating != null && <InlineRatingStars rating={game.rating} />}
+                  {game.rating != null && <RatingStars rating={game.rating} />}
                 </div>
 
                 {game.moods && game.moods.length > 0 && (
@@ -139,23 +121,57 @@ export function DashboardHeroCard({ playingGames, handleStatusChange, isAuthenti
               </div>
 
               <div className="mt-6">
-                <GatedElement isAuthenticated={isAuthenticated} onSignIn={onSignIn}>
-                  <Button
-                    variant="gray-dark"
-                    size="sm"
-                    onClick={() => handleStatusChange(game.id, "completed")}
-                  >
-                    Mark as Completed
-                  </Button>
-                </GatedElement>
+                <Button
+                  variant="gray-dark"
+                  size="sm"
+                  icon={<NotebookText size={14} />}
+                  onClick={() => setNotesOpen(true)}
+                >
+                  View Notes
+                </Button>
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Carousel controls — only when multiple games */}
+          {/* Notes overlay */}
+          <AnimatePresence>
+            {notesOpen && (
+              <motion.div
+                key="notes"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="absolute inset-0 z-10 flex flex-col bg-gray-950/92 p-6 backdrop-blur-sm md:p-8"
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                    <NotebookText size={15} className="text-gray-400" />
+                    Notes
+                  </div>
+                  <button
+                    onClick={() => setNotesOpen(false)}
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white"
+                    aria-label="Close notes"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+
+                {game.personal_note ? (
+                  <p className="text-sm leading-relaxed text-gray-300">
+                    {game.personal_note}
+                  </p>
+                ) : (
+                  <p className="text-sm italic text-gray-500">No notes for this game.</p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Carousel controls */}
           {total > 1 && (
             <div className="absolute right-4 bottom-4 flex items-center gap-2">
-              {/* Dot indicators */}
               <div className="flex items-center gap-1.5">
                 {playingGames.map((_, i) => (
                   <button
@@ -166,7 +182,6 @@ export function DashboardHeroCard({ playingGames, handleStatusChange, isAuthenti
                   />
                 ))}
               </div>
-              {/* Prev / Next */}
               <button
                 onClick={() => go(-1)}
                 className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-800/80 text-gray-300 transition-colors hover:bg-gray-700 hover:text-white"

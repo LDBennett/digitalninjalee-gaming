@@ -49,10 +49,9 @@ export function useWishlist() {
     setPage(1);
   }, [tab, setPage]);
 
-  const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
+  const { handleAdd, handleEdit, handleDelete } =
     useGameActions({
       onAddSuccess: invalidate,
-      onStatusSuccess: invalidate,
       onEditSuccess: () => {
         setEditGame(null);
         invalidate();
@@ -88,7 +87,6 @@ export function useWishlist() {
     handleAdd,
     handleEdit: handleEditSubmit,
     handleDelete: handleDeleteConfirm,
-    handleStatusChange,
     handlePriorityChange: (id: string, delta: number) =>
       handlePriorityChange(id, delta, games),
   };

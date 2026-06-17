@@ -60,10 +60,9 @@ export function useLibrary() {
     setPage(1);
   }, [platformFilter, setPage]);
 
-  const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
+  const { handleAdd, handleEdit, handleDelete } =
     useGameActions({
       onAddSuccess: invalidate,
-      onStatusSuccess: invalidate,
       onEditSuccess: () => {
         setEditGame(null);
         invalidate();
@@ -103,7 +102,6 @@ export function useLibrary() {
     setEditGame,
     gamesLoading,
     isAuthenticated,
-    handleStatusChange,
     handleEdit: handleEditSubmit,
     handleDelete: handleDeleteConfirm,
     handleAdd,

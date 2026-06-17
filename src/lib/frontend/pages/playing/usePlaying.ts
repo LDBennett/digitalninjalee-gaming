@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { buildStatusPayload } from "@/src/lib/backend/backlog/domain/services";
 import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import {
   useMoods,
@@ -77,14 +76,12 @@ export function usePlaying() {
     setPage(1);
   }, [platformFilter, setPage]);
 
-  const { handleStatusChange, handleEdit, handleDelete } = useGameActions({
-    onStatusSuccess: invalidate,
+  const { handleEdit, handleDelete } = useGameActions({
     onEditSuccess: () => {
       setEditGame(null);
       invalidate();
     },
     onDeleteSuccess: invalidate,
-    buildStatusUpdates: buildStatusPayload,
   });
 
   const handleDeleteConfirm = (id: string) => {
@@ -115,7 +112,6 @@ export function usePlaying() {
     setEditGame,
     loading: authLoading,
     isAuthenticated,
-    handleStatusChange,
     sortBy,
     setSortBy,
     platformFilter,

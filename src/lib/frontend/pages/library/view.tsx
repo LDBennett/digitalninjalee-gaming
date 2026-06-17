@@ -44,7 +44,6 @@ export function LibraryView() {
     setEditGame,
     gamesLoading,
     isAuthenticated,
-    handleStatusChange,
     handleEdit,
     handleDelete,
     handleAdd,
@@ -135,7 +134,6 @@ export function LibraryView() {
                 game={game}
                 index={i}
                 onEdit={setEditGame}
-                onStatusChange={handleStatusChange}
                 isAuthenticated={isAuthenticated}
                 onSignIn={openLoginModal}
                 showStatusBadge={tab === "all" || tab === "completed"}

@@ -16,6 +16,9 @@ export {
   getBacklogGames,
   getPlayingGames,
   getRecentlyPlayed,
+  getTopPlaying,
+  getTopWishlist,
+  getLastCompleted,
   filterByMood,
   filterByTitle,
 } from "./game.queries";

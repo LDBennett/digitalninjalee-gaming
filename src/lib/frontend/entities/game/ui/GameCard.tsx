@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Pencil } from "lucide-react";
-import { GameDto, GameStatus } from "@/src/lib/backend/backlog/domain/models";
+import { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import { scoreToTier } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
 import { Button, GatedElement } from "@/src/lib/frontend/shared";
@@ -19,12 +19,10 @@ import { GameCardExpandable } from "./GameCard.Expandable";
 interface GameCardProps {
   game: GameDto;
   onEdit?: (game: GameDto) => void;
-  onStatusChange?: (id: string, status: GameStatus) => void;
   onPriorityChange?: (id: string, delta: number) => void;
   isAuthenticated?: boolean;
   onSignIn?: () => void;
   showPriority?: boolean;
-  showActions?: boolean;
   showStatusBadge?: boolean;
   rank?: number;
   index?: number;
@@ -33,17 +31,14 @@ interface GameCardProps {
 export function GameCard({
   game,
   onEdit,
-  onStatusChange,
   onPriorityChange,
   isAuthenticated,
   onSignIn,
   showPriority = false,
-  showActions = true,
   showStatusBadge = false,
   rank,
   index = 0,
 }: GameCardProps) {
-  const [showStatusSelect, setShowStatusSelect] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
   const [showNote, setShowNote] = useState(false);
 
@@ -142,11 +137,23 @@ export function GameCard({
           </div>
 
           {moods.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1">
-              {moods.map((mood) => (
-                <MoodBadge key={mood.id} mood={mood.name} />
-              ))}
-            </div>
+            <>
+              <div className="mt-2 flex flex-wrap gap-1 sm:hidden">
+                {moods.slice(0, 2).map((mood) => (
+                  <MoodBadge key={mood.id} mood={mood.name} />
+                ))}
+                {moods.length > 2 && (
+                  <span className="inline-flex items-center rounded-full bg-gray-800 px-2 py-0.5 text-[11px] font-medium text-gray-400">
+                    +{moods.length - 2}
+                  </span>
+                )}
+              </div>
+              <div className="mt-2 hidden flex-wrap gap-1 sm:flex">
+                {moods.map((mood) => (
+                  <MoodBadge key={mood.id} mood={mood.name} />
+                ))}
+              </div>
+            </>
           )}
 
           {!!game.game_description && (
@@ -165,20 +172,12 @@ export function GameCard({
           )}
 
           <GameCardActions
-            gameId={game.id}
-            gameStatus={game.status}
             hasDescription={!!game.game_description}
             hasNote={!!game.personal_note}
             showDesc={showDesc}
             showNote={showNote}
-            showActions={showActions}
-            showStatusSelect={showStatusSelect}
             onToggleDesc={() => setShowDesc((p) => !p)}
             onToggleNote={() => setShowNote((p) => !p)}
-            onToggleStatusSelect={() => setShowStatusSelect((p) => !p)}
-            onStatusChange={onStatusChange}
-            isAuthenticated={isAuthenticated}
-            onSignIn={onSignIn}
           />
         </div>
       </div>

@@ -20,8 +20,8 @@ interface GameStatsGridProps {
 }
 
 type StatCard =
-  | { label: string; color: string; activeColor: string; accentBorder: string; activeBorder: string; Icon: LucideIcon; filterKey?: string; kind: "single"; getValue: (s: Stats) => number }
-  | { label: string; color: string; activeColor: string; accentBorder: string; activeBorder: string; Icon: LucideIcon; filterKey?: string; kind: "split"; getPrimary: (s: Stats) => number; getSecondary: (s: Stats) => number; subLabel: string };
+  | { label: string; color: string; activeColor: string; accentBorder: string; activeBorder: string; ambient: string; activeAmbient: string; Icon: LucideIcon; filterKey?: string; kind: "single"; getValue: (s: Stats) => number }
+  | { label: string; color: string; activeColor: string; accentBorder: string; activeBorder: string; ambient: string; activeAmbient: string; Icon: LucideIcon; filterKey?: string; kind: "split"; getPrimary: (s: Stats) => number; getSecondary: (s: Stats) => number; subLabel: string };
 
 const STAT_CARDS: StatCard[] = [
   {
@@ -31,7 +31,10 @@ const STAT_CARDS: StatCard[] = [
     activeColor: "text-emerald-300",
     accentBorder: "border-l-emerald-800",
     activeBorder: "border-l-emerald-500",
+    ambient: "from-emerald-950/60",
+    activeAmbient: "from-emerald-900/30",
     Icon: SquarePlay,
+    filterKey: "playing",
     getValue: (s) => s.playing + s.ongoing,
   },
   {
@@ -41,6 +44,8 @@ const STAT_CARDS: StatCard[] = [
     activeColor: "text-violet-300",
     accentBorder: "border-l-violet-800",
     activeBorder: "border-l-violet-500",
+    ambient: "from-violet-950/60",
+    activeAmbient: "from-violet-900/30",
     Icon: ClipboardList,
     filterKey: "backlog",
     getValue: (s) => s.backlog,
@@ -52,6 +57,8 @@ const STAT_CARDS: StatCard[] = [
     activeColor: "text-green-300",
     accentBorder: "border-l-green-800",
     activeBorder: "border-l-green-500",
+    ambient: "from-green-950/60",
+    activeAmbient: "from-green-900/30",
     Icon: Trophy,
     filterKey: "completed",
     getPrimary: (s) => s.completedFull,
@@ -65,6 +72,8 @@ const STAT_CARDS: StatCard[] = [
     activeColor: "text-yellow-300",
     accentBorder: "border-l-yellow-800",
     activeBorder: "border-l-yellow-500",
+    ambient: "from-yellow-950/60",
+    activeAmbient: "from-yellow-900/30",
     Icon: Gift,
     filterKey: "wishlist",
     getValue: (s) => s.wishlist,
@@ -83,11 +92,11 @@ export function GameStatsGrid({ stats, activeFilter, onFilter }: GameStatsGridPr
             key={card.label}
             onClick={isClickable ? () => onFilter!(card.filterKey!) : undefined}
             className={cn(
-              "relative overflow-hidden rounded-xl border border-l-2 p-4 transition-all duration-150",
+              "relative overflow-hidden rounded-xl border border-l-2 bg-linear-to-br to-gray-900 p-4 transition-all duration-150",
               isActive
-                ? "border-gray-700 bg-gray-800 " + card.activeBorder
-                : "border-gray-800 bg-gray-900 " + card.accentBorder,
-              isClickable && "cursor-pointer hover:border-gray-700 hover:bg-gray-800/60",
+                ? cn("border-gray-700 to-gray-800", card.activeAmbient, card.activeBorder)
+                : cn("border-gray-800", card.ambient, card.accentBorder),
+              isClickable && "cursor-pointer hover:border-gray-700",
             )}
           >
             <div className="mb-2 flex items-center justify-between">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { GameDto, MoodDto } from "@/src/lib/backend/backlog/domain/models";
@@ -28,6 +28,10 @@ interface RandomPickerProps {
 export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }: RandomPickerProps) {
   const { authHeaders } = useAuthFetch();
   const [selectedPool, setSelectedPool] = useState<Pool>(defaultPool);
+
+  useEffect(() => {
+    if (isOpen) setSelectedPool(defaultPool);
+  }, [isOpen]);
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [pickedGame, setPickedGame] = useState<GameDto | null>(null);
   const [candidates, setCandidates] = useState<GameDto[]>([]);

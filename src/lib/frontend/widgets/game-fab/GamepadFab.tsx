@@ -103,8 +103,14 @@ export function GamepadFab() {
       key: "E",
       label: "Roll: Backlog",
       icon: (
-        <ClipboardList size={26}>
-          <Dices size={16} x={11} y={9} absoluteStrokeWidth />
+        <ClipboardList size={26} stroke="var(--color-brand-700)">
+          <Dices
+            size={16}
+            x={11}
+            y={9}
+            absoluteStrokeWidth
+            stroke="var(--color-brand-200)"
+          />
         </ClipboardList>
       ),
       offset: { x: RADIUS, y: 0 },
@@ -121,8 +127,14 @@ export function GamepadFab() {
       key: "W",
       label: "Roll: Playing",
       icon: (
-        <Play size={26}>
-          <Dices size={16} x={11} y={9} absoluteStrokeWidth />
+        <Play size={26} stroke="var(--color-brand-700)">
+          <Dices
+            size={16}
+            x={11}
+            y={9}
+            absoluteStrokeWidth
+            stroke="var(--color-brand-200)"
+          />
         </Play>
       ),
       offset: { x: -RADIUS, y: 0 },

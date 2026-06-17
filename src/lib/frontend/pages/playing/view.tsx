@@ -52,7 +52,6 @@ export function PlayingView() {
     setEditGame,
     loading,
     isAuthenticated,
-    handleStatusChange,
     handleEdit,
     handleDelete,
   } = usePlaying();
@@ -143,7 +142,6 @@ export function PlayingView() {
             game={game}
             index={i}
             onEdit={setEditGame}
-            onStatusChange={handleStatusChange}
             isAuthenticated={isAuthenticated}
             onSignIn={openLoginModal}
           />

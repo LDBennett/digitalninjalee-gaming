@@ -63,10 +63,9 @@ export function useBacklog() {
     setPage(1);
   }, [platformFilter, setPage]);
 
-  const { handleAdd, handleStatusChange, handleEdit, handleDelete } =
+  const { handleAdd, handleEdit, handleDelete } =
     useGameActions({
       onAddSuccess: invalidate,
-      onStatusSuccess: invalidate,
       onEditSuccess: () => {
         setEditGame(null);
         invalidate();
@@ -107,7 +106,6 @@ export function useBacklog() {
     handleAdd,
     handleEdit: handleEditSubmit,
     handleDelete: handleDeleteConfirm,
-    handleStatusChange,
     sortBy,
     setSortBy,
     platformFilter,

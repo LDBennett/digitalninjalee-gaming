@@ -5,3 +5,4 @@ export { PlatformBadge } from "./ui/PlatformBadge";
 export { GameStatsGrid } from "./ui/GameStatsGrid";
 export { GameStatusBadge, STATUS_BADGE } from "./ui/GameStatusBadge";
 export { PriorityPill } from "./ui/PriorityPill";
+export { RatingStars } from "./ui/GameCard.RatingStars";

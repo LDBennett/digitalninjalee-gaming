@@ -33,7 +33,6 @@ export function BacklogView() {
     handleAdd,
     handleEdit,
     handleDelete,
-    handleStatusChange,
     handlePriorityChange,
     replayOnly,
     setReplayOnly,
@@ -145,7 +144,6 @@ export function BacklogView() {
             index={i}
             rank={(page - 1) * 20 + i + 1}
             onEdit={setEditGame}
-            onStatusChange={handleStatusChange}
             onPriorityChange={handlePriorityChange}
             isAuthenticated={isAuthenticated}
             onSignIn={openLoginModal}

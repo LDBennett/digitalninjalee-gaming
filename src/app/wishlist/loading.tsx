@@ -3,10 +3,10 @@ import { GameCardSkeleton } from "@/src/lib/frontend/entities/game";
 export default function WishlistLoading() {
   return (
     <div className="mx-auto max-w-5xl">
-      {/* PageHeader */}
-      <div className="mb-5">
+      {/* PageHeader — static subtitle always shown on /wishlist */}
+      <div className="mb-6">
         <div className="h-7 w-20 animate-pulse rounded bg-gray-800" />
-        <div className="mt-1.5 h-4 w-24 animate-pulse rounded bg-gray-800" />
+        <div className="mt-0.5 h-4 w-72 animate-pulse rounded bg-gray-800" />
       </div>
 
       {/* Tabs: All / Interested / Pre-Ordered / Keep-an-Eye-On */}

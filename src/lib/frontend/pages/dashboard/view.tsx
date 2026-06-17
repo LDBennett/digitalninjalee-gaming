@@ -4,13 +4,20 @@ import { useState } from "react";
 import { useDashboard } from "./useDashboard";
 import { GameStatsGrid } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
-import { PageHeader, useAuthStore } from "@/src/lib/frontend/shared";
+import { PageHeader } from "@/src/lib/frontend/shared";
 import { DashboardHeroCard } from "./ui/Dashboard.HeroCard";
-import { DashboardBacklogQueue } from "./ui/Dashboard.BacklogQueue";
+import { DashboardListQueue } from "./ui/Dashboard.ListQueue";
 
-type StatFilter = "backlog" | "completed" | "wishlist";
+type StatFilter = "playing" | "backlog" | "completed" | "wishlist";
 
-const QUEUE_CONFIG: Record<StatFilter, { heading: string; dataKey: "topPriority" | "lastCompleted" | "topWishlist" }> = {
+const QUEUE_CONFIG: Record<
+  StatFilter,
+  {
+    heading: string;
+    dataKey: "topPlaying" | "topPriority" | "lastCompleted" | "topWishlist";
+  }
+> = {
+  playing: { heading: "Playing: Top Priority", dataKey: "topPlaying" },
   backlog: { heading: "Backlog: Top Priority", dataKey: "topPriority" },
   completed: { heading: "Recently Completed", dataKey: "lastCompleted" },
   wishlist: { heading: "Top Wishlist", dataKey: "topWishlist" },
@@ -22,21 +29,23 @@ export function DashboardView() {
   const {
     stats,
     topPriority,
+    topPlaying,
     playingGames,
     topWishlist,
     lastCompleted,
-    handleStatusChange,
     moods,
     showAdd,
     setShowAdd,
     loading,
-    isAuthenticated,
     handleAdd,
   } = useDashboard();
 
-  const { openLoginModal } = useAuthStore();
-
-  const queueData = { topPriority: topPriority.slice(0, 5), lastCompleted, topWishlist };
+  const queueData = {
+    topPlaying,
+    topPriority: topPriority.slice(0, 5),
+    lastCompleted,
+    topWishlist,
+  };
   const { heading, dataKey } = QUEUE_CONFIG[activeFilter];
   const queueGames = queueData[dataKey];
 
@@ -56,16 +65,11 @@ export function DashboardView() {
         onFilter={(key) => setActiveFilter(key as StatFilter)}
       />
       <div className="mt-6 grid grid-cols-1 items-stretch gap-6 lg:grid-cols-5">
-        <div className="h-full lg:col-span-3">
-          <DashboardHeroCard
-            playingGames={playingGames}
-            handleStatusChange={handleStatusChange}
-            isAuthenticated={isAuthenticated}
-            onSignIn={openLoginModal}
-          />
+        <div className="order-2 h-full lg:order-1 lg:col-span-3">
+          <DashboardHeroCard playingGames={playingGames} />
         </div>
-        <div className="h-full lg:col-span-2">
-          <DashboardBacklogQueue games={queueGames} heading={heading} />
+        <div className="order-1 h-full lg:order-2 lg:col-span-2">
+          <DashboardListQueue games={queueGames} heading={heading} />
         </div>
       </div>
       <AddGameModal

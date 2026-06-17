@@ -1,14 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
-import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import { signIn } from "@/src/lib/frontend/shared/lib/auth.init";
-import { Button } from "@/src/lib/frontend/shared/ui/Button";
-import { Input } from "@/src/lib/frontend/shared/ui/Input";
-
-const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+import { Button, Input, Modal } from "@/src/lib/frontend/shared";
 
 export function LoginModal() {
   const { showLoginModal, closeLoginModal } = useAuthStore();
@@ -16,53 +11,16 @@ export function LoginModal() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [turnstileError, setTurnstileError] = useState(false);
-  const turnstileRef = useRef<TurnstileInstance>(null);
-
-  const resetTurnstile = () => {
-    setTurnstileToken(null);
-    setTurnstileError(false);
-    turnstileRef.current?.reset();
-  };
-
-  const handleTurnstileError = () => {
-    setTurnstileToken(null);
-    setTurnstileError(true);
-  };
-
-  const isTurnstilePending = !!SITE_KEY && !turnstileToken && !turnstileError;
-
-  const handleClose = () => {
-    resetTurnstile();
-    closeLoginModal();
-  };
 
   const handleSignIn = async () => {
-    if (!turnstileToken) return;
-
     setLoading(true);
     setError(null);
-
-    const verifyRes = await fetch("/api/auth/verify-turnstile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: turnstileToken }),
-    });
-
-    if (!verifyRes.ok) {
-      setError("Human verification failed. Please try again.");
-      setLoading(false);
-      resetTurnstile();
-      return;
-    }
 
     const authErr = await signIn(email, password);
     setLoading(false);
 
     if (authErr) {
       setError(authErr.message);
-      resetTurnstile();
     } else {
       closeLoginModal();
       setEmail("");
@@ -70,18 +28,9 @@ export function LoginModal() {
     }
   };
 
-  if (!showLoginModal) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      onClick={handleClose}
-    >
-      <div
-        className="w-80 rounded-xl border border-gray-800 bg-gray-900 p-6 shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="mb-1 text-base font-semibold text-white">Sign in</h2>
+    <Modal isOpen={showLoginModal} onClose={closeLoginModal} title="Sign in" maxWidth="max-w-xs">
+      <div className="p-5">
         <p className="mb-4 text-xs text-gray-500">
           Game Vault is personal — sign in to make changes.
         </p>
@@ -102,32 +51,16 @@ export function LoginModal() {
             error={error ?? undefined}
             fullWidth
           />
-          {SITE_KEY && (
-            <Turnstile
-              ref={turnstileRef}
-              siteKey={SITE_KEY}
-              onSuccess={(token) => { setTurnstileToken(token); setTurnstileError(false); }}
-              onError={handleTurnstileError}
-              onExpire={resetTurnstile}
-              options={{ theme: "dark", size: "invisible" }}
-            />
-          )}
           <Button
             variant="brand"
             onClick={handleSignIn}
-            disabled={loading || !email || !password || isTurnstilePending || (!!SITE_KEY && turnstileError)}
-            icon={isTurnstilePending ? <Loader2 className="size-4 animate-spin" /> : undefined}
+            disabled={loading || !email || !password}
             fullWidth
           >
-            {loading ? "Signing in…" : isTurnstilePending ? "Verifying…" : "Sign in"}
+            {loading ? "Signing in…" : "Sign in"}
           </Button>
-          {turnstileError && (
-            <p className="text-center text-xs text-red-400">
-              Verification failed. Please try again.
-            </p>
-          )}
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }

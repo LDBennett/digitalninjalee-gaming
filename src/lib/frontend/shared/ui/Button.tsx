@@ -55,7 +55,7 @@ export function Button({
       type={type ?? "button"}
       className={cn(
         "inline-flex items-center justify-center gap-2 font-semibold transition-colors",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        "disabled:cursor-not-allowed disabled:bg-gray-800 disabled:text-gray-500 disabled:shadow-none",
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
         SHAPE_CLASSES[shape],

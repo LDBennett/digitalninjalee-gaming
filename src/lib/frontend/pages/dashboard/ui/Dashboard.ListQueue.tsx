@@ -10,18 +10,13 @@ interface Props {
   heading: string;
 }
 
-export function DashboardBacklogQueue({ games, heading }: Props) {
+export function DashboardListQueue({ games, heading }: Props) {
   return (
     <div className="flex h-full flex-col">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold tracking-wide text-white uppercase">
           {heading}
         </h3>
-        {games.length > 0 && (
-          <span className="rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-400">
-            {games.length}
-          </span>
-        )}
       </div>
 
       {games.length === 0 ? (
@@ -58,7 +53,11 @@ export function DashboardBacklogQueue({ games, heading }: Props) {
                   </div>
                 </div>
 
-                <Badge bg={tier.pillBg} text={tier.pillText} className="shrink-0">
+                <Badge
+                  bg={tier.pillBg}
+                  text={tier.pillText}
+                  className="shrink-0"
+                >
                   {tier.label}
                 </Badge>
               </div>

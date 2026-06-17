@@ -36,7 +36,6 @@ export function WishlistView() {
     handleAdd,
     handleEdit,
     handleDelete,
-    handleStatusChange,
     handlePriorityChange,
   } = useWishlist();
 
@@ -88,7 +87,6 @@ export function WishlistView() {
                 game={game}
                 index={i}
                 onEdit={setEditGame}
-                onStatusChange={handleStatusChange}
                 onPriorityChange={handlePriorityChange}
                 isAuthenticated={isAuthenticated}
                 onSignIn={openLoginModal}

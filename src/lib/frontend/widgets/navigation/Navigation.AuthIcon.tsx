@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { Ghost, LogIn } from "lucide-react";
+import { Ghost, LogIn, Shield } from "lucide-react";
 import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 
 export function NavigationAuthIcon() {
@@ -27,11 +27,9 @@ export function NavigationAuthIcon() {
         className="relative shrink-0 cursor-pointer p-1"
         aria-label="Sign out"
       >
-        <img
-          src="/logos/dnl-logo--green.png"
-          alt="Signed in"
-          className="h-6 w-8 rounded-full"
-        />
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-green-400">
+          <Shield size={16} />
+        </div>
         <span className="absolute right-0.5 bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-gray-950 bg-green-500" />
       </button>
     );

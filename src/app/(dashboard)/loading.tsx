@@ -18,12 +18,12 @@ export default function DashboardLoading() {
       </div>
 
       {/* Hero + queue two-column layout */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-        {/* Hero card */}
-        <div className="h-75 animate-pulse rounded-2xl border border-gray-800 bg-gray-900 md:h-90 lg:col-span-3" />
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-5">
+        {/* Hero card — second on mobile, first column on desktop */}
+        <div className="order-2 h-75 animate-pulse rounded-2xl border border-gray-800 bg-gray-900 md:h-90 lg:order-1 lg:col-span-3" />
 
-        {/* Backlog queue */}
-        <div className="flex flex-col gap-2 lg:col-span-2">
+        {/* Queue — first on mobile, second column on desktop */}
+        <div className="order-1 flex flex-col gap-2 lg:order-2 lg:col-span-2">
           <div className="mb-1 h-4 w-36 animate-pulse rounded bg-gray-800" />
           {Array.from({ length: 5 }).map((_, i) => (
             <div

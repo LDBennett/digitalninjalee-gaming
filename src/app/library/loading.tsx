@@ -3,10 +3,9 @@ import { GameCardSkeleton } from "@/src/lib/frontend/entities/game";
 export default function LibraryLoading() {
   return (
     <div className="mx-auto max-w-5xl">
-      {/* PageHeader */}
-      <div className="mb-5">
+      {/* PageHeader — no subtitle on /library */}
+      <div className="mb-6">
         <div className="h-7 w-20 animate-pulse rounded bg-gray-800" />
-        <div className="mt-1.5 h-4 w-28 animate-pulse rounded bg-gray-800" />
       </div>
 
       {/* Tabs: All / Completed / Main-Complete / Ongoing / Dropped */}

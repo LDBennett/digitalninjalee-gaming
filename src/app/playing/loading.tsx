@@ -4,7 +4,7 @@ export default function PlayingLoading() {
   return (
     <div className="mx-auto max-w-5xl">
       {/* PageHeader */}
-      <div className="mb-5">
+      <div className="mb-6">
         <div className="h-7 w-32 animate-pulse rounded bg-gray-800" />
         <div className="mt-1.5 h-4 w-24 animate-pulse rounded bg-gray-800" />
       </div>
