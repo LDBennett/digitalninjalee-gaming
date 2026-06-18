@@ -72,7 +72,7 @@ Desktop.ini
 # Optional next-env
 .next-env.d.ts
 
-.claude/*
+.claude
 
 CLAUDE.md
 docs
