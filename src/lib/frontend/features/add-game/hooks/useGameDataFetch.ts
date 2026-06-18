@@ -37,6 +37,7 @@ export function useGameDataFetch(params: UseGameDataFetchParams) {
 
     setTitle(game.name);
     setCoverArtUrl(game.coverUrl ?? "");
+    setIgdbId(game.id);
     setIgdbResults([]);
     setShowDropdown(false);
     setEnrichLoading(true);
