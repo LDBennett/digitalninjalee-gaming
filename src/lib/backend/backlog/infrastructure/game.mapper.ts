@@ -3,6 +3,7 @@ import {
   createPlatform,
   createGameStatus,
   createPriorityScore,
+  createPlayGoals,
 } from "@/src/lib/backend/backlog/domain/models/game.types";
 import { MoodState } from "@/src/lib/backend/backlog/domain/models/mood.types";
 import { GameRowWithMoods } from "@/src/lib/backend/backlog/infrastructure/db.types";
@@ -27,6 +28,10 @@ export function gameRowToDomain(row: GameRowWithMoods): GameState {
     .filter(Boolean)
     .map((m) => ({ id: m.id, name: m.name }));
 
+  const playGoalsResult = createPlayGoals(row.play_goals ?? []);
+  if (!playGoalsResult.success)
+    throw new Error(`DB contains invalid play_goals: ${row.play_goals}`);
+
   return {
     id: row.id,
     title: row.title,
@@ -42,6 +47,7 @@ export function gameRowToDomain(row: GameRowWithMoods): GameState {
     replayStatus: row.replay_status ?? null,
     personalNote: row.personal_note ?? null,
     rating: row.rating ?? null,
+    playGoals: playGoalsResult.value,
   };
 }
 
@@ -62,6 +68,7 @@ export function gameStateToRow(
     replay_status: game.replayStatus,
     personal_note: game.personalNote,
     rating: game.rating,
+    play_goals: [...game.playGoals],
   };
 }
 

@@ -12,6 +12,7 @@ export interface GameRow {
   replay_status: "want-to-replay" | "replaying" | null;
   personal_note: string | null;
   rating: number | null;
+  play_goals: string[];
 }
 
 export interface MoodRow {

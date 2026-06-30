@@ -26,6 +26,7 @@ function makeGame(overrides: Partial<GameDto> = {}): GameDto {
     replay_status: null,
     personal_note: null,
     rating: null,
+    play_goals: [],
     ...overrides,
   };
 }
@@ -147,7 +148,11 @@ describe("getTopPriority", () => {
     const games = [
       makeGame({ status: "backlog", priority_score: 80 }),
       makeGame({ status: "playing", priority_score: 90 }),
-      makeGame({ status: "completed", replay_status: "want-to-replay", priority_score: 70 }),
+      makeGame({
+        status: "completed",
+        replay_status: "want-to-replay",
+        priority_score: 70,
+      }),
     ];
     const result = getTopPriority(games);
     expect(result).toHaveLength(2);
@@ -166,7 +171,9 @@ describe("getTopPriority", () => {
   });
 
   it("respects the limit parameter", () => {
-    const games = Array.from({ length: 10 }, () => makeGame({ status: "backlog" }));
+    const games = Array.from({ length: 10 }, () =>
+      makeGame({ status: "backlog" }),
+    );
     expect(getTopPriority(games, 3)).toHaveLength(3);
   });
 });

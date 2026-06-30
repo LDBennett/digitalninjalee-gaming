@@ -5,6 +5,7 @@ import {
   GameDto,
   GameStatus,
   MoodDto,
+  PlayGoal,
 } from "@/src/lib/backend/backlog/domain/models";
 import { AddGamePayload } from "@/src/lib/frontend/features/add-game/types";
 import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
@@ -74,6 +75,11 @@ export function useAddGameForm({
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
 
+  const togglePlayGoal = (goal: PlayGoal) =>
+    state.setSelectedPlayGoals((prev) =>
+      prev.includes(goal) ? prev.filter((x) => x !== goal) : [...prev, goal],
+    );
+
   const resetForm = () => {
     state.setTitle("");
     state.setPlatform("pc");
@@ -87,6 +93,7 @@ export function useAddGameForm({
     state.setIgdbId(null);
     state.setSelectedMoods([]);
     state.setReplayStatus(null);
+    state.setSelectedPlayGoals([]);
     state.setIgdbResults([]);
     state.setShowDropdown(false);
     state.setEnrichLoading(false);
@@ -110,6 +117,7 @@ export function useAddGameForm({
       igdb_id: state.igdbId,
       mood_ids: state.selectedMoods,
       replay_status: state.replayStatus,
+      play_goals: state.selectedPlayGoals,
     });
     state.setSaving(false);
     return true;
@@ -138,6 +146,7 @@ export function useAddGameForm({
     ...state,
     handleIgdbSelect,
     toggleMood,
+    togglePlayGoal,
     handleSubmit,
     handleSubmitAndAdd,
     clearCoverArt,

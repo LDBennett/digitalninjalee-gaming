@@ -20,6 +20,7 @@ function makeGame(overrides: Partial<GameDto> = {}): GameDto {
     replay_status: null,
     personal_note: null,
     rating: null,
+    play_goals: [],
     ...overrides,
   };
 }

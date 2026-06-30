@@ -6,6 +6,7 @@ import {
   GameStatus,
   Platform,
   ReplayStatus,
+  PlayGoal,
 } from "@/src/lib/backend/backlog/domain/models";
 import { IgdbSearchResult } from "@/src/lib/frontend/features/add-game/types";
 
@@ -26,6 +27,7 @@ export function useAddGameFormState(
   const [igdbId, setIgdbId] = useState<number | null>(null);
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [replayStatus, setReplayStatus] = useState<ReplayStatus>(null);
+  const [selectedPlayGoals, setSelectedPlayGoals] = useState<PlayGoal[]>([]);
   const [saving, setSaving] = useState(false);
   const [igdbResults, setIgdbResults] = useState<IgdbSearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -48,6 +50,7 @@ export function useAddGameFormState(
       setIgdbId(null);
       setSelectedMoods(editGame.moods?.map((m) => m.id) ?? []);
       setReplayStatus(editGame.replay_status ?? null);
+      setSelectedPlayGoals(editGame.play_goals ?? []);
     } else {
       setTitle("");
       setPlatform("pc");
@@ -61,6 +64,7 @@ export function useAddGameFormState(
       setIgdbId(null);
       setSelectedMoods([]);
       setReplayStatus(null);
+      setSelectedPlayGoals([]);
     }
     setIgdbResults([]);
     setShowDropdown(false);
@@ -93,6 +97,8 @@ export function useAddGameFormState(
     setSelectedMoods,
     replayStatus,
     setReplayStatus,
+    selectedPlayGoals,
+    setSelectedPlayGoals,
     saving,
     setSaving,
     igdbResults,

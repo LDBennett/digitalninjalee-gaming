@@ -10,12 +10,14 @@ import {
   adjustPriority,
   replaceMoods,
   setReplayStatus,
+  setPlayGoals,
 } from "@/src/lib/backend/backlog/domain/services";
 import {
   gameStateToDto,
   createPlatform,
   createGameStatus,
   createPriorityScore,
+  createPlayGoals,
 } from "@/src/lib/backend/backlog/domain/models";
 import type { GameState } from "@/src/lib/backend/backlog/domain/models";
 
@@ -116,6 +118,16 @@ export async function PUT(
 
   if (body.replay_status !== undefined) {
     game = setReplayStatus(game, body.replay_status ?? null);
+  }
+
+  if (body.play_goals !== undefined) {
+    const playGoalsResult = createPlayGoals(body.play_goals);
+    if (!playGoalsResult.success)
+      return NextResponse.json(
+        { error: playGoalsResult.error },
+        { status: 400 },
+      );
+    game = setPlayGoals(game, playGoalsResult.value);
   }
 
   const updateResult = await gameRepo.update(game);

@@ -15,6 +15,7 @@ import { PriorityPill } from "./PriorityPill";
 import { GameCoverArt } from "./GameCard.CoverArt";
 import { GameCardActions } from "./GameCard.Actions";
 import { GameCardExpandable } from "./GameCard.Expandable";
+import { GameCardPlayGoals } from "./GameCard.PlayGoals";
 
 interface GameCardProps {
   game: GameDto;
@@ -155,6 +156,8 @@ export function GameCard({
               </div>
             </>
           )}
+
+          <GameCardPlayGoals playGoals={game.play_goals} />
 
           {!!game.game_description && (
             <GameCardExpandable

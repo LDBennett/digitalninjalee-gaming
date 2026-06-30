@@ -5,6 +5,7 @@ import {
   Platform,
   PriorityScore,
   ReplayStatus,
+  PlayGoal,
   canTransitionTo,
   adjustPriorityScore,
 } from "@/src/lib/backend/backlog/domain/models/game.types";
@@ -23,6 +24,7 @@ export interface NewGameProps {
   replayStatus?: ReplayStatus;
   personalNote?: string | null;
   rating?: number | null;
+  playGoals?: ReadonlyArray<PlayGoal>;
 }
 
 export function newGame(props: NewGameProps): Result<GameState, string> {
@@ -42,6 +44,7 @@ export function newGame(props: NewGameProps): Result<GameState, string> {
     replayStatus: props.replayStatus ?? null,
     personalNote: props.personalNote ?? null,
     rating: props.rating ?? null,
+    playGoals: [...(props.playGoals ?? [])],
   });
 }
 
@@ -50,6 +53,13 @@ export function setReplayStatus(
   replayStatus: ReplayStatus,
 ): GameState {
   return { ...game, replayStatus };
+}
+
+export function setPlayGoals(
+  game: GameState,
+  playGoals: ReadonlyArray<PlayGoal>,
+): GameState {
+  return { ...game, playGoals: [...playGoals] };
 }
 
 export function transitionGame(

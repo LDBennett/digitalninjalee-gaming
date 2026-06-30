@@ -11,6 +11,7 @@ import {
   createPlatform,
   createGameStatus,
   createPriorityScore,
+  createPlayGoals,
   DEFAULT_PRIORITY_SCORE,
 } from "@/src/lib/backend/backlog/domain/models";
 
@@ -63,6 +64,10 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
 
+  const playGoalsResult = createPlayGoals(body.play_goals ?? []);
+  if (!playGoalsResult.success)
+    return NextResponse.json({ error: playGoalsResult.error }, { status: 400 });
+
   const gameResult = newGame({
     title: body.title,
     platform: platformResult.value,
@@ -75,6 +80,7 @@ export async function POST(req: NextRequest) {
     replayStatus: body.replay_status ?? null,
     personalNote: body.personal_note ?? null,
     rating: body.rating ?? null,
+    playGoals: playGoalsResult.value,
   });
   if (!gameResult.success)
     return NextResponse.json({ error: gameResult.error }, { status: 400 });

@@ -3,6 +3,7 @@ export type { GameStats } from "./game.queries";
 export {
   newGame,
   setReplayStatus,
+  setPlayGoals,
   transitionGame,
   updateGameDetails,
   adjustPriority,

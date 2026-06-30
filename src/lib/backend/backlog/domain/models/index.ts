@@ -28,6 +28,10 @@ export {
   canTransitionTo,
   isWishlistStatus,
   gameStateToDto,
+  PLAY_GOALS,
+  PLAY_GOAL_LABELS,
+  PLAY_GOAL_STATUSES,
+  createPlayGoals,
 } from "./game.types";
 export type {
   Platform,
@@ -36,4 +40,5 @@ export type {
   ReplayStatus,
   GameState,
   GameDto,
+  PlayGoal,
 } from "./game.types";

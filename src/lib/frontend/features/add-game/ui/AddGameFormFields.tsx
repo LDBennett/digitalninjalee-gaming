@@ -11,6 +11,7 @@ import {
   LIBRARY_STATUSES,
   WISHLIST_STATUSES,
   VALID_TRANSITIONS,
+  PLAY_GOAL_STATUSES,
 } from "@/src/lib/backend/backlog/domain/models";
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import {
@@ -21,6 +22,7 @@ import { StarRating, Select } from "@/src/lib/frontend/shared";
 import { MoodSelector } from "@/src/lib/frontend/features/mood-selector";
 import { useAddGameForm } from "../hooks/useAddGameForm";
 import { EditMediaFields } from "./AddGameFormFields.Media";
+import { PlayGoalsField } from "./AddGameFormFields.PlayGoals";
 
 interface AddGameFormFieldsProps {
   form: ReturnType<typeof useAddGameForm>;
@@ -28,7 +30,11 @@ interface AddGameFormFieldsProps {
   moods: MoodDto[];
 }
 
-export function AddGameFormFields({ form, editGame, moods }: AddGameFormFieldsProps) {
+export function AddGameFormFields({
+  form,
+  editGame,
+  moods,
+}: AddGameFormFieldsProps) {
   const {
     platform,
     status,
@@ -120,6 +126,10 @@ export function AddGameFormFields({ form, editGame, moods }: AddGameFormFieldsPr
         </Select>
       )}
 
+      {(PLAY_GOAL_STATUSES as ReadonlyArray<string>).includes(status) && (
+        <PlayGoalsField form={form} />
+      )}
+
       <div>
         <label className="mb-1.5 block text-xs font-medium text-gray-400">
           Priority
@@ -145,9 +155,7 @@ export function AddGameFormFields({ form, editGame, moods }: AddGameFormFieldsPr
         </div>
       </div>
 
-      {editGame && (
-        <EditMediaFields form={form} />
-      )}
+      {editGame && <EditMediaFields form={form} />}
 
       <MoodSelector
         moods={moods}

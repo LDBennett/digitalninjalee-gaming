@@ -21,4 +21,5 @@ export interface AddGamePayload {
   igdb_id: number | null;
   mood_ids: string[];
   replay_status: ReplayStatus;
+  play_goals: string[];
 }
