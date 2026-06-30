@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { cn } from "../lib/cn";
 
 export interface ModalProps {
@@ -24,10 +24,16 @@ export function Modal({
   overlay,
   className,
 }: ModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
       <div
         className={cn(
           "relative w-full overflow-hidden rounded-2xl border border-gray-700 bg-gray-900 shadow-2xl",
