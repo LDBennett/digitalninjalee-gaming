@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { PlatformBadge } from "@/src/lib/frontend/entities/game/ui/PlatformBadge";
+import { PlatformBadge } from "@/src/lib/frontend/entities/game/ui/badges/PlatformBadge";
 import { PLATFORMS } from "@/src/lib/backend/backlog/domain/models/game.types";
 
 const EXPECTED_LABELS: Record<string, string> = {

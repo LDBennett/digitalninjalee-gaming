@@ -7,15 +7,15 @@ import { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import { scoreToTier } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
 import { Button, GatedElement } from "@/src/lib/frontend/shared";
-import { PlatformBadge } from "./PlatformBadge";
 import { RatingStars } from "./GameCard.RatingStars";
-import { GameStatusBadge } from "./GameStatusBadge";
+import { GameStatusBadge } from "../badges/GameStatusBadge";
 import { GameReplayBadge } from "./GameCard.ReplayBadge";
-import { PriorityPill } from "./PriorityPill";
+import { PriorityPill } from "../badges/PriorityPill";
 import { GameCoverArt } from "./GameCard.CoverArt";
 import { GameCardActions } from "./GameCard.Actions";
 import { GameCardExpandable } from "./GameCard.Expandable";
 import { GameCardPlayGoals } from "./GameCard.PlayGoals";
+import { PlatformIcon } from "../badges/PlatformIcon";
 
 interface GameCardProps {
   game: GameDto;
@@ -93,9 +93,15 @@ export function GameCard({
 
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="truncate text-sm leading-snug font-semibold text-white">
-              {game.title}
-            </h3>
+            <div className="flex min-w-0 items-center gap-1.5">
+              <PlatformIcon
+                platform={game.platform}
+                className="h-4 w-4 shrink-0"
+              />
+              <h3 className="truncate text-sm leading-snug font-semibold text-white">
+                {game.title}
+              </h3>
+            </div>
             <div className="flex shrink-0 items-center gap-2">
               {onEdit && (
                 <GatedElement
@@ -129,11 +135,11 @@ export function GameCard({
           </div>
 
           <div className="mt-1 flex flex-wrap items-center gap-2">
-            <PlatformBadge platform={game.platform} />
             {game.rating !== null && game.rating !== undefined && (
               <RatingStars rating={game.rating} />
             )}
             <GameReplayBadge replayStatus={game.replay_status} />
+            <GameCardPlayGoals playGoals={game.play_goals} />
             {showStatusBadge && <GameStatusBadge status={game.status} />}
           </div>
 
@@ -156,8 +162,6 @@ export function GameCard({
               </div>
             </>
           )}
-
-          <GameCardPlayGoals playGoals={game.play_goals} />
 
           {!!game.game_description && (
             <GameCardExpandable

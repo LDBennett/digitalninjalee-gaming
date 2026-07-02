@@ -10,15 +10,17 @@ export function GameReplayBadge({
 }) {
   if (replayStatus === "want-to-replay") {
     return (
-      <span className="inline-flex items-center gap-1 rounded bg-violet-900/50 px-1.5 py-0.5 text-xs text-violet-300">
-        <RotateCcw size={10} /> Want to Replay
+      <span title="Want to Replay" className="inline-flex items-center">
+        <RotateCcw size={14} className="text-violet-400" aria-hidden />
+        <span className="sr-only">Want to Replay</span>
       </span>
     );
   }
   if (replayStatus === "replaying") {
     return (
-      <span className="inline-flex items-center gap-1 rounded bg-teal-900/50 px-1.5 py-0.5 text-xs text-teal-300">
-        <Repeat size={10} /> Replaying
+      <span title="Replaying" className="inline-flex items-center">
+        <Repeat size={14} className="text-teal-400" aria-hidden />
+        <span className="sr-only">Replaying</span>
       </span>
     );
   }
