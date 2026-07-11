@@ -78,6 +78,19 @@ describe("useGameFilters", () => {
     expect(result.current.filtered[0].platform).toBe("xbox");
   });
 
+  it("filters by play goal", () => {
+    const games = [
+      makeGame({ play_goals: ["completionist"] }),
+      makeGame({ play_goals: ["casual"] }),
+      makeGame({ play_goals: ["exploration", "completionist"] }),
+    ];
+    const { result } = renderHook(() => useGameFilters(games));
+    act(() => result.current.setPlayGoalFilter("completionist"));
+    expect(result.current.filtered).toHaveLength(2);
+    expect(result.current.filtered[0].play_goals).toContain("completionist");
+    expect(result.current.filtered[1].play_goals).toContain("completionist");
+  });
+
   it("sorts by priority-desc by default", () => {
     const games = [
       makeGame({ priority_score: 30 }),

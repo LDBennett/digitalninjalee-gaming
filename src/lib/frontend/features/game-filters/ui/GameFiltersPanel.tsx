@@ -3,6 +3,9 @@
 import {
   Platform,
   PLATFORM_LABELS,
+  PlayGoal,
+  PLAY_GOALS,
+  PLAY_GOAL_LABELS,
 } from "@/src/lib/backend/backlog/domain/models";
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import { Select } from "@/src/lib/frontend/shared";
@@ -26,19 +29,42 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ];
 
 interface GameFiltersPanelProps {
-  filters: Pick<ReturnType<typeof useGameFilters>, "moodFilter" | "setMoodFilter" | "sortBy" | "setSortBy" | "platformFilter" | "setPlatformFilter">;
+  filters: Pick<
+    ReturnType<typeof useGameFilters>,
+    | "moodFilter"
+    | "setMoodFilter"
+    | "sortBy"
+    | "setSortBy"
+    | "platformFilter"
+    | "setPlatformFilter"
+  > & {
+    playGoalFilter?: PlayGoal | null;
+    setPlayGoalFilter?: (val: PlayGoal | null) => void;
+  };
   moods: MoodDto[];
   className?: string;
   children?: React.ReactNode;
 }
 
 export function GameFiltersPanel({ filters, moods, className, children }: GameFiltersPanelProps) {
-  const { moodFilter, setMoodFilter, sortBy, setSortBy, platformFilter, setPlatformFilter } = filters;
+  const {
+    moodFilter,
+    setMoodFilter,
+    sortBy,
+    setSortBy,
+    platformFilter,
+    setPlatformFilter,
+    playGoalFilter,
+    setPlayGoalFilter,
+  } = filters;
+
+  const showPlayGoal = playGoalFilter !== undefined && setPlayGoalFilter !== undefined;
+
   return (
     <div
       className={`space-y-4 rounded-xl border border-gray-800 bg-gray-900/60 p-4 ${className ?? ""}`}
     >
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className={`grid grid-cols-1 gap-3 ${showPlayGoal ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
         <div>
           <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
             Sort By
@@ -88,6 +114,26 @@ export function GameFiltersPanel({ filters, moods, className, children }: GameFi
             ))}
           </div>
         </div>
+
+        {showPlayGoal && (
+          <div>
+            <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
+              Play Goal
+            </label>
+            <Select
+              value={playGoalFilter ?? ""}
+              onChange={(e) => setPlayGoalFilter((e.target.value as PlayGoal) || null)}
+              fullWidth
+            >
+              <option value="">All Play Goals</option>
+              {PLAY_GOALS.map((g) => (
+                <option key={g} value={g}>
+                  {PLAY_GOAL_LABELS[g]}
+                </option>
+              ))}
+            </Select>
+          </div>
+        )}
       </div>
 
       <div>

@@ -22,6 +22,8 @@ export function BacklogView() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
+    playGoalFilter,
+    setPlayGoalFilter,
     searchQuery,
     setSearchQuery,
     showAdd,
@@ -46,6 +48,7 @@ export function BacklogView() {
   const activeFilterCount = [
     moodFilter !== null,
     platformFilter !== null,
+    playGoalFilter !== null,
     sortBy !== "priority-desc",
     replayOnly,
   ].filter(Boolean).length;
@@ -93,7 +96,16 @@ export function BacklogView() {
 
       {showFilters && (
         <GameFiltersPanel
-          filters={{ moodFilter, setMoodFilter, sortBy, setSortBy, platformFilter, setPlatformFilter }}
+          filters={{
+            moodFilter,
+            setMoodFilter,
+            sortBy,
+            setSortBy,
+            platformFilter,
+            setPlatformFilter,
+            playGoalFilter,
+            setPlayGoalFilter,
+          }}
           moods={moods}
           className="mb-5"
         >

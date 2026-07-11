@@ -51,6 +51,8 @@ export function usePlaying() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
+    playGoalFilter,
+    setPlayGoalFilter,
     filtered,
   } = useGameFilters(games);
   const { page, setPage, totalPages, paginated } =
@@ -60,6 +62,7 @@ export function usePlaying() {
     setActiveTabState(tab);
     setPage(1);
     setMoodFilter(null);
+    setPlayGoalFilter(null);
     setSearchQuery("");
   };
 
@@ -75,6 +78,9 @@ export function usePlaying() {
   useEffect(() => {
     setPage(1);
   }, [platformFilter, setPage]);
+  useEffect(() => {
+    setPage(1);
+  }, [playGoalFilter, setPage]);
 
   const { handleEdit, handleDelete } = useGameActions({
     onEditSuccess: () => {
@@ -116,6 +122,8 @@ export function usePlaying() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
+    playGoalFilter,
+    setPlayGoalFilter,
     handleEdit: handleEditSubmit,
     handleDelete: handleDeleteConfirm,
   };

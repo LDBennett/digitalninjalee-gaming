@@ -44,6 +44,8 @@ export function useBacklog() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
+    playGoalFilter,
+    setPlayGoalFilter,
     filtered,
   } = useGameFilters(games);
   const { page, setPage, totalPages, paginated } =
@@ -62,6 +64,9 @@ export function useBacklog() {
   useEffect(() => {
     setPage(1);
   }, [platformFilter, setPage]);
+  useEffect(() => {
+    setPage(1);
+  }, [playGoalFilter, setPage]);
 
   const { handleAdd, handleEdit, handleDelete } =
     useGameActions({
@@ -110,6 +115,8 @@ export function useBacklog() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
+    playGoalFilter,
+    setPlayGoalFilter,
     wantToReplayCount,
     handlePriorityChange: (id: string, delta: number) =>
       handlePriorityChange(id, delta, games),

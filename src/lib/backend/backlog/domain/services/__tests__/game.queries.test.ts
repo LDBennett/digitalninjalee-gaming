@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   filterByMood,
+  filterByPlayGoal,
   filterByTitle,
   deriveStats,
   getTopPriority,
@@ -60,6 +61,35 @@ describe("filterByMood", () => {
       ],
     });
     expect(filterByMood([game], "rpg")).toHaveLength(1);
+  });
+});
+
+describe("filterByPlayGoal", () => {
+  it("returns all games when playGoalFilter is null", () => {
+    const games = [makeGame(), makeGame()];
+    expect(filterByPlayGoal(games, null)).toHaveLength(2);
+  });
+
+  it("returns only games matching the play goal", () => {
+    const games = [
+      makeGame({ play_goals: ["completionist"] }),
+      makeGame({ play_goals: ["casual"] }),
+    ];
+    const result = filterByPlayGoal(games, "completionist");
+    expect(result).toHaveLength(1);
+    expect(result[0].play_goals).toContain("completionist");
+  });
+
+  it("returns empty array when no games match", () => {
+    const games = [makeGame({ play_goals: ["completionist"] })];
+    expect(filterByPlayGoal(games, "casual")).toHaveLength(0);
+  });
+
+  it("matches against any play goal in the list", () => {
+    const game = makeGame({
+      play_goals: ["story-completion", "casual"],
+    });
+    expect(filterByPlayGoal([game], "casual")).toHaveLength(1);
   });
 });
 

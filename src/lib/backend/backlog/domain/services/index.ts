@@ -21,5 +21,6 @@ export {
   getTopWishlist,
   getLastCompleted,
   filterByMood,
+  filterByPlayGoal,
   filterByTitle,
 } from "./game.queries";

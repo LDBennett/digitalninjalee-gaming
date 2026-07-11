@@ -84,6 +84,14 @@ export function filterByMood(
   return games.filter((g) => g.moods?.some((m) => m.name === moodFilter));
 }
 
+export function filterByPlayGoal(
+  games: GameDto[],
+  playGoalFilter: string | null,
+): GameDto[] {
+  if (!playGoalFilter) return games;
+  return games.filter((g) => g.play_goals?.includes(playGoalFilter as any));
+}
+
 export function filterByTitle(games: GameDto[], query: string): GameDto[] {
   const q = query.trim().toLowerCase();
   if (!q) return games;

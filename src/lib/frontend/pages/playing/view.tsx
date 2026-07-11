@@ -46,6 +46,8 @@ export function PlayingView() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
+    playGoalFilter,
+    setPlayGoalFilter,
     searchQuery,
     setSearchQuery,
     editGame,
@@ -62,6 +64,7 @@ export function PlayingView() {
   const activeFilterCount = [
     moodFilter !== null,
     platformFilter !== null,
+    playGoalFilter !== null,
     sortBy !== "priority-desc",
   ].filter(Boolean).length;
   const emptyState = EMPTY_STATE[activeTab];
@@ -69,8 +72,8 @@ export function PlayingView() {
     activeTab === "playing"
       ? "active game"
       : activeTab === "ongoing"
-        ? "ongoing game"
-        : "replaying game";
+      ? "ongoing game"
+      : "replaying game";
 
   if (loading)
     return (
@@ -122,6 +125,8 @@ export function PlayingView() {
             setSortBy,
             platformFilter,
             setPlatformFilter,
+            playGoalFilter,
+            setPlayGoalFilter,
           }}
           moods={moods}
           className="mb-5"
