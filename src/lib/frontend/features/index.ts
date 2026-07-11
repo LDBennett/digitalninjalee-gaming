@@ -3,3 +3,4 @@ export * from "./game-actions";
 export * from "./mood-selector";
 export * from "./roll-random";
 export * from "./add-game";
+export * from "./recent-activity";
