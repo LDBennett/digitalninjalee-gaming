@@ -98,18 +98,6 @@ export function filterByTitle(games: GameDto[], query: string): GameDto[] {
   return games.filter((g) => g.title.toLowerCase().includes(q));
 }
 
-export function getTopPlaying(games: GameDto[], limit = 5): GameDto[] {
-  return games
-    .filter(
-      (g) =>
-        g.status === "playing" ||
-        g.status === "ongoing" ||
-        g.replay_status === "replaying",
-    )
-    .sort((a, b) => b.priority_score - a.priority_score)
-    .slice(0, limit);
-}
-
 export function getTopWishlist(games: GameDto[], limit = 5): GameDto[] {
   return games
     .filter((g) => ["interested", "pre-ordered", "keep-an-eye-on"].includes(g.status))

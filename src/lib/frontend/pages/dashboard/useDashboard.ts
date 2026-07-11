@@ -6,12 +6,12 @@ import {
   useMoods,
   useGameActions,
   useGameQuery,
+  useRecentActivity,
 } from "@/src/lib/frontend/features";
 import {
   deriveStats,
   getTopPriority,
   getPlayingGames,
-  getTopPlaying,
   getTopWishlist,
   getLastCompleted,
 } from "@/src/lib/backend/backlog/domain/services";
@@ -27,16 +27,17 @@ export function useDashboard() {
 
   const { handleAdd } = useGameActions({ onAddSuccess: invalidate });
 
+  const { recentPlays } = useRecentActivity();
+
   const topPriority = useMemo(() => getTopPriority(allGames), [allGames]);
   const playingGames = useMemo(() => getPlayingGames(allGames), [allGames]);
-  const topPlaying = useMemo(() => getTopPlaying(allGames), [allGames]);
   const topWishlist = useMemo(() => getTopWishlist(allGames), [allGames]);
   const lastCompleted = useMemo(() => getLastCompleted(allGames), [allGames]);
 
   return {
     stats,
     topPriority,
-    topPlaying,
+    recentPlays,
     playingGames,
     topWishlist,
     lastCompleted,

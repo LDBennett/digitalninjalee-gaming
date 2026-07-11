@@ -1,4 +1,5 @@
 export { cn } from "./lib/cn";
+export { formatRelativeTime } from "./lib/formatRelativeTime";
 export { Modal } from "./ui/Modal";
 export type { ModalProps } from "./ui/Modal";
 export { Button } from "./ui/Button";

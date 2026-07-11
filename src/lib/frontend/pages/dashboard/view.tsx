@@ -7,17 +7,17 @@ import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { PageHeader } from "@/src/lib/frontend/shared";
 import { DashboardHeroCard } from "./ui/HeroCard/HeroCard";
 import { DashboardListQueue } from "./ui/Dashboard.ListQueue";
+import { DashboardRecentPlays } from "./ui/Dashboard.RecentPlays";
 
 type StatFilter = "playing" | "backlog" | "completed" | "wishlist";
 
 const QUEUE_CONFIG: Record<
-  StatFilter,
+  Exclude<StatFilter, "playing">,
   {
     heading: string;
-    dataKey: "topPlaying" | "topPriority" | "lastCompleted" | "topWishlist";
+    dataKey: "topPriority" | "lastCompleted" | "topWishlist";
   }
 > = {
-  playing: { heading: "Playing: Top Priority", dataKey: "topPlaying" },
   backlog: { heading: "Backlog: Top Priority", dataKey: "topPriority" },
   completed: { heading: "Recently Completed", dataKey: "lastCompleted" },
   wishlist: { heading: "Top Wishlist", dataKey: "topWishlist" },
@@ -29,7 +29,7 @@ export function DashboardView() {
   const {
     stats,
     topPriority,
-    topPlaying,
+    recentPlays,
     playingGames,
     topWishlist,
     lastCompleted,
@@ -41,13 +41,12 @@ export function DashboardView() {
   } = useDashboard();
 
   const queueData = {
-    topPlaying,
     topPriority: topPriority.slice(0, 5),
     lastCompleted,
     topWishlist,
   };
-  const { heading, dataKey } = QUEUE_CONFIG[activeFilter];
-  const queueGames = queueData[dataKey];
+  const queue =
+    activeFilter === "playing" ? null : QUEUE_CONFIG[activeFilter];
 
   if (loading)
     return (
@@ -69,7 +68,14 @@ export function DashboardView() {
           <DashboardHeroCard playingGames={playingGames} />
         </div>
         <div className="order-1 h-full lg:order-2 lg:col-span-2">
-          <DashboardListQueue games={queueGames} heading={heading} />
+          {queue === null ? (
+            <DashboardRecentPlays plays={recentPlays} heading="Recently Played" />
+          ) : (
+            <DashboardListQueue
+              games={queueData[queue.dataKey]}
+              heading={queue.heading}
+            />
+          )}
         </div>
       </div>
       <AddGameModal
