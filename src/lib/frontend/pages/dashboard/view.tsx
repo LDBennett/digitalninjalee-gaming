@@ -5,7 +5,7 @@ import { useDashboard } from "./useDashboard";
 import { GameStatsGrid } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { PageHeader } from "@/src/lib/frontend/shared";
-import { DashboardHeroCard } from "./ui/Dashboard.HeroCard";
+import { DashboardHeroCard } from "./ui/HeroCard/HeroCard";
 import { DashboardListQueue } from "./ui/Dashboard.ListQueue";
 
 type StatFilter = "playing" | "backlog" | "completed" | "wishlist";

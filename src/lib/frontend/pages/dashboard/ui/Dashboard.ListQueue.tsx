@@ -2,7 +2,7 @@
 
 import { scoreToTier } from "@/src/lib/backend/backlog/domain/models";
 import type { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { PlatformBadge } from "@/src/lib/frontend/entities/game";
+import { PlatformIcon } from "@/src/lib/frontend/entities/game";
 import { Badge, EmptyState } from "@/src/lib/frontend/shared";
 
 interface Props {
@@ -49,7 +49,7 @@ export function DashboardListQueue({ games, heading }: Props) {
                     {game.title}
                   </p>
                   <div className="mt-0.5">
-                    <PlatformBadge platform={game.platform} />
+                    <PlatformIcon platform={game.platform} className="h-4 w-4" />
                   </div>
                 </div>
 

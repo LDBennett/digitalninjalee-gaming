@@ -2,7 +2,7 @@
 
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
-import { PlatformBadge } from "@/src/lib/frontend/entities/game";
+import { PlatformIcon } from "@/src/lib/frontend/entities/game";
 import { Button } from "@/src/lib/frontend/shared";
 
 interface Props {
@@ -36,7 +36,7 @@ export function RandomPickResult({ game, onPickAgain }: Props) {
           </p>
           <h3 className="leading-snug font-bold text-white">{game.title}</h3>
           <div className="mt-1.5">
-            <PlatformBadge platform={game.platform} />
+            <PlatformIcon platform={game.platform} className="h-4 w-4" />
           </div>
         </div>
       </div>

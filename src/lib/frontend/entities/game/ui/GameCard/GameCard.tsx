@@ -14,8 +14,8 @@ import { PriorityPill } from "../badges/PriorityPill";
 import { GameCoverArt } from "./GameCard.CoverArt";
 import { GameCardActions } from "./GameCard.Actions";
 import { GameCardExpandable } from "./GameCard.Expandable";
-import { GameCardPlayGoals } from "./GameCard.PlayGoals";
 import { PlatformIcon } from "../badges/PlatformIcon";
+import { PlayGoals } from "../badges/PlayGoals";
 
 interface GameCardProps {
   game: GameDto;
@@ -139,7 +139,7 @@ export function GameCard({
               <RatingStars rating={game.rating} />
             )}
             <GameReplayBadge replayStatus={game.replay_status} />
-            <GameCardPlayGoals playGoals={game.play_goals} />
+            <PlayGoals playGoals={game.play_goals} />
             {showStatusBadge && <GameStatusBadge status={game.status} />}
           </div>
 

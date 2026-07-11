@@ -2,11 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, NotebookText, X } from "lucide-react";
-import { GameStatusBadge, PlatformBadge, RatingStars } from "@/src/lib/frontend/entities/game";
+import { NotebookText } from "lucide-react";
+import {
+  GameStatusBadge,
+  PlatformIcon,
+  PlayGoals,
+  RatingStars,
+} from "@/src/lib/frontend/entities/game";
 import { MoodBadge } from "@/src/lib/frontend/entities/mood";
 import { Button, EmptyState } from "@/src/lib/frontend/shared";
-import type { useDashboard } from "../useDashboard";
+import type { useDashboard } from "../../useDashboard";
+import { HeroCardControls } from "./HeroCard.Controls";
+import { HeroCardNotesOverlay } from "./HeroCard.NotesOverlay";
 
 type Props = Pick<ReturnType<typeof useDashboard>, "playingGames">;
 
@@ -21,6 +28,11 @@ export function DashboardHeroCard({ playingGames }: Props) {
   const go = (delta: number) => {
     setDirection(delta);
     setIdx((i) => (i + delta + total) % total);
+  };
+
+  const goTo = (i: number) => {
+    setDirection(i > idx ? 1 : -1);
+    setIdx(i);
   };
 
   useEffect(() => {
@@ -40,9 +52,9 @@ export function DashboardHeroCard({ playingGames }: Props) {
   const coverImage = game ? (game.background_url || game.cover_art_url) : null;
 
   return (
-    <div className="relative h-full min-h-75 overflow-hidden rounded-2xl border border-gray-800 md:min-h-90">
+    <div className="relative h-100 overflow-hidden rounded-2xl border border-gray-800 lg:h-full lg:min-h-90">
       {!game ? (
-        <div className="flex h-full min-h-75 items-center justify-center bg-gray-900">
+        <div className="flex h-full items-center justify-center bg-gray-900">
           <EmptyState heading="Nothing playing right now" />
         </div>
       ) : (
@@ -100,7 +112,7 @@ export function DashboardHeroCard({ playingGames }: Props) {
                 </h2>
 
                 <div className="mb-3 flex flex-wrap items-center gap-2">
-                  <PlatformBadge platform={game.platform} />
+                  <PlatformIcon platform={game.platform} className="h-5 w-5" />
                   <GameStatusBadge status={game.status} />
                   {game.rating != null && <RatingStars rating={game.rating} />}
                 </div>
@@ -110,6 +122,12 @@ export function DashboardHeroCard({ playingGames }: Props) {
                     {game.moods.map((mood) => (
                       <MoodBadge key={mood.id} mood={mood.name} />
                     ))}
+                  </div>
+                )}
+
+                {game.play_goals && game.play_goals.length > 0 && (
+                  <div className="mb-4">
+                    <PlayGoals playGoals={game.play_goals} showLabels />
                   </div>
                 )}
 
@@ -133,71 +151,13 @@ export function DashboardHeroCard({ playingGames }: Props) {
             </motion.div>
           </AnimatePresence>
 
-          {/* Notes overlay */}
-          <AnimatePresence>
-            {notesOpen && (
-              <motion.div
-                key="notes"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.18 }}
-                className="absolute inset-0 z-10 flex flex-col bg-gray-950/92 p-6 backdrop-blur-sm md:p-8"
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                    <NotebookText size={15} className="text-gray-400" />
-                    Notes
-                  </div>
-                  <button
-                    onClick={() => setNotesOpen(false)}
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white"
-                    aria-label="Close notes"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
+          <HeroCardNotesOverlay
+            open={notesOpen}
+            note={game.personal_note}
+            onClose={() => setNotesOpen(false)}
+          />
 
-                {game.personal_note ? (
-                  <p className="text-sm leading-relaxed text-gray-300">
-                    {game.personal_note}
-                  </p>
-                ) : (
-                  <p className="text-sm italic text-gray-500">No notes for this game.</p>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Carousel controls */}
-          {total > 1 && (
-            <div className="absolute right-4 bottom-4 flex items-center gap-2">
-              <div className="flex items-center gap-1.5">
-                {playingGames.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => { setDirection(i > idx ? 1 : -1); setIdx(i); }}
-                    className={`h-1.5 rounded-full transition-all ${i === idx ? "w-4 bg-white" : "w-1.5 bg-gray-600 hover:bg-gray-400"}`}
-                    aria-label={`Go to game ${i + 1}`}
-                  />
-                ))}
-              </div>
-              <button
-                onClick={() => go(-1)}
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-800/80 text-gray-300 transition-colors hover:bg-gray-700 hover:text-white"
-                aria-label="Previous game"
-              >
-                <ChevronLeft size={14} />
-              </button>
-              <button
-                onClick={() => go(1)}
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-800/80 text-gray-300 transition-colors hover:bg-gray-700 hover:text-white"
-                aria-label="Next game"
-              >
-                <ChevronRight size={14} />
-              </button>
-            </div>
-          )}
+          <HeroCardControls total={total} idx={idx} onDot={goTo} onGo={go} />
         </>
       )}
     </div>

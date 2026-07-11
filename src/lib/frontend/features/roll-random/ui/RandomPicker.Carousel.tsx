@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { PlatformBadge } from "@/src/lib/frontend/entities/game";
+import { PlatformIcon } from "@/src/lib/frontend/entities/game";
 
 interface GameCarouselProps {
   candidates: GameDto[];
@@ -133,7 +133,7 @@ export function GameCarousel({
               {displayGame.title}
             </p>
             <div className="mt-1">
-              <PlatformBadge platform={displayGame.platform} />
+              <PlatformIcon platform={displayGame.platform} className="h-4 w-4" />
             </div>
           </div>
         </motion.div>
