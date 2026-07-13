@@ -24,7 +24,7 @@ const QUEUE_CONFIG: Record<
 };
 
 export function DashboardView() {
-  const [activeFilter, setActiveFilter] = useState<StatFilter>("backlog");
+  const [activeFilter, setActiveFilter] = useState<StatFilter>("playing");
 
   const {
     stats,
