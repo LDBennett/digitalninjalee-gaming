@@ -1,3 +1,4 @@
+import { SupabaseClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/src/lib/infrastructure/supabase/supabaseClient";
 import { fetchDiscordPresence } from "@/src/lib/backend/sync";
@@ -6,6 +7,28 @@ import {
   matchGameByTitle,
   shouldExtendSession,
 } from "@/src/lib/backend/activity/domain/services";
+
+// PostgREST caps unfiltered selects at 1000 rows; the library exceeds that,
+// so page through like GameRepository.findAll does.
+async function fetchAllGameTitles(client: SupabaseClient) {
+  const PAGE_SIZE = 1000;
+  const titles: Array<{ id: string; title: string }> = [];
+  let from = 0;
+
+  while (true) {
+    const { data, error } = await client
+      .from("games")
+      .select("id, title")
+      .range(from, from + PAGE_SIZE - 1);
+    if (error) return { data: null, error };
+
+    titles.push(...(data as Array<{ id: string; title: string }>));
+    if (data.length < PAGE_SIZE) break;
+    from += PAGE_SIZE;
+  }
+
+  return { data: titles, error: null };
+}
 
 export async function POST(req: NextRequest) {
   const cronSecret = process.env.CRON_SECRET;
@@ -71,9 +94,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { data: games, error: gamesError } = await client
-      .from("games")
-      .select("id, title");
+    const { data: games, error: gamesError } = await fetchAllGameTitles(client);
     if (gamesError) {
       return NextResponse.json({ error: gamesError.message }, { status: 500 });
     }
