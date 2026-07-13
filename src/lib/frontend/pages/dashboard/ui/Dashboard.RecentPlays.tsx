@@ -1,21 +1,46 @@
 "use client";
 
+import { useState } from "react";
+import { Plus } from "lucide-react";
 import type { RecentPlayDto } from "@/src/lib/backend/activity/domain/models";
+import type { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import { PlatformIcon } from "@/src/lib/frontend/entities/game";
-import { EmptyState, formatRelativeTime } from "@/src/lib/frontend/shared";
+import { LogPlayModal } from "@/src/lib/frontend/features/log-play";
+import {
+  Button,
+  EmptyState,
+  formatRelativeTime,
+  useAuthStore,
+} from "@/src/lib/frontend/shared";
 
 interface Props {
   plays: RecentPlayDto[];
   heading: string;
+  games: GameDto[];
 }
 
-export function DashboardRecentPlays({ plays, heading }: Props) {
+export function DashboardRecentPlays({ plays, heading, games }: Props) {
+  const { session } = useAuthStore();
+  const [showLog, setShowLog] = useState(false);
+
   return (
     <div className="flex h-full flex-col">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold tracking-wide text-white uppercase">
-          {heading}
-        </h3>
+        <div className="flex flex-col gap-0.5">
+          <h3 className="text-sm font-semibold tracking-wide text-white uppercase">
+            {heading}
+          </h3>
+        </div>
+        {session && (
+          <Button
+            variant="ghost"
+            size="xs"
+            icon={<Plus size={14} />}
+            onClick={() => setShowLog(true)}
+          >
+            Log
+          </Button>
+        )}
       </div>
 
       {plays.length === 0 ? (
@@ -69,6 +94,14 @@ export function DashboardRecentPlays({ plays, heading }: Props) {
           })}
         </div>
       )}
+      <span className="mt-2 flex justify-end text-xs text-gray-400 italic">
+        Activity sourced from Discord and Steam
+      </span>
+      <LogPlayModal
+        isOpen={showLog}
+        onClose={() => setShowLog(false)}
+        games={games}
+      />
     </div>
   );
 }

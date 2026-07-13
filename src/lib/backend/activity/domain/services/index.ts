@@ -3,5 +3,7 @@ export {
   shouldExtendSession,
   normalizeGameTitle,
   matchGameByTitle,
+  collectDistinctGameNames,
+  findExtendableSession,
   dedupeSessionsByGame,
 } from "./session.logic";

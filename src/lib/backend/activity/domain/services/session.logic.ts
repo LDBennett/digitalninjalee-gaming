@@ -59,6 +59,50 @@ export function matchGameByTitle(
 }
 
 /**
+ * Distinct game names across presence sources, deduped by normalized title
+ * (sources can disagree on ™/edition spelling for the same game). Earlier
+ * sources win the spelling, so callers list Discord first to keep continuity
+ * with existing history rows. Null (not playing) sightings are dropped.
+ */
+export function collectDistinctGameNames(
+  sightings: Array<{ source: string; gameName: string | null }>,
+): Array<{ source: string; gameName: string }> {
+  const seen = new Set<string>();
+  const result: Array<{ source: string; gameName: string }> = [];
+  for (const { source, gameName } of sightings) {
+    if (!gameName) continue;
+    const key = normalizeGameTitle(gameName);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    result.push({ source, gameName });
+  }
+  return result;
+}
+
+/**
+ * Finds an open session for the same game under normalized-title comparison —
+ * covers one source reporting a variant spelling of another source's game
+ * ("ELDEN RING™" vs "ELDEN RING") within the merge gap, so alternating
+ * sources extend one session instead of starting duplicates.
+ */
+export function findExtendableSession<T extends PlaySessionState>(
+  sessions: T[],
+  gameName: string,
+  now: Date,
+  gapMinutes: number = SESSION_MERGE_GAP_MINUTES,
+): T | null {
+  const target = normalizeGameTitle(gameName);
+  if (!target) return null;
+  return (
+    sessions.find(
+      (s) =>
+        normalizeGameTitle(s.game_name) === target &&
+        shouldExtendSession(s.last_seen_at, now, gapMinutes),
+    ) ?? null
+  );
+}
+
+/**
  * Latest session per distinct game, ordered most-recent first.
  * Input is expected ordered by last_seen_at desc (DB order).
  */

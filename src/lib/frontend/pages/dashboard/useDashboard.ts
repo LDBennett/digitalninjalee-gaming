@@ -36,6 +36,7 @@ export function useDashboard() {
 
   return {
     stats,
+    allGames,
     topPriority,
     recentPlays,
     playingGames,

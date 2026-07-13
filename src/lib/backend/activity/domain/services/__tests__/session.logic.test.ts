@@ -3,6 +3,8 @@ import {
   shouldExtendSession,
   normalizeGameTitle,
   matchGameByTitle,
+  collectDistinctGameNames,
+  findExtendableSession,
   dedupeSessionsByGame,
 } from "../session.logic";
 import type { PlaySessionState } from "../../models/session.types";
@@ -81,6 +83,69 @@ describe("matchGameByTitle", () => {
 
   it("returns null for an empty activity name", () => {
     expect(matchGameByTitle(games, "  ")).toBeNull();
+  });
+});
+
+describe("collectDistinctGameNames", () => {
+  it("drops sources that report no game", () => {
+    const result = collectDistinctGameNames([
+      { source: "discord", gameName: null },
+      { source: "steam", gameName: "Hades II" },
+    ]);
+    expect(result).toEqual([{ source: "steam", gameName: "Hades II" }]);
+  });
+
+  it("collapses normalized duplicates, keeping the earlier source's spelling", () => {
+    const result = collectDistinctGameNames([
+      { source: "discord", gameName: "ELDEN RING™" },
+      { source: "steam", gameName: "ELDEN RING" },
+    ]);
+    expect(result).toEqual([{ source: "discord", gameName: "ELDEN RING™" }]);
+  });
+
+  it("keeps genuinely different games from different sources", () => {
+    const result = collectDistinctGameNames([
+      { source: "discord", gameName: "Storyteller" },
+      { source: "steam", gameName: "Hades II" },
+    ]);
+    expect(result).toHaveLength(2);
+  });
+
+  it("returns empty when nothing is playing", () => {
+    expect(
+      collectDistinctGameNames([
+        { source: "discord", gameName: null },
+        { source: "steam", gameName: null },
+      ]),
+    ).toEqual([]);
+  });
+});
+
+describe("findExtendableSession", () => {
+  it("finds an open session under a variant spelling", () => {
+    const sessions = [
+      makeSession({ id: "a", game_name: "ELDEN RING™", last_seen_at: minutesAgo(5) }),
+    ];
+    expect(findExtendableSession(sessions, "ELDEN RING", NOW)?.id).toBe("a");
+  });
+
+  it("ignores sessions outside the merge gap", () => {
+    const sessions = [
+      makeSession({ id: "a", game_name: "ELDEN RING™", last_seen_at: minutesAgo(45) }),
+    ];
+    expect(findExtendableSession(sessions, "ELDEN RING", NOW)).toBeNull();
+  });
+
+  it("ignores open sessions for other games", () => {
+    const sessions = [
+      makeSession({ id: "a", game_name: "Hades", last_seen_at: minutesAgo(5) }),
+    ];
+    expect(findExtendableSession(sessions, "ELDEN RING", NOW)).toBeNull();
+  });
+
+  it("returns null for an empty game name", () => {
+    const sessions = [makeSession({ last_seen_at: minutesAgo(5) })];
+    expect(findExtendableSession(sessions, "  ", NOW)).toBeNull();
   });
 });
 

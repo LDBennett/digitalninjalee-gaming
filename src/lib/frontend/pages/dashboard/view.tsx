@@ -28,6 +28,7 @@ export function DashboardView() {
 
   const {
     stats,
+    allGames,
     topPriority,
     recentPlays,
     playingGames,
@@ -69,7 +70,11 @@ export function DashboardView() {
         </div>
         <div className="order-1 h-full lg:order-2 lg:col-span-2">
           {queue === null ? (
-            <DashboardRecentPlays plays={recentPlays} heading="Recently Played" />
+            <DashboardRecentPlays
+              plays={recentPlays}
+              heading="Recently Played"
+              games={allGames}
+            />
           ) : (
             <DashboardListQueue
               games={queueData[queue.dataKey]}

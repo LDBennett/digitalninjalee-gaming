@@ -7,6 +7,8 @@ export {
 } from "./rawg.adapter";
 export type { DiscordPresence } from "./discord.adapter";
 export { fetchDiscordPresence } from "./discord.adapter";
+export type { SteamPresence } from "./steam.adapter";
+export { fetchSteamPresence } from "./steam.adapter";
 export type { IgdbSearchResult, IgdbGameData } from "./igdb.adapter";
 export {
   mapIgdbToMoods,
