@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { createServerClient } from "@/src/lib/infrastructure/supabase/supabaseClient";
 import { createSupabaseGameRepository } from "@/src/lib/backend/backlog/infrastructure/game.supabase.repo";
 import { createSupabaseMoodRepository } from "@/src/lib/backend/backlog/infrastructure/mood.supabase.repo";
@@ -22,9 +23,13 @@ export async function prefetchStatusCounts(): Promise<StatusCounts> {
   return result.value;
 }
 
-export async function prefetchMoods(): Promise<MoodDto[]> {
-  const repo = createSupabaseMoodRepository(createServerClient());
-  const result = await repo.findAll();
-  if (!result.success) throw result.error;
-  return result.value as MoodDto[];
-}
+export const prefetchMoods = unstable_cache(
+  async (): Promise<MoodDto[]> => {
+    const repo = createSupabaseMoodRepository(createServerClient());
+    const result = await repo.findAll();
+    if (!result.success) throw result.error;
+    return result.value as MoodDto[];
+  },
+  ["moods-all"],
+  { revalidate: 3600, tags: ["moods"] },
+);

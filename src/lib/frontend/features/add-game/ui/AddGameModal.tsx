@@ -36,6 +36,7 @@ export function AddGameModal({
     editGame,
     isOpen,
     defaultStatus,
+    moods,
     onSave,
     onClose,
   });

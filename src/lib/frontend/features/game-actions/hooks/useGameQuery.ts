@@ -6,18 +6,16 @@ import { gameKeys } from "@/src/lib/backend/backlog/repository";
 import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
 import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 
-export function useGameQuery(status?: string) {
+export function useGameQuery() {
   const queryClient = useQueryClient();
-  const queryKey = status ? gameKeys.byStatus(status) : gameKeys.all;
+  const queryKey = gameKeys.all;
   const { authHeaders } = useAuthFetch();
   const { session, authLoading } = useAuthStore();
 
   const { data: games = [], isPending: gamesLoading } = useQuery<GameDto[]>({
     queryKey,
     queryFn: () =>
-      fetch(status ? `/api/games?status=${status}` : "/api/games", {
-        headers: authHeaders(),
-      }).then((r) => {
+      fetch("/api/games", { headers: authHeaders() }).then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       }),

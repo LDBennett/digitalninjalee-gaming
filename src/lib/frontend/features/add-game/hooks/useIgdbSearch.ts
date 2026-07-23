@@ -8,6 +8,7 @@ interface UseIgdbSearchParams {
   title: string;
   igdbId: number | null;
   editGame: GameDto | null | undefined;
+  isOpen: boolean;
   authHeaders: () => Record<string, string>;
   setIgdbResults: (results: IgdbSearchResult[]) => void;
   setShowDropdown: (show: boolean) => void;
@@ -18,13 +19,14 @@ export function useIgdbSearch({
   title,
   igdbId,
   editGame,
+  isOpen,
   authHeaders,
   setIgdbResults,
   setShowDropdown,
   setSearchLoading,
 }: UseIgdbSearchParams) {
   useEffect(() => {
-    if (editGame || igdbId || title.trim().length < 2) {
+    if (!isOpen || editGame || igdbId || title.trim().length < 2) {
       setIgdbResults([]);
       setShowDropdown(false);
       return;
@@ -44,5 +46,5 @@ export function useIgdbSearch({
       }
     }, 400);
     return () => clearTimeout(timer);
-  }, [title, igdbId, editGame]);
+  }, [title, igdbId, editGame, isOpen]);
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   GameDto,
   GameStatus,
@@ -9,7 +8,6 @@ import {
 } from "@/src/lib/backend/backlog/domain/models";
 import { AddGamePayload } from "@/src/lib/frontend/features/add-game/types";
 import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import { useAddGameFormState } from "./useAddGameFormState";
 import { useIgdbSearch } from "./useIgdbSearch";
 import { useGameDataFetch } from "./useGameDataFetch";
@@ -18,6 +16,7 @@ interface UseAddGameFormOptions {
   editGame?: GameDto | null;
   isOpen: boolean;
   defaultStatus: GameStatus;
+  moods: MoodDto[];
   onSave: (data: AddGamePayload) => void | Promise<void>;
   onClose: () => void;
 }
@@ -26,29 +25,19 @@ export function useAddGameForm({
   editGame,
   isOpen,
   defaultStatus,
+  moods,
   onSave,
   onClose,
 }: UseAddGameFormOptions) {
   const { authHeaders } = useAuthFetch();
-  const { session, authLoading } = useAuthStore();
 
   const state = useAddGameFormState(editGame, isOpen, defaultStatus);
-
-  const [allMoods, setAllMoods] = useState<MoodDto[]>([]);
-  useEffect(() => {
-    if (authLoading || !session) return;
-    fetch("/api/moods", { headers: authHeaders() })
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) setAllMoods(data);
-      })
-      .catch(() => {});
-  }, [authLoading, session]);
 
   useIgdbSearch({
     title: state.title,
     igdbId: state.igdbId,
     editGame,
+    isOpen,
     authHeaders,
     setIgdbResults: state.setIgdbResults,
     setShowDropdown: state.setShowDropdown,
@@ -56,7 +45,7 @@ export function useAddGameForm({
   });
 
   const { handleIgdbSelect } = useGameDataFetch({
-    allMoods,
+    allMoods: moods,
     authHeaders,
     setTitle: state.setTitle,
     setBackgroundUrl: state.setBackgroundUrl,

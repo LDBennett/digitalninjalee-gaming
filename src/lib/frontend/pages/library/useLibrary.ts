@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import {
   LibraryTab,
@@ -29,7 +29,14 @@ export function useLibrary() {
   const [editGame, setEditGame] = useState<GameDto | null>(null);
 
   const statusParam = tab !== "all" ? LIBRARY_TAB_STATUSES[tab] : undefined;
-  const { games, gamesLoading, invalidate } = useGameQuery(statusParam);
+  const { games: allGames, gamesLoading, invalidate } = useGameQuery();
+  const games = useMemo(
+    () =>
+      statusParam
+        ? allGames.filter((g) => g.status === statusParam)
+        : allGames,
+    [allGames, statusParam],
+  );
   const {
     searchQuery,
     setSearchQuery,
