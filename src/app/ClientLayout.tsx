@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { initAuth } from "@/src/lib/frontend/shared/lib/auth.init";
 import { LoginModal, SignOutConfirmModal } from "@/src/lib/frontend/features/auth";
+import { initAuth } from "@/src/lib/frontend/shared";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(

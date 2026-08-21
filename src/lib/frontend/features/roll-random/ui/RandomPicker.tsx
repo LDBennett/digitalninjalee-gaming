@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useMutation } from "@tanstack/react-query";
-import { GameDto, MoodDto } from "@/src/lib/backend/backlog/domain/models";
-import { MoodBadge } from "@/src/lib/frontend/entities/mood";
-import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
+import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
+import { MoodBadge } from "@/src/lib/frontend/entities/game";
 import { Button, Modal } from "@/src/lib/frontend/shared";
+import { useRandomPick, type Pool } from "../hooks/useRandomPick";
 import { GameCarousel } from "./RandomPicker.Carousel";
 import { RandomPickResult } from "./RandomPickResult";
 
-type Pool = "backlog" | "playing";
 type SpinPhase = "idle" | "spinning" | "done";
 
 const POOLS: { value: Pool; label: string }[] = [
@@ -26,71 +24,29 @@ interface RandomPickerProps {
 }
 
 export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }: RandomPickerProps) {
-  const { authHeaders } = useAuthFetch();
   const [selectedPool, setSelectedPool] = useState<Pool>(defaultPool);
 
   useEffect(() => {
     if (isOpen) setSelectedPool(defaultPool);
   }, [isOpen]);
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
-  const [pickedGame, setPickedGame] = useState<GameDto | null>(null);
-  const [candidates, setCandidates] = useState<GameDto[]>([]);
   const [spinPhase, setSpinPhase] = useState<SpinPhase>("idle");
-  const [noGamesMsg, setNoGamesMsg] = useState("");
 
-  const { mutate: executePick } = useMutation({
-    mutationFn: async (moodNames: string[]) => {
-      const status =
-        selectedPool === "playing" ? "playing,ongoing" : selectedPool;
-      const params = new URLSearchParams({ status });
-      if (moodNames.length) params.set("moods", moodNames.join(","));
-      const res = await fetch(`/api/games/random?${params}`, {
-        headers: authHeaders(),
-      });
-      return res.json() as Promise<{ game?: GameDto; message?: string }>;
-    },
-    onSuccess: (data) => {
-      if (data.game) {
-        setPickedGame(data.game);
-      } else {
-        setSpinPhase("idle");
-        setNoGamesMsg(data.message ?? "No games found");
-      }
-    },
-  });
+  const { candidates, pickedGame, noGamesMsg, pick, reset } =
+    useRandomPick(selectedPool);
 
-  const fetchCandidates = async (moodNames: string[]) => {
-    const status =
-      selectedPool === "playing" ? "playing,ongoing" : selectedPool;
-    const params = new URLSearchParams({ status });
-    const res = await fetch(`/api/games?${params}`, { headers: authHeaders() });
-    if (!res.ok) return;
-    const data: GameDto[] = await res.json();
+  useEffect(() => {
+    if (noGamesMsg) setSpinPhase("idle");
+  }, [noGamesMsg]);
 
-    let pool = data;
-    if (moodNames.length > 0) {
-      const filtered = data.filter((g) =>
-        g.moods?.some((m) => moodNames.includes(m.name)),
-      );
-      if (filtered.length > 0) pool = filtered;
-    }
-    setCandidates(pool);
-  };
-
-  const pick = () => {
-    setPickedGame(null);
-    setCandidates([]);
-    setNoGamesMsg("");
+  const handlePick = () => {
     setSpinPhase("spinning");
-    fetchCandidates(selectedMoods);
-    executePick(selectedMoods);
+    pick(selectedMoods);
   };
 
   const selectPool = (pool: Pool) => {
     setSelectedPool(pool);
-    setPickedGame(null);
-    setCandidates([]);
-    setNoGamesMsg("");
+    reset();
     setSelectedMoods([]);
     setSpinPhase("idle");
   };
@@ -99,17 +55,13 @@ export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }
     setSelectedMoods((prev) =>
       prev.includes(name) ? prev.filter((m) => m !== name) : [...prev, name],
     );
-    setPickedGame(null);
-    setCandidates([]);
-    setNoGamesMsg("");
+    reset();
     setSpinPhase("idle");
   };
 
   const handleClose = () => {
-    setPickedGame(null);
-    setCandidates([]);
+    reset();
     setSelectedMoods([]);
-    setNoGamesMsg("");
     setSelectedPool(defaultPool);
     setSpinPhase("idle");
     onClose();
@@ -168,7 +120,7 @@ export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }
             variant="brand-gradient"
             fullWidth
             size="lg"
-            onClick={pick}
+            onClick={handlePick}
             disabled={isSpinning}
             className="rounded-xl disabled:opacity-60"
           >
@@ -205,7 +157,7 @@ export function RandomPicker({ isOpen, onClose, moods, defaultPool = "backlog" }
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ type: "spring", stiffness: 380, damping: 32 }}
               >
-                <RandomPickResult game={pickedGame} onPickAgain={pick} />
+                <RandomPickResult game={pickedGame} onPickAgain={handlePick} />
               </motion.div>
             )}
           </AnimatePresence>

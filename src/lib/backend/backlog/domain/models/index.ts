@@ -16,9 +16,15 @@ export {
   PLATFORMS,
   PLATFORM_LABELS,
   createPlatform,
+} from "@/src/lib/backend/shared/platform";
+export type { Platform } from "@/src/lib/backend/shared/platform";
+export {
   DEFAULT_PRIORITY_SCORE,
   createPriorityScore,
   adjustPriorityScore,
+} from "./priorityScore.types";
+export type { PriorityScore } from "./priorityScore.types";
+export {
   GAME_STATUSES,
   WISHLIST_STATUSES,
   LIBRARY_STATUSES,
@@ -27,18 +33,14 @@ export {
   createGameStatus,
   canTransitionTo,
   isWishlistStatus,
-  gameStateToDto,
+} from "./gameStatus.types";
+export type { GameStatus, ReplayStatus } from "./gameStatus.types";
+export {
   PLAY_GOALS,
   PLAY_GOAL_LABELS,
   PLAY_GOAL_STATUSES,
   createPlayGoals,
-} from "./game.types";
-export type {
-  Platform,
-  PriorityScore,
-  GameStatus,
-  ReplayStatus,
-  GameState,
-  GameDto,
-  PlayGoal,
-} from "./game.types";
+} from "./playGoal.types";
+export type { PlayGoal } from "./playGoal.types";
+export { gameStateToDto } from "./game.types";
+export type { GameState, GameDto } from "./game.types";

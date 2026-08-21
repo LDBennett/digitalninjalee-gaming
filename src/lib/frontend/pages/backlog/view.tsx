@@ -1,11 +1,16 @@
 "use client";
 import { useState } from "react";
 import { useBacklog } from "./useBacklog";
-import { useScrollToTop } from "@/src/lib/frontend/shared/hooks/useScrollToTop";
 import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
-import { EmptyState, PageHeader, SearchInput, useAuthStore } from "@/src/lib/frontend/shared";
+import {
+  EmptyState,
+  PageHeader,
+  SearchInput,
+  useAuthStore,
+  useScrollToTop,
+} from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
 
 export function BacklogView() {
@@ -162,9 +167,7 @@ export function BacklogView() {
             showPriority
           />
         )}
-        page={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
+        pagination={{ page, totalPages, onPageChange: setPage }}
       />
 
       <AddGameModal

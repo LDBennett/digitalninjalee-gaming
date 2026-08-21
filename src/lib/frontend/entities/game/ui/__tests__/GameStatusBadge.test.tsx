@@ -4,7 +4,7 @@ import { GameStatusBadge } from "@/src/lib/frontend/entities/game/ui/badges/Game
 import {
   STATUS_LABELS,
   GAME_STATUSES,
-} from "@/src/lib/backend/backlog/domain/models/game.types";
+} from "@/src/lib/backend/backlog/domain/models/gameStatus.types";
 
 describe("GameStatusBadge", () => {
   it.each(GAME_STATUSES)("renders correct label for status '%s'", (status) => {

@@ -79,20 +79,7 @@ export function AddGameModal({
       }
     >
       <form onSubmit={form.handleSubmit} className="space-y-4 p-5">
-        <GameTitleSearch
-          value={form.title}
-          onChange={(val) => {
-            form.setTitle(val);
-            form.setIgdbId(null);
-            form.setBackgroundUrl("");
-          }}
-          onSelect={form.handleIgdbSelect}
-          results={form.igdbResults}
-          showDropdown={form.showDropdown}
-          onDropdownChange={form.setShowDropdown}
-          searchLoading={form.searchLoading}
-          isEditing={!!editGame}
-        />
+        <GameTitleSearch form={form} isEditing={!!editGame} />
 
         {!editGame && (form.coverArtUrl || form.backgroundUrl) && (
           <SelectedGamePreview form={form} />

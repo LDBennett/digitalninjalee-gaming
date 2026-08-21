@@ -1,16 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import {
   useMoods,
-  useGameActions,
+  useGameEditActions,
   useGameQuery,
   useGameFilters,
   useGamePriority,
 } from "@/src/lib/frontend/features";
-import { useClientPagination } from "@/src/lib/frontend/shared/hooks/useClientPagination";
+import { useAuthStore, useClientPagination } from "@/src/lib/frontend/shared";
 
 export function useBacklog() {
   const { session, authLoading } = useAuthStore();
@@ -18,7 +16,6 @@ export function useBacklog() {
   const isAuthenticated = session !== null;
 
   const [showAdd, setShowAdd] = useState(false);
-  const [editGame, setEditGame] = useState<GameDto | null>(null);
   const [replayOnly, setReplayOnly] = useState(false);
 
   const { games: allGames, invalidate, queryKey } = useGameQuery();
@@ -68,25 +65,11 @@ export function useBacklog() {
     setPage(1);
   }, [playGoalFilter, setPage]);
 
-  const { handleAdd, handleEdit, handleDelete } =
-    useGameActions({
-      onAddSuccess: invalidate,
-      onEditSuccess: () => {
-        setEditGame(null);
-        invalidate();
-      },
-      onDeleteSuccess: invalidate,
+  const { editGame, setEditGame, handleAdd, handleEdit, handleDelete } =
+    useGameEditActions({
+      invalidate,
+      deleteConfirmMessage: "Remove this game from your backlog?",
     });
-
-  const handleDeleteConfirm = (id: string) => {
-    if (!confirm("Remove this game from your backlog?")) return;
-    handleDelete(id);
-  };
-
-  const handleEditSubmit = (data: object) => {
-    if (!editGame) return;
-    handleEdit(editGame.id, data);
-  };
 
   return {
     games,
@@ -109,8 +92,8 @@ export function useBacklog() {
     loading: authLoading,
     isAuthenticated,
     handleAdd,
-    handleEdit: handleEditSubmit,
-    handleDelete: handleDeleteConfirm,
+    handleEdit,
+    handleDelete,
     sortBy,
     setSortBy,
     platformFilter,

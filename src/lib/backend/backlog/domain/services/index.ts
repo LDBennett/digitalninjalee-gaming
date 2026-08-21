@@ -1,5 +1,6 @@
 export type { NewGameProps } from "./game.service";
-export type { GameStats } from "./game.queries";
+export type { GameStats } from "./game.stats";
+export { deriveStats } from "./game.stats";
 export {
   newGame,
   setReplayStatus,
@@ -12,7 +13,6 @@ export {
   buildStatusPayload,
 } from "./game.service";
 export {
-  deriveStats,
   getTopPriority,
   getBacklogGames,
   getPlayingGames,
@@ -23,3 +23,5 @@ export {
   filterByPlayGoal,
   filterByTitle,
 } from "./game.queries";
+export { mapIgdbToMoods } from "./igdbMoodMapping";
+export { mapRawgToMoods } from "./rawgMoodMapping";

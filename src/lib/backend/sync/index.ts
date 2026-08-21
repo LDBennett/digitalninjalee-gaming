@@ -1,6 +1,5 @@
 export type { RawgGame, RawgGameData } from "./rawg.adapter";
 export {
-  mapRawgToMoods,
   fetchRawgGameData,
   createRawgClient,
   searchRawgGames,
@@ -11,7 +10,6 @@ export type { SteamPresence } from "./steam.adapter";
 export { fetchSteamPresence } from "./steam.adapter";
 export type { IgdbSearchResult, IgdbGameData } from "./igdb.adapter";
 export {
-  mapIgdbToMoods,
   searchIgdbGames,
   fetchIgdbGameData,
   fetchIgdbGameDataByTitle,

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useLibrary, LibraryTab, LIBRARY_TAB_LABELS } from "./useLibrary";
-import { useScrollToTop } from "@/src/lib/frontend/shared/hooks/useScrollToTop";
 import {
   GameCard,
   GameCardList,
@@ -10,7 +9,14 @@ import {
 } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
-import { EmptyState, PageHeader, SearchInput, TabBar, useAuthStore } from "@/src/lib/frontend/shared";
+import {
+  EmptyState,
+  PageHeader,
+  SearchInput,
+  TabBar,
+  useAuthStore,
+  useScrollToTop,
+} from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
 
 const TABS: LibraryTab[] = [
@@ -140,9 +146,7 @@ export function LibraryView() {
               />
             )}
             spacing="space-y-3"
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
+            pagination={{ page, totalPages, onPageChange: setPage }}
           />
         </>
       )}

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { PlatformIcon } from "@/src/lib/frontend/entities/game/ui/badges/PlatformIcon";
-import { PLATFORMS } from "@/src/lib/backend/backlog/domain/models/game.types";
+import { PLATFORMS } from "@/src/lib/backend/shared/platform";
 
 const EXPECTED_LABELS: Record<string, string> = {
   pc: "PC (Steam)",

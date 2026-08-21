@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { activityKeys } from "@/src/lib/backend/activity/repository";
 import { gameKeys } from "@/src/lib/backend/backlog/repository";
 import type { Platform } from "@/src/lib/backend/backlog/domain/models";
-import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
+import { useAuthFetch } from "@/src/lib/frontend/shared";
 
 export interface LogPlayInput {
   gameId?: string;

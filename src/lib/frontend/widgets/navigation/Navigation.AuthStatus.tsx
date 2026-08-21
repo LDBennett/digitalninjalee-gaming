@@ -1,7 +1,7 @@
 "use client";
 
 import { Ghost, Shield } from "lucide-react";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
+import { useAuthStore } from "@/src/lib/frontend/shared";
 
 export function NavigationAuthStatus() {
   const { user, openLoginModal, openSignOutConfirm } = useAuthStore();

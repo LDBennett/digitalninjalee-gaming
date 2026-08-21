@@ -1,14 +1,19 @@
 "use client";
 
 import { useWishlist, WishlistTab, WISHLIST_TAB_LABELS } from "./useWishlist";
-import { useScrollToTop } from "@/src/lib/frontend/shared/hooks/useScrollToTop";
 import {
   GameCard,
   GameCardList,
   GameCardSkeleton,
 } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
-import { EmptyState, PageHeader, TabBar, useAuthStore } from "@/src/lib/frontend/shared";
+import {
+  EmptyState,
+  PageHeader,
+  TabBar,
+  useAuthStore,
+  useScrollToTop,
+} from "@/src/lib/frontend/shared";
 
 const TABS: WishlistTab[] = [
   "all",
@@ -95,9 +100,7 @@ export function WishlistView() {
               />
             )}
             spacing="space-y-3"
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
+            pagination={{ page, totalPages, onPageChange: setPage }}
           />
         </>
       )}

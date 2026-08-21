@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Result, ok, err } from "@/src/lib/backend/shared/result";
-import type { Platform } from "@/src/lib/backend/backlog/domain/models";
+import type { Platform } from "@/src/lib/backend/shared/platform";
 import type { PlaySessionRepository } from "../repository/playSession.repo";
 import type { PlaySessionState } from "../domain/models/session.types";
 import {

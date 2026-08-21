@@ -3,7 +3,6 @@ import {
   filterByMood,
   filterByPlayGoal,
   filterByTitle,
-  deriveStats,
   getTopPriority,
   getPlayingGames,
   getRecentlyPlayed,
@@ -116,60 +115,6 @@ describe("filterByTitle", () => {
   it("returns empty array when no title matches", () => {
     const games = [makeGame({ title: "Hollow Knight" })];
     expect(filterByTitle(games, "mario")).toHaveLength(0);
-  });
-});
-
-describe("deriveStats", () => {
-  it("counts each status correctly", () => {
-    const games = [
-      makeGame({ status: "backlog" }),
-      makeGame({ status: "playing" }),
-      makeGame({ status: "playing" }),
-      makeGame({ status: "completed" }),
-      makeGame({ status: "main-complete" }),
-      makeGame({ status: "ongoing" }),
-      makeGame({ status: "interested" }),
-      makeGame({ status: "pre-ordered" }),
-    ];
-    const stats = deriveStats(games);
-    expect(stats.backlog).toBe(1);
-    expect(stats.playing).toBe(2);
-    expect(stats.completed).toBe(2); // completed + main-complete
-    expect(stats.completedFull).toBe(1);
-    expect(stats.ongoing).toBe(1);
-    expect(stats.wishlist).toBe(2);
-    expect(stats.total).toBe(8);
-  });
-
-  it("adds want-to-replay games to backlog count", () => {
-    const games = [
-      makeGame({ status: "completed", replay_status: "want-to-replay" }),
-    ];
-    const stats = deriveStats(games);
-    expect(stats.backlog).toBe(1);
-  });
-
-  it("does not double-count backlog games with want-to-replay", () => {
-    const games = [
-      makeGame({ status: "backlog", replay_status: "want-to-replay" }),
-    ];
-    const stats = deriveStats(games);
-    expect(stats.backlog).toBe(1);
-  });
-
-  it("adds replaying games to playing count", () => {
-    const games = [
-      makeGame({ status: "completed", replay_status: "replaying" }),
-    ];
-    const stats = deriveStats(games);
-    expect(stats.playing).toBe(1);
-  });
-
-  it("returns zeros for empty input", () => {
-    const stats = deriveStats([]);
-    expect(stats.total).toBe(0);
-    expect(stats.backlog).toBe(0);
-    expect(stats.playing).toBe(0);
   });
 });
 

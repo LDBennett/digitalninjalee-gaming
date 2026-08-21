@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mapIgdbToMoods } from "@/src/lib/backend/sync/igdb.adapter";
+import { mapIgdbToMoods } from "@/src/lib/backend/backlog/domain/services/igdbMoodMapping";
 
 describe("mapIgdbToMoods", () => {
   it("returns empty array for no genre/theme/mode ids", () => {

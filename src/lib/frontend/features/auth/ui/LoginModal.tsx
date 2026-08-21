@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
-import { signIn } from "@/src/lib/frontend/shared/lib/auth.init";
-import { Button, Input, Modal } from "@/src/lib/frontend/shared";
+import {
+  Button,
+  Input,
+  Modal,
+  signIn,
+  useAuthStore,
+} from "@/src/lib/frontend/shared";
 
 export function LoginModal() {
   const { showLoginModal, closeLoginModal } = useAuthStore();

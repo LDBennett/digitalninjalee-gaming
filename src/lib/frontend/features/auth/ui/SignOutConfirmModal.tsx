@@ -1,8 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
-import { signOut } from "@/src/lib/frontend/shared/lib/auth.init";
-import { Button, Modal } from "@/src/lib/frontend/shared";
+import { Button, Modal, signOut, useAuthStore } from "@/src/lib/frontend/shared";
 
 export function SignOutConfirmModal() {
   const { showSignOutConfirm, closeSignOutConfirm } = useAuthStore();

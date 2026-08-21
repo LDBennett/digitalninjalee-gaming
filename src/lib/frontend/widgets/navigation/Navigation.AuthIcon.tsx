@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { Ghost, LogIn, Shield } from "lucide-react";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
+import { useAuthStore } from "@/src/lib/frontend/shared";
 
 export function NavigationAuthIcon() {
   const { user, openLoginModal, openSignOutConfirm } = useAuthStore();

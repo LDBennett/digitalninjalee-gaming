@@ -3,8 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import { moodKeys } from "@/src/lib/backend/backlog/repository";
-import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
+import { useAuthFetch, useAuthStore } from "@/src/lib/frontend/shared";
 
 export function useMoods() {
   const { authHeaders } = useAuthFetch();

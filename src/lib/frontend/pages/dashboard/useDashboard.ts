@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import {
   useMoods,
   useGameActions,
   useGameQuery,
   useRecentActivity,
 } from "@/src/lib/frontend/features";
+import { useAuthStore } from "@/src/lib/frontend/shared";
 import {
   deriveStats,
   getTopPriority,

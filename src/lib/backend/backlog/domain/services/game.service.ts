@@ -1,14 +1,13 @@
 import { Result, ok, err } from "@/src/lib/backend/shared/result";
+import type { Platform } from "@/src/lib/backend/shared/platform";
+import { GameState } from "@/src/lib/backend/backlog/domain/models/game.types";
 import {
-  GameState,
   GameStatus,
-  Platform,
-  PriorityScore,
   ReplayStatus,
-  PlayGoal,
   canTransitionTo,
-  adjustPriorityScore,
-} from "@/src/lib/backend/backlog/domain/models/game.types";
+} from "@/src/lib/backend/backlog/domain/models/gameStatus.types";
+import { PriorityScore, adjustPriorityScore } from "@/src/lib/backend/backlog/domain/models/priorityScore.types";
+import { PlayGoal } from "@/src/lib/backend/backlog/domain/models/playGoal.types";
 import { MoodState } from "@/src/lib/backend/backlog/domain/models/mood.types";
 
 export interface NewGameProps {

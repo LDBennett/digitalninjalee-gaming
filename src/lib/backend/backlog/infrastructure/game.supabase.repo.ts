@@ -2,7 +2,6 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import {
   GameRepository,
   GameFilter,
-  StatusCounts,
 } from "@/src/lib/backend/backlog/repository/game.repo";
 import { GameState } from "@/src/lib/backend/backlog/domain/models/game.types";
 import { Result, ok, err } from "@/src/lib/backend/shared/result";
@@ -59,30 +58,6 @@ export function createSupabaseGameRepository(
 
       if (error) return err(new Error(error.message));
       return ok(gameRowToDomain(data as GameRowWithMoods));
-    },
-
-    async getStatusCounts(): Promise<Result<StatusCounts, Error>> {
-      const PAGE_SIZE = 1000;
-      const counts: StatusCounts = {};
-      let from = 0;
-
-      while (true) {
-        const { data, error } = await client
-          .from("games")
-          .select("status")
-          .range(from, from + PAGE_SIZE - 1);
-
-        if (error) return err(new Error(error.message));
-
-        for (const row of data as { status: string }[]) {
-          counts[row.status] = (counts[row.status] ?? 0) + 1;
-        }
-
-        if (data.length < PAGE_SIZE) break;
-        from += PAGE_SIZE;
-      }
-
-      return ok(counts);
     },
 
     async save(game: GameState): Promise<Result<void, Error>> {

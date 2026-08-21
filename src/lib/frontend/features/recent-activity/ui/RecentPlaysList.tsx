@@ -4,31 +4,31 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import type { RecentPlayDto } from "@/src/lib/backend/activity/domain/models";
 import type { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { LogPlayModal } from "@/src/lib/frontend/features/log-play";
 import {
   Button,
   EmptyState,
   Pagination,
   useAuthStore,
 } from "@/src/lib/frontend/shared";
+import { LogPlayModal } from "./LogPlayModal";
 import { RecentPlayRow } from "./RecentPlayRow";
 
 interface Props {
   plays: RecentPlayDto[];
   heading: string;
   games: GameDto[];
-  page?: number;
-  totalPages?: number;
-  onPageChange?: (page: number) => void;
+  pagination?: {
+    page: number;
+    totalPages: number;
+    onPageChange: (page: number) => void;
+  };
 }
 
 export function RecentPlaysList({
   plays,
   heading,
   games,
-  page,
-  totalPages,
-  onPageChange,
+  pagination,
 }: Props) {
   const { session } = useAuthStore();
   const [showLog, setShowLog] = useState(false);
@@ -65,11 +65,11 @@ export function RecentPlaysList({
         </div>
       )}
 
-      {page !== undefined && totalPages !== undefined && onPageChange && (
+      {pagination && (
         <Pagination
-          page={page}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          onPageChange={pagination.onPageChange}
         />
       )}
 

@@ -1,20 +1,18 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import {
   LibraryTab,
   LIBRARY_TAB_STATUSES,
   LIBRARY_TAB_LABELS,
 } from "@/src/lib/backend/backlog/domain/models";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import {
   useMoods,
-  useGameActions,
+  useGameEditActions,
   useGameQuery,
   useGameFilters,
 } from "@/src/lib/frontend/features";
-import { useClientPagination } from "@/src/lib/frontend/shared/hooks/useClientPagination";
+import { useAuthStore, useClientPagination } from "@/src/lib/frontend/shared";
 
 export type { LibraryTab };
 export { LIBRARY_TAB_STATUSES, LIBRARY_TAB_LABELS };
@@ -26,7 +24,6 @@ export function useLibrary() {
 
   const [tab, setTab] = useState<LibraryTab>("all");
   const [showAdd, setShowAdd] = useState(false);
-  const [editGame, setEditGame] = useState<GameDto | null>(null);
 
   const statusParam = tab !== "all" ? LIBRARY_TAB_STATUSES[tab] : undefined;
   const { games: allGames, gamesLoading, invalidate } = useGameQuery();
@@ -67,25 +64,8 @@ export function useLibrary() {
     setPage(1);
   }, [platformFilter, setPage]);
 
-  const { handleAdd, handleEdit, handleDelete } =
-    useGameActions({
-      onAddSuccess: invalidate,
-      onEditSuccess: () => {
-        setEditGame(null);
-        invalidate();
-      },
-      onDeleteSuccess: invalidate,
-    });
-
-  const handleDeleteConfirm = (id: string) => {
-    if (!confirm("Delete this game?")) return;
-    handleDelete(id);
-  };
-
-  const handleEditSubmit = (data: object) => {
-    if (!editGame) return;
-    handleEdit(editGame.id, data);
-  };
+  const { editGame, setEditGame, handleAdd, handleEdit, handleDelete } =
+    useGameEditActions({ invalidate });
 
   return {
     games,
@@ -109,8 +89,8 @@ export function useLibrary() {
     setEditGame,
     gamesLoading,
     isAuthenticated,
-    handleEdit: handleEditSubmit,
-    handleDelete: handleDeleteConfirm,
+    handleEdit,
+    handleDelete,
     handleAdd,
     showAdd,
     setShowAdd,

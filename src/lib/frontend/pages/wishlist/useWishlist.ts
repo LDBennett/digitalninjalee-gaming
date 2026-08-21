@@ -7,14 +7,13 @@ import {
   ALL_WISHLIST_STATUSES,
   WISHLIST_TAB_LABELS,
 } from "@/src/lib/backend/backlog/domain/models";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import {
   useMoods,
   useGameActions,
   useGameQuery,
   useGamePriority,
 } from "@/src/lib/frontend/features";
-import { useClientPagination } from "@/src/lib/frontend/shared/hooks/useClientPagination";
+import { useAuthStore, useClientPagination } from "@/src/lib/frontend/shared";
 
 export type { WishlistTab };
 export { ALL_WISHLIST_STATUSES, WISHLIST_TAB_LABELS };

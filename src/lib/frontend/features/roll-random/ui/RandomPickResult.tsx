@@ -1,8 +1,7 @@
 "use client";
 
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { MoodBadge } from "@/src/lib/frontend/entities/mood";
-import { PlatformIcon } from "@/src/lib/frontend/entities/game";
+import { MoodBadge, PlatformIcon } from "@/src/lib/frontend/entities/game";
 import { Button } from "@/src/lib/frontend/shared";
 
 interface Props {

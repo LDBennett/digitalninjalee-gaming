@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchRawgGameData, mapRawgToMoods } from "@/src/lib/backend/sync";
+import { fetchRawgGameData } from "@/src/lib/backend/sync";
+import { mapRawgToMoods } from "@/src/lib/backend/backlog/domain/services";
 import { requireAuth } from "@/src/lib/backend/backlog/infrastructure";
 
 export async function GET(

@@ -19,9 +19,9 @@ import {
   scoreToTier,
 } from "@/src/lib/backend/backlog/domain/models";
 import { StarRating, Select } from "@/src/lib/frontend/shared";
-import { MoodSelector } from "@/src/lib/frontend/features/mood-selector";
 import { useAddGameForm } from "../hooks/useAddGameForm";
 import { EditMediaFields } from "./AddGameFormFields.Media";
+import { MoodSelector } from "./AddGameFormFields.MoodSelector";
 import { PlayGoalsField } from "./AddGameFormFields.PlayGoals";
 
 interface AddGameFormFieldsProps {

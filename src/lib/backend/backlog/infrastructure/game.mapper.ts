@@ -1,10 +1,8 @@
-import {
-  GameState,
-  createPlatform,
-  createGameStatus,
-  createPriorityScore,
-  createPlayGoals,
-} from "@/src/lib/backend/backlog/domain/models/game.types";
+import { createPlatform } from "@/src/lib/backend/shared/platform";
+import { GameState } from "@/src/lib/backend/backlog/domain/models/game.types";
+import { createGameStatus } from "@/src/lib/backend/backlog/domain/models/gameStatus.types";
+import { createPriorityScore } from "@/src/lib/backend/backlog/domain/models/priorityScore.types";
+import { createPlayGoals } from "@/src/lib/backend/backlog/domain/models/playGoal.types";
 import { MoodState } from "@/src/lib/backend/backlog/domain/models/mood.types";
 import { GameRowWithMoods } from "@/src/lib/backend/backlog/infrastructure/db.types";
 

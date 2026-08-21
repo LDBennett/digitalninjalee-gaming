@@ -2,12 +2,18 @@
 
 import { useState } from "react";
 import { usePlaying, PlayingTab } from "./usePlaying";
-import { useScrollToTop } from "@/src/lib/frontend/shared/hooks/useScrollToTop";
 import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
 import { RecentPlaysList } from "@/src/lib/frontend/features/recent-activity";
-import { EmptyState, PageHeader, SearchInput, TabBar, useAuthStore } from "@/src/lib/frontend/shared";
+import {
+  EmptyState,
+  PageHeader,
+  SearchInput,
+  TabBar,
+  useAuthStore,
+  useScrollToTop,
+} from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
 
 const TAB_VALUES: PlayingTab[] = [
@@ -119,9 +125,11 @@ export function PlayingView() {
           plays={recentPaginated}
           heading="Recently Played"
           games={allGames}
-          page={recentPage}
-          totalPages={recentTotalPages}
-          onPageChange={setRecentPage}
+          pagination={{
+            page: recentPage,
+            totalPages: recentTotalPages,
+            onPageChange: setRecentPage,
+          }}
         />
       ) : (
         <>
@@ -180,9 +188,7 @@ export function PlayingView() {
                 onSignIn={openLoginModal}
               />
             )}
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
+            pagination={{ page, totalPages, onPageChange: setPage }}
           />
         </>
       )}

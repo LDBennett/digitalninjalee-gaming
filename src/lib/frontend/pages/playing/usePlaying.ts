@@ -1,16 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { useAuthStore } from "@/src/lib/frontend/shared/store/auth.store";
 import {
   useMoods,
-  useGameActions,
+  useGameEditActions,
   useGameQuery,
   useGameFilters,
   useRecentActivity,
 } from "@/src/lib/frontend/features";
-import { useClientPagination } from "@/src/lib/frontend/shared/hooks/useClientPagination";
+import { useAuthStore, useClientPagination } from "@/src/lib/frontend/shared";
 
 const RECENT_ACTIVITY_LIMIT = 30;
 
@@ -26,7 +24,6 @@ export function usePlaying() {
   const isAuthenticated = session !== null;
 
   const [activeTab, setActiveTabState] = useState<PlayingTab>("playing");
-  const [editGame, setEditGame] = useState<GameDto | null>(null);
 
   const { games: allGames, invalidate } = useGameQuery();
   const playingGames = useMemo(
@@ -100,23 +97,8 @@ export function usePlaying() {
     setPage(1);
   }, [playGoalFilter, setPage]);
 
-  const { handleEdit, handleDelete } = useGameActions({
-    onEditSuccess: () => {
-      setEditGame(null);
-      invalidate();
-    },
-    onDeleteSuccess: invalidate,
-  });
-
-  const handleDeleteConfirm = (id: string) => {
-    if (!confirm("Delete this game?")) return;
-    handleDelete(id);
-  };
-
-  const handleEditSubmit = (data: object) => {
-    if (!editGame) return;
-    handleEdit(editGame.id, data);
-  };
+  const { editGame, setEditGame, handleEdit, handleDelete } =
+    useGameEditActions({ invalidate });
 
   return {
     activeTab,
@@ -149,7 +131,7 @@ export function usePlaying() {
     setPlatformFilter,
     playGoalFilter,
     setPlayGoalFilter,
-    handleEdit: handleEditSubmit,
-    handleDelete: handleDeleteConfirm,
+    handleEdit,
+    handleDelete,
   };
 }

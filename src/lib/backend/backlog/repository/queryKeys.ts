@@ -5,7 +5,3 @@ export const gameKeys = {
 export const moodKeys = {
   all: ["moods"] as const,
 };
-
-export const statsKeys = {
-  statusCounts: ["games", "stats"] as const,
-};

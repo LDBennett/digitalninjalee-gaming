@@ -2,28 +2,32 @@
 
 import { IgdbSearchResult } from "@/src/lib/frontend/features/add-game/types";
 import { Input } from "@/src/lib/frontend/shared";
+import { useAddGameForm } from "../hooks/useAddGameForm";
 
 interface GameTitleSearchProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSelect: (game: IgdbSearchResult) => void;
-  results: IgdbSearchResult[];
-  showDropdown: boolean;
-  onDropdownChange: (show: boolean) => void;
-  searchLoading: boolean;
+  form: ReturnType<typeof useAddGameForm>;
   isEditing: boolean;
 }
 
-export function GameTitleSearch({
-  value,
-  onChange,
-  onSelect,
-  results,
-  showDropdown,
-  onDropdownChange,
-  searchLoading,
-  isEditing,
-}: GameTitleSearchProps) {
+export function GameTitleSearch({ form, isEditing }: GameTitleSearchProps) {
+  const {
+    title: value,
+    setTitle,
+    setIgdbId,
+    setBackgroundUrl,
+    handleIgdbSelect: onSelect,
+    igdbResults: results,
+    showDropdown,
+    setShowDropdown: onDropdownChange,
+    searchLoading,
+  } = form;
+
+  const onChange = (val: string) => {
+    setTitle(val);
+    setIgdbId(null);
+    setBackgroundUrl("");
+  };
+
   return (
     <div className="relative">
       <label className="mb-1 block text-xs font-medium text-gray-400">
@@ -55,7 +59,7 @@ export function GameTitleSearch({
 
       {showDropdown && results.length > 0 && (
         <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-xl">
-          {results.map((game) => (
+          {results.map((game: IgdbSearchResult) => (
             <li key={game.id}>
               <button
                 type="button"

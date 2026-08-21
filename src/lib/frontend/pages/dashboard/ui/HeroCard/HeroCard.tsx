@@ -5,11 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { NotebookText } from "lucide-react";
 import {
   GameStatusBadge,
+  MoodBadge,
   PlatformIcon,
   PlayGoals,
   RatingStars,
 } from "@/src/lib/frontend/entities/game";
-import { MoodBadge } from "@/src/lib/frontend/entities/mood";
 import { Button, EmptyState } from "@/src/lib/frontend/shared";
 import type { useDashboard } from "../../useDashboard";
 import { HeroCardControls } from "./HeroCard.Controls";

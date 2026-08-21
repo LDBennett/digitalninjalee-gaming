@@ -7,7 +7,7 @@ import {
   PlayGoal,
 } from "@/src/lib/backend/backlog/domain/models";
 import { AddGamePayload } from "@/src/lib/frontend/features/add-game/types";
-import { useAuthFetch } from "@/src/lib/frontend/shared/hooks/useAuthFetch";
+import { useAuthFetch } from "@/src/lib/frontend/shared";
 import { useAddGameFormState } from "./useAddGameFormState";
 import { useIgdbSearch } from "./useIgdbSearch";
 import { useGameDataFetch } from "./useGameDataFetch";

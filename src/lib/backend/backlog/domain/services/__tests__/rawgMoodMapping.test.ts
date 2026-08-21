@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mapRawgToMoods } from "@/src/lib/backend/sync/rawg.adapter";
+import { mapRawgToMoods } from "@/src/lib/backend/backlog/domain/services/rawgMoodMapping";
 
 describe("mapRawgToMoods", () => {
   it("returns empty array for no genres or tags", () => {

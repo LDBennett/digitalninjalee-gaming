@@ -3,6 +3,7 @@ export { GameCardList } from "./ui/GameCard/GameCardList";
 export { GameCardSkeleton } from "./ui/GameCard/GameCardSkeleton";
 export { RatingStars } from "./ui/GameCard/GameCard.RatingStars";
 export { GameStatusBadge, STATUS_BADGE } from "./ui/badges/GameStatusBadge";
+export { MoodBadge, getMoodLabel } from "./ui/badges/MoodBadge";
 export { PlatformIcon } from "./ui/badges/PlatformIcon";
 export { PlayGoals } from "./ui/badges/PlayGoals";
 export { PriorityPill } from "./ui/badges/PriorityPill";

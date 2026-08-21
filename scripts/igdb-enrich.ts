@@ -16,10 +16,8 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
-import {
-  createIgdbClient,
-  mapIgdbToMoods,
-} from "../src/lib/backend/sync/igdb.adapter";
+import { createIgdbClient } from "../src/lib/backend/sync/igdb.adapter";
+import { mapIgdbToMoods } from "../src/lib/backend/backlog/domain/services/igdbMoodMapping";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;

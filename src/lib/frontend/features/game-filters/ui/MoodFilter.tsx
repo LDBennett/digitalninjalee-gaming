@@ -1,7 +1,7 @@
 "use client";
 
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
-import { MoodBadge, getMoodLabel } from "@/src/lib/frontend/entities/mood";
+import { MoodBadge, getMoodLabel } from "@/src/lib/frontend/entities/game";
 import { Select } from "@/src/lib/frontend/shared";
 
 interface MoodFilterProps {

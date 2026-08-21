@@ -1,5 +1,5 @@
 import { Result } from "@/src/lib/backend/shared/result";
-import type { Platform } from "@/src/lib/backend/backlog/domain/models";
+import type { Platform } from "@/src/lib/backend/shared/platform";
 import type {
   PlaySessionState,
   RecentPlayDto,

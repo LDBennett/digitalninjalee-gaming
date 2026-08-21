@@ -2,16 +2,20 @@
 
 import { ReactNode } from "react";
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { Pagination } from "@/src/lib/frontend/shared/ui/Pagination";
+import { Pagination } from "@/src/lib/frontend/shared";
+
+interface PaginationProps {
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
 
 interface Props {
   games: GameDto[];
   emptyState: ReactNode;
   renderCard: (game: GameDto, index: number) => ReactNode;
   spacing?: string;
-  page?: number;
-  totalPages?: number;
-  onPageChange?: (page: number) => void;
+  pagination?: PaginationProps;
 }
 
 export function GameCardList({
@@ -19,9 +23,7 @@ export function GameCardList({
   emptyState,
   renderCard,
   spacing = "space-y-3 md:space-y-5",
-  page,
-  totalPages,
-  onPageChange,
+  pagination,
 }: Props) {
   if (games.length === 0) return <>{emptyState}</>;
 
@@ -30,11 +32,11 @@ export function GameCardList({
       <div className={spacing}>
         {games.map((game, i) => renderCard(game, i))}
       </div>
-      {page !== undefined && totalPages !== undefined && onPageChange && (
+      {pagination && (
         <Pagination
-          page={page}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          onPageChange={pagination.onPageChange}
         />
       )}
     </>
