@@ -30,10 +30,59 @@ export function normalizeGameTitle(title: string): string {
     .trim();
 }
 
+// Words that mark a title's remainder as an edition/version suffix rather
+// than a genuinely different game (e.g. a subtitle or spin-off). Prefix
+// matching only applies when the leftover words are drawn from this list —
+// otherwise "Gears of War: E-Day" would wrongly match "Gears of War".
+const EDITION_SUFFIX_WORDS = [
+  "edition",
+  "goty",
+  "definitive",
+  "deluxe",
+  "complete",
+  "enhanced",
+  "remastered",
+  "remaster",
+  "royal",
+  "gold",
+  "ultimate",
+  "extended",
+  "anniversary",
+  "directors",
+  "cut",
+  "special",
+  "hd",
+  "collection",
+];
+
+function isEditionSuffix(words: string[]): boolean {
+  return (
+    words.length > 0 &&
+    words.every((w) => EDITION_SUFFIX_WORDS.includes(w))
+  );
+}
+
+// Returns the leftover words of `longerWords` after `shorterWords`, only if
+// `shorterWords` is a whole-word prefix of it; null otherwise.
+function wordPrefixRemainder(
+  longerWords: string[],
+  shorterWords: string[],
+): string[] | null {
+  if (shorterWords.length === 0 || shorterWords.length > longerWords.length)
+    return null;
+  for (let i = 0; i < shorterWords.length; i++) {
+    if (longerWords[i] !== shorterWords[i]) return null;
+  }
+  return longerWords.slice(shorterWords.length);
+}
+
 /**
  * Matches a Discord activity name against library titles. Exact normalized
- * match wins; otherwise a prefix match in either direction (handles edition
- * suffixes like "Game — Deluxe Edition"). Returns the matched game id.
+ * match wins; otherwise a whole-word prefix match in either direction, but
+ * only when the leftover words are edition/version vocabulary (handles
+ * suffixes like "Game — Deluxe Edition") — a genuinely different title that
+ * happens to share a word prefix (e.g. a spin-off subtitle) is rejected.
+ * Returns the matched game id.
  */
 export function matchGameByTitle(
   games: Array<{ id: string; title: string }>,
@@ -41,6 +90,7 @@ export function matchGameByTitle(
 ): string | null {
   const target = normalizeGameTitle(activityName);
   if (!target) return null;
+  const targetWords = target.split(" ");
 
   const normalized = games.map((g) => ({
     id: g.id,
@@ -50,11 +100,14 @@ export function matchGameByTitle(
   const exact = normalized.find((g) => g.title === target);
   if (exact) return exact.id;
 
-  const prefix = normalized.find(
-    (g) =>
-      g.title.length > 0 &&
-      (target.startsWith(g.title) || g.title.startsWith(target)),
-  );
+  const prefix = normalized.find((g) => {
+    if (g.title.length === 0) return false;
+    const gameWords = g.title.split(" ");
+    const remainder =
+      wordPrefixRemainder(targetWords, gameWords) ??
+      wordPrefixRemainder(gameWords, targetWords);
+    return remainder !== null && isEditionSuffix(remainder);
+  });
   return prefix?.id ?? null;
 }
 

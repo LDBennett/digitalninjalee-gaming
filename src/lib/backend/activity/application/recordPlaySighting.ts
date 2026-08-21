@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Result, ok, err } from "@/src/lib/backend/shared/result";
+import type { Platform } from "@/src/lib/backend/backlog/domain/models";
 import type { PlaySessionRepository } from "../repository/playSession.repo";
 import type { PlaySessionState } from "../domain/models/session.types";
 import {
@@ -12,6 +13,8 @@ export interface PlaySightingInput {
   gameName: string;
   /** Library game id when the caller already knows it (manual pick) — skips title matching. */
   knownGameId?: string;
+  /** Platform the sighting is known to be on (e.g. a manual log entry). Auto-detected sources that can't tell leave this unset. */
+  platform?: Platform;
   now: Date;
 }
 
@@ -75,7 +78,7 @@ async function findOpenSession(
 export async function recordPlaySighting(
   client: SupabaseClient,
   repo: PlaySessionRepository,
-  { gameName, knownGameId, now }: PlaySightingInput,
+  { gameName, knownGameId, platform, now }: PlaySightingInput,
 ): Promise<Result<PlaySightingResult, Error>> {
   const nowIso = now.toISOString();
 
@@ -100,6 +103,7 @@ export async function recordPlaySighting(
   const inserted = await repo.insert({
     game_name: gameName,
     game_id: gameId,
+    platform: platform ?? null,
     started_at: nowIso,
     last_seen_at: nowIso,
   });

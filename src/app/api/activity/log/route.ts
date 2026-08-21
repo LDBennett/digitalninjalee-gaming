@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createPlatform, type Platform } from "@/src/lib/backend/backlog/domain/models";
 import { requireAuth } from "@/src/lib/backend/backlog/infrastructure";
 import { createServiceClient } from "@/src/lib/infrastructure/supabase/supabaseClient";
 import { createSupabasePlaySessionRepository } from "@/src/lib/backend/activity/infrastructure";
@@ -25,6 +26,15 @@ export async function POST(req: NextRequest) {
   const knownGameId =
     typeof body?.game_id === "string" ? body.game_id : undefined;
 
+  let platform: Platform | undefined;
+  if (typeof body?.platform === "string" && body.platform.length > 0) {
+    const parsed = createPlatform(body.platform);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
+    }
+    platform = parsed.value;
+  }
+
   // play_sessions RLS only grants writes to service_role; requireAuth above
   // is the actual gate.
   const client = createServiceClient();
@@ -33,6 +43,7 @@ export async function POST(req: NextRequest) {
   const recorded = await recordPlaySighting(client, repo, {
     gameName,
     knownGameId,
+    platform,
     now: new Date(),
   });
   if (!recorded.success) {

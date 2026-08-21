@@ -20,6 +20,7 @@ function makeSession(overrides?: Partial<PlaySessionState>): PlaySessionState {
     id: "s1",
     game_name: "Hades",
     game_id: null,
+    platform: null,
     started_at: minutesAgo(60),
     last_seen_at: minutesAgo(10),
     ...overrides,
@@ -65,6 +66,7 @@ describe("matchGameByTitle", () => {
     { id: "g1", title: "Elden Ring" },
     { id: "g2", title: "Hades" },
     { id: "g3", title: "The Witcher 3: Wild Hunt" },
+    { id: "g4", title: "Gears of War" },
   ];
 
   it("matches exactly after normalization", () => {
@@ -75,6 +77,14 @@ describe("matchGameByTitle", () => {
     expect(
       matchGameByTitle(games, "The Witcher 3: Wild Hunt — Complete Edition"),
     ).toBe("g3");
+  });
+
+  it("does not match a different game that shares a word prefix", () => {
+    expect(matchGameByTitle(games, "Gears of War: E-Day BETA")).toBeNull();
+  });
+
+  it("does not match a different game with a longer shared word prefix", () => {
+    expect(matchGameByTitle(games, "The Witcher 3: Wild Hunt Photo Mode")).toBeNull();
   });
 
   it("returns null when nothing matches", () => {

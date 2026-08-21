@@ -21,7 +21,7 @@ interface GatewayPayload {
     guilds?: Array<{ id: string }>;
     presences?: Array<{
       user: { id: string };
-      activities?: Array<{ type: number; name: string }>;
+      activities?: Array<Record<string, unknown> & { type: number; name: string }>;
     }>;
   };
 }
@@ -113,6 +113,12 @@ export function fetchDiscordPresence(
           const game = presence.activities?.find(
             (a) => a.type === ACTIVITY_TYPE_PLAYING,
           );
+          // Temporary diagnostic: dump the raw activity to see whether Discord
+          // exposes a platform hint (e.g. "platform": "xbox") for
+          // console-linked Connections. Remove once confirmed either way.
+          if (game) {
+            console.log("[discord-activity-raw]", JSON.stringify(game));
+          }
           settle(ok({ gameName: game?.name ?? null }));
           return;
         }

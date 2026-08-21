@@ -4,6 +4,7 @@ export interface PlaySessionState {
   id: string;
   game_name: string;
   game_id: string | null;
+  platform: Platform | null;
   started_at: string;
   last_seen_at: string;
 }

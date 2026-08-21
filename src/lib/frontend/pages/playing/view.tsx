@@ -6,14 +6,21 @@ import { useScrollToTop } from "@/src/lib/frontend/shared/hooks/useScrollToTop";
 import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
+import { RecentPlaysList } from "@/src/lib/frontend/features/recent-activity";
 import { EmptyState, PageHeader, SearchInput, TabBar, useAuthStore } from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
 
-const TAB_VALUES: PlayingTab[] = ["playing", "ongoing", "replaying"];
+const TAB_VALUES: PlayingTab[] = [
+  "playing",
+  "ongoing",
+  "replaying",
+  "recently-played",
+];
 const TAB_LABELS: Record<PlayingTab, string> = {
   playing: "Playing",
   ongoing: "Ongoing",
   replaying: "Replaying",
+  "recently-played": "Recently Played",
 };
 const EMPTY_STATE = {
   playing: {
@@ -39,6 +46,11 @@ export function PlayingView() {
     page,
     setPage,
     totalPages,
+    allGames,
+    recentPaginated,
+    recentPage,
+    setRecentPage,
+    recentTotalPages,
     moods,
     moodFilter,
     setMoodFilter,
@@ -67,13 +79,15 @@ export function PlayingView() {
     playGoalFilter !== null,
     sortBy !== "priority-desc",
   ].filter(Boolean).length;
-  const emptyState = EMPTY_STATE[activeTab];
-  const countLabel =
-    activeTab === "playing"
+  const isRecentlyPlayed = activeTab === "recently-played";
+  const emptyState = isRecentlyPlayed ? EMPTY_STATE.playing : EMPTY_STATE[activeTab];
+  const countLabel = isRecentlyPlayed
+    ? null
+    : activeTab === "playing"
       ? "active game"
       : activeTab === "ongoing"
-      ? "ongoing game"
-      : "replaying game";
+        ? "ongoing game"
+        : "replaying game";
 
   if (loading)
     return (
@@ -85,7 +99,11 @@ export function PlayingView() {
   return (
     <div ref={topRef} className="mx-auto max-w-5xl">
       <PageHeader
-        subtitle={`${filtered.length} ${countLabel}${filtered.length !== 1 ? "s" : ""}${moodFilter ? ` · ${moodFilter}` : ""}`}
+        subtitle={
+          countLabel
+            ? `${filtered.length} ${countLabel}${filtered.length !== 1 ? "s" : ""}${moodFilter ? ` · ${moodFilter}` : ""}`
+            : undefined
+        }
       />
 
       <TabBar
@@ -96,65 +114,78 @@ export function PlayingView() {
         className="mb-6"
       />
 
-      <div className="mb-5 flex gap-2">
-        <SearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          className="flex-1"
+      {isRecentlyPlayed ? (
+        <RecentPlaysList
+          plays={recentPaginated}
+          heading="Recently Played"
+          games={allGames}
+          page={recentPage}
+          totalPages={recentTotalPages}
+          onPageChange={setRecentPage}
         />
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${showFilters || activeFilterCount > 0 ? "bg-brand-800/30 border-brand-700 text-brand-300" : "border-gray-700 bg-gray-800 text-gray-400 hover:text-white"}`}
-        >
-          <SlidersHorizontal size={15} />
-          <span className="hidden sm:inline">Filters</span>
-          {activeFilterCount > 0 && (
-            <span className="bg-brand-600 rounded-full px-1.5 text-xs leading-tight text-white">
-              {activeFilterCount}
-            </span>
+      ) : (
+        <>
+          <div className="mb-5 flex gap-2">
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              className="flex-1"
+            />
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${showFilters || activeFilterCount > 0 ? "bg-brand-800/30 border-brand-700 text-brand-300" : "border-gray-700 bg-gray-800 text-gray-400 hover:text-white"}`}
+            >
+              <SlidersHorizontal size={15} />
+              <span className="hidden sm:inline">Filters</span>
+              {activeFilterCount > 0 && (
+                <span className="bg-brand-600 rounded-full px-1.5 text-xs leading-tight text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {showFilters && (
+            <GameFiltersPanel
+              filters={{
+                moodFilter,
+                setMoodFilter,
+                sortBy,
+                setSortBy,
+                platformFilter,
+                setPlatformFilter,
+                playGoalFilter,
+                setPlayGoalFilter,
+              }}
+              moods={moods}
+              className="mb-5"
+            />
           )}
-        </button>
-      </div>
 
-      {showFilters && (
-        <GameFiltersPanel
-          filters={{
-            moodFilter,
-            setMoodFilter,
-            sortBy,
-            setSortBy,
-            platformFilter,
-            setPlatformFilter,
-            playGoalFilter,
-            setPlayGoalFilter,
-          }}
-          moods={moods}
-          className="mb-5"
-        />
+          <GameCardList
+            games={paginated}
+            emptyState={
+              <EmptyState
+                heading={emptyState.heading}
+                hint={moodFilter ? "Try another filter." : emptyState.hint}
+              />
+            }
+            renderCard={(game, i) => (
+              <GameCard
+                key={game.id}
+                game={game}
+                index={i}
+                onEdit={setEditGame}
+                isAuthenticated={isAuthenticated}
+                onSignIn={openLoginModal}
+              />
+            )}
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
+        </>
       )}
-
-      <GameCardList
-        games={paginated}
-        emptyState={
-          <EmptyState
-            heading={emptyState.heading}
-            hint={moodFilter ? "Try another filter." : emptyState.hint}
-          />
-        }
-        renderCard={(game, i) => (
-          <GameCard
-            key={game.id}
-            game={game}
-            index={i}
-            onEdit={setEditGame}
-            isAuthenticated={isAuthenticated}
-            onSignIn={openLoginModal}
-          />
-        )}
-        page={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-      />
 
       {editGame && (
         <AddGameModal

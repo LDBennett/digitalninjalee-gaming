@@ -1,4 +1,5 @@
 import { Result } from "@/src/lib/backend/shared/result";
+import type { Platform } from "@/src/lib/backend/backlog/domain/models";
 import type {
   PlaySessionState,
   RecentPlayDto,
@@ -7,6 +8,7 @@ import type {
 export interface NewPlaySession {
   game_name: string;
   game_id: string | null;
+  platform: Platform | null;
   started_at: string;
   last_seen_at: string;
 }

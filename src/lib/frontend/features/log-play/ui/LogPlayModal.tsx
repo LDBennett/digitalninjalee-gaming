@@ -1,8 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { Modal, SearchInput } from "@/src/lib/frontend/shared";
+import {
+  PLATFORMS,
+  PLATFORM_LABELS,
+  type GameDto,
+  type Platform,
+} from "@/src/lib/backend/backlog/domain/models";
+import { Modal, SearchInput, cn } from "@/src/lib/frontend/shared";
 import { useLogPlay } from "../hooks/useLogPlay";
 
 interface Props {
@@ -15,9 +20,11 @@ const MAX_RESULTS = 8;
 
 export function LogPlayModal({ isOpen, onClose, games }: Props) {
   const [query, setQuery] = useState("");
+  const [platform, setPlatform] = useState<Platform | null>(null);
   const { logPlay, logging } = useLogPlay({
     onSuccess: () => {
       setQuery("");
+      setPlatform(null);
       onClose();
     },
   });
@@ -32,6 +39,24 @@ export function LogPlayModal({ isOpen, onClose, games }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Log play" maxWidth="max-w-md">
       <div className="p-5">
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {PLATFORMS.map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setPlatform(platform === p ? null : p)}
+              className={cn(
+                "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                platform === p
+                  ? "border-brand-700 bg-brand-800/30 text-brand-300"
+                  : "border-gray-700 bg-gray-800 text-gray-400 hover:text-white",
+              )}
+            >
+              {PLATFORM_LABELS[p]}
+            </button>
+          ))}
+        </div>
+
         <SearchInput
           value={query}
           onChange={setQuery}
@@ -44,7 +69,13 @@ export function LogPlayModal({ isOpen, onClose, games }: Props) {
               key={game.id}
               type="button"
               disabled={logging}
-              onClick={() => logPlay({ gameId: game.id, gameName: game.title })}
+              onClick={() =>
+                logPlay({
+                  gameId: game.id,
+                  gameName: game.title,
+                  platform: platform ?? undefined,
+                })
+              }
               className="flex items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-gray-800 disabled:opacity-50"
             >
               {game.cover_art_url ? (
@@ -66,7 +97,9 @@ export function LogPlayModal({ isOpen, onClose, games }: Props) {
             <button
               type="button"
               disabled={logging}
-              onClick={() => logPlay({ gameName: trimmed })}
+              onClick={() =>
+                logPlay({ gameName: trimmed, platform: platform ?? undefined })
+              }
               className="rounded-lg px-2 py-2 text-left text-sm text-gray-400 transition-colors hover:bg-gray-800 hover:text-white disabled:opacity-50"
             >
               Log &ldquo;{trimmed}&rdquo;{matches.length > 0 && " as typed"}

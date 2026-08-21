@@ -9,7 +9,8 @@ import type {
   PlaySessionRepository,
 } from "../repository/playSession.repo";
 
-const SESSION_SELECT = "id, game_name, game_id, started_at, last_seen_at";
+const SESSION_SELECT =
+  "id, game_name, game_id, platform, started_at, last_seen_at";
 const RECENT_SELECT = `${SESSION_SELECT}, game:games ( title, cover_art_url, platform )`;
 
 export function createSupabasePlaySessionRepository(

@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useDashboard } from "./useDashboard";
 import { GameStatsGrid } from "@/src/lib/frontend/entities/game";
 import { AddGameModal } from "@/src/lib/frontend/features/add-game";
+import { RecentPlaysList } from "@/src/lib/frontend/features/recent-activity";
 import { PageHeader } from "@/src/lib/frontend/shared";
 import { DashboardHeroCard } from "./ui/HeroCard/HeroCard";
 import { DashboardListQueue } from "./ui/Dashboard.ListQueue";
-import { DashboardRecentPlays } from "./ui/Dashboard.RecentPlays";
 
 type StatFilter = "playing" | "backlog" | "completed" | "wishlist";
 
@@ -70,7 +70,7 @@ export function DashboardView() {
         </div>
         <div className="order-1 h-full lg:order-2 lg:col-span-2">
           {queue === null ? (
-            <DashboardRecentPlays
+            <RecentPlaysList
               plays={recentPlays}
               heading="Recently Played"
               games={allGames}

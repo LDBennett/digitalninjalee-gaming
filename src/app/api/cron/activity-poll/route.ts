@@ -100,6 +100,9 @@ export async function POST(req: NextRequest) {
     for (const { source, gameName } of distinct) {
       const recorded = await recordPlaySighting(client, repo, {
         gameName,
+        // Steam presence is inherently PC; other sources have no reliable
+        // platform signal yet (see docs/activity-tracking.md).
+        platform: source === "steam" ? "pc" : undefined,
         now,
       });
       if (!recorded.success) {

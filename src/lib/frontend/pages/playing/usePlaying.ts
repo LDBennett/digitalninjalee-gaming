@@ -8,10 +8,17 @@ import {
   useGameActions,
   useGameQuery,
   useGameFilters,
+  useRecentActivity,
 } from "@/src/lib/frontend/features";
 import { useClientPagination } from "@/src/lib/frontend/shared/hooks/useClientPagination";
 
-export type PlayingTab = "playing" | "ongoing" | "replaying";
+const RECENT_ACTIVITY_LIMIT = 30;
+
+export type PlayingTab =
+  | "playing"
+  | "ongoing"
+  | "replaying"
+  | "recently-played";
 
 export function usePlaying() {
   const { session, authLoading } = useAuthStore();
@@ -58,9 +65,20 @@ export function usePlaying() {
   const { page, setPage, totalPages, paginated } =
     useClientPagination(filtered);
 
+  const { recentPlays, recentLoading } = useRecentActivity(
+    RECENT_ACTIVITY_LIMIT,
+  );
+  const {
+    page: recentPage,
+    setPage: setRecentPage,
+    totalPages: recentTotalPages,
+    paginated: recentPaginated,
+  } = useClientPagination(recentPlays);
+
   const setActiveTab = (tab: PlayingTab) => {
     setActiveTabState(tab);
     setPage(1);
+    setRecentPage(1);
     setMoodFilter(null);
     setPlayGoalFilter(null);
     setSearchQuery("");
@@ -104,11 +122,18 @@ export function usePlaying() {
     activeTab,
     setActiveTab,
     games,
+    allGames,
     filtered,
     paginated,
     page,
     setPage,
     totalPages,
+    recentPlays,
+    recentPaginated,
+    recentPage,
+    setRecentPage,
+    recentTotalPages,
+    recentLoading,
     moods,
     moodFilter,
     setMoodFilter,

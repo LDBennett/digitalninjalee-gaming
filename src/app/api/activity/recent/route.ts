@@ -1,13 +1,20 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/src/lib/infrastructure/supabase/supabaseClient";
 import { createSupabasePlaySessionRepository } from "@/src/lib/backend/activity/infrastructure";
 import { dedupeSessionsByGame } from "@/src/lib/backend/activity/domain/services";
 
-const FETCH_WINDOW = 30;
-const DISTINCT_GAMES = 5;
+const FETCH_WINDOW = 150;
+const DEFAULT_LIMIT = 5;
+const MAX_LIMIT = 50;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const requestedLimit = Number(request.nextUrl.searchParams.get("limit"));
+    const limit =
+      Number.isFinite(requestedLimit) && requestedLimit > 0
+        ? Math.min(requestedLimit, MAX_LIMIT)
+        : DEFAULT_LIMIT;
+
     const client = createServerClient(null);
     const repo = createSupabasePlaySessionRepository(client);
 
@@ -20,9 +27,7 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json(
-      dedupeSessionsByGame(recent.value, DISTINCT_GAMES),
-    );
+    return NextResponse.json(dedupeSessionsByGame(recent.value, limit));
   } catch (e) {
     console.error("[activity/recent] Uncaught error:", e);
     return NextResponse.json(
