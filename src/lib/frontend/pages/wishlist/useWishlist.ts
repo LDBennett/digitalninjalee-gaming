@@ -21,7 +21,7 @@ export { ALL_WISHLIST_STATUSES, WISHLIST_TAB_LABELS };
 const WISHLIST_STATUS_LIST = ALL_WISHLIST_STATUSES.split(",");
 
 export function useWishlist() {
-  const { session } = useAuthStore();
+  const { session, authLoading } = useAuthStore();
   const { moods } = useMoods();
   const isAuthenticated = session !== null;
 
@@ -81,7 +81,7 @@ export function useWishlist() {
     setEditGame,
     showAdd,
     setShowAdd,
-    gamesLoading,
+    gamesLoading: authLoading || gamesLoading,
     isAuthenticated,
     handleAdd,
     handleEdit: handleEditSubmit,

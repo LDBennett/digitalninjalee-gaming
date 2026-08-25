@@ -22,7 +22,7 @@ export function useDashboard() {
 
   const [showAdd, setShowAdd] = useState(false);
 
-  const { games: allGames, invalidate } = useGameQuery();
+  const { games: allGames, gamesLoading, invalidate } = useGameQuery();
   const stats = useMemo(() => deriveStats(allGames), [allGames]);
 
   const { handleAdd } = useGameActions({ onAddSuccess: invalidate });
@@ -45,7 +45,7 @@ export function useDashboard() {
     moods,
     showAdd,
     setShowAdd,
-    loading: authLoading,
+    loading: authLoading || gamesLoading,
     handleAdd,
   };
 }

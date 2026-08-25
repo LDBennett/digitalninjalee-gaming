@@ -23,7 +23,7 @@ export async function fetchRawgGameData(
   apiKey: string,
 ): Promise<RawgGameData | null> {
   const url = `https://api.rawg.io/api/games/${id}?key=${apiKey}`;
-  const res = await fetch(url, { next: { revalidate: 3600 } });
+  const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`RAWG API responded with ${res.status}`);
 
   const g = (await res.json()) as Record<string, unknown>;
@@ -56,7 +56,7 @@ export async function searchRawgGames(
   apiKey: string,
 ): Promise<RawgGame[]> {
   const url = `https://api.rawg.io/api/games?key=${apiKey}&search=${encodeURIComponent(query)}&page_size=6&search_precise=true`;
-  const res = await fetch(url, { next: { revalidate: 300 } });
+  const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`RAWG API responded with ${res.status}`);
 
   const data = await res.json();

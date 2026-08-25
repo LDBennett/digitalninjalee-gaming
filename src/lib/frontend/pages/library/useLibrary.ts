@@ -18,7 +18,7 @@ export type { LibraryTab };
 export { LIBRARY_TAB_STATUSES, LIBRARY_TAB_LABELS };
 
 export function useLibrary() {
-  const { session } = useAuthStore();
+  const { session, authLoading } = useAuthStore();
   const { moods } = useMoods();
   const isAuthenticated = session !== null;
 
@@ -87,7 +87,7 @@ export function useLibrary() {
     setPlatformFilter,
     editGame,
     setEditGame,
-    gamesLoading,
+    gamesLoading: authLoading || gamesLoading,
     isAuthenticated,
     handleEdit,
     handleDelete,

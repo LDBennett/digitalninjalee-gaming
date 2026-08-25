@@ -18,7 +18,12 @@ export function useBacklog() {
   const [showAdd, setShowAdd] = useState(false);
   const [replayOnly, setReplayOnly] = useState(false);
 
-  const { games: allGames, invalidate, queryKey } = useGameQuery();
+  const {
+    games: allGames,
+    gamesLoading,
+    invalidate,
+    queryKey,
+  } = useGameQuery();
   const wantToReplayCount = useMemo(
     () => allGames.filter((g) => g.replay_status === "want-to-replay").length,
     [allGames],
@@ -89,7 +94,7 @@ export function useBacklog() {
     setShowAdd,
     editGame,
     setEditGame,
-    loading: authLoading,
+    loading: authLoading || gamesLoading,
     isAuthenticated,
     handleAdd,
     handleEdit,

@@ -25,7 +25,7 @@ export function usePlaying() {
 
   const [activeTab, setActiveTabState] = useState<PlayingTab>("playing");
 
-  const { games: allGames, invalidate } = useGameQuery();
+  const { games: allGames, gamesLoading, invalidate } = useGameQuery();
   const playingGames = useMemo(
     () => allGames.filter((g) => g.status === "playing"),
     [allGames],
@@ -123,7 +123,7 @@ export function usePlaying() {
     setSearchQuery,
     editGame,
     setEditGame,
-    loading: authLoading,
+    loading: authLoading || gamesLoading,
     isAuthenticated,
     sortBy,
     setSortBy,
