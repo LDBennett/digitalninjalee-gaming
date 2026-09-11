@@ -1,3 +1,3 @@
 export * from "./navigation";
-export * from "./game-fab";
+export * from "./quick-guide";
 export * from "./game-modal";

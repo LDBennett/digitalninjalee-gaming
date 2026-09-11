@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { ClientLayout } from "./ClientLayout";
 import { Navigation } from "@/src/lib/frontend/widgets/navigation";
-import { GamepadFab } from "@/src/lib/frontend/widgets/game-fab";
+import { QuickGuide } from "@/src/lib/frontend/widgets/quick-guide";
 
 const inter = Inter({ subsets: ["latin"] });
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -53,7 +53,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
-          <GamepadFab />
+          <QuickGuide />
         </ClientLayout>
       </body>
     </html>

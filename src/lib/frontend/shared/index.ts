@@ -35,3 +35,5 @@ export type {
   ActiveGameModalTab,
   GameModalState,
 } from "./store/gameModal.store";
+export { useQuickGuideStore } from "./store/quickGuide.store";
+export type { QuickGuideState } from "./store/quickGuide.store";

@@ -12,8 +12,10 @@ import {
   SquarePlay,
   ClipboardList,
   Library,
+  Gamepad2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { useQuickGuideStore } from "@/src/lib/frontend/shared";
 
 type NavItem = { href: string; label: string; Icon: LucideIcon };
 
@@ -77,6 +79,7 @@ export function Navigation() {
   const idx = activeIdx === -1 ? 0 : activeIdx;
   const tabW = navWidth > 0 ? navWidth / NAV_ITEMS.length : 0;
   const cx = (idx + 0.5) * tabW;
+  const { isOpen: isGuideOpen, toggleGuide } = useQuickGuideStore();
   const { href: activeHref, Icon: ActiveIcon } = NAV_ITEMS[idx];
 
   return (
@@ -86,7 +89,22 @@ export function Navigation() {
         <span className="text-base font-bold tracking-tight text-white">
           DigitalNinjaLee
         </span>
-        <NavigationAuthIcon />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleGuide}
+            aria-label="Open Bunker Guide"
+            title="Bunker Guide"
+            className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border transition-all active:scale-95 ${
+              isGuideOpen
+                ? "border-brand-500/50 bg-brand-950/80 text-brand-300 shadow-[0_0_10px_rgba(16,185,129,0.25)]"
+                : "border-gray-800 bg-gray-900/90 text-gray-400 hover:border-gray-700 hover:text-white"
+            }`}
+          >
+            <Gamepad2 size={16} />
+          </button>
+          <NavigationAuthIcon />
+        </div>
       </header>
 
       {/* Desktop sidebar — fixed icon rail */}
@@ -139,6 +157,30 @@ export function Navigation() {
               </div>
             );
           })}
+
+          {/* Divider */}
+          <div className="my-1.5 h-px w-6 bg-gray-800" />
+
+          {/* Bunker Guide Trigger */}
+          <div className="group relative flex w-full justify-center">
+            <button
+              type="button"
+              onClick={toggleGuide}
+              aria-label="Bunker Guide (G)"
+              className={`relative flex cursor-pointer items-center justify-center rounded-lg p-2.5 transition-colors ${
+                isGuideOpen
+                  ? "border-brand-500/40 bg-brand-950/60 text-brand-300 shadow-[0_0_12px_rgba(16,185,129,0.3)] border"
+                  : "text-gray-400 hover:bg-gray-800 hover:text-white"
+              }`}
+            >
+              <Gamepad2 size={18} />
+            </button>
+            {/* Tooltip */}
+            <span className="pointer-events-none absolute top-1/2 left-full z-999999 ml-3 -translate-y-1/2 rounded-md border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100">
+              Bunker Guide{" "}
+              <span className="text-brand-400 font-semibold">(G)</span>
+            </span>
+          </div>
         </div>
 
         {/* Auth status at bottom */}
