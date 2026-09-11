@@ -12,11 +12,15 @@ import {
   X,
   Clock,
 } from "lucide-react";
-import { GameLogEntry } from "@/src/lib/backend/backlog/domain/models";
+import {
+  GameLogEntry,
+  scoreToTier,
+} from "@/src/lib/backend/backlog/domain/models";
 import { GameStatusBadge } from "@/src/lib/frontend/entities/game";
 import {
   formatRelativeTime,
   Button,
+  ConfirmDialog,
   useAuthStore,
 } from "@/src/lib/frontend/shared";
 
@@ -43,10 +47,12 @@ export function GameLogTimelineEntry({
   const [editPrivate, setEditPrivate] = useState(entry.isPrivate);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const isEdited =
     entry.type === "note" &&
-    new Date(entry.updatedAt).getTime() > new Date(entry.createdAt).getTime() + 1000;
+    new Date(entry.updatedAt).getTime() >
+      new Date(entry.createdAt).getTime() + 1000;
 
   const handleSave = async () => {
     if (!editContent.trim() || !onUpdateNote) return;
@@ -63,9 +69,8 @@ export function GameLogTimelineEntry({
     }
   };
 
-  const handleDelete = async () => {
+  const handleConfirmDelete = async () => {
     if (!onDeleteNote) return;
-    if (!window.confirm("Delete this journal note?")) return;
     setDeleting(true);
     try {
       await onDeleteNote(entry.id);
@@ -84,7 +89,7 @@ export function GameLogTimelineEntry({
             <span title={new Date(entry.createdAt).toLocaleString()}>
               {formatRelativeTime(entry.createdAt)}
             </span>
-            {isEdited && <span className="italic text-gray-500">(edited)</span>}
+            {isEdited && <span className="text-gray-500 italic">(edited)</span>}
             {entry.isPrivate && (
               <span className="flex items-center gap-0.5 rounded bg-amber-500/10 px-1 py-0.5 text-[10px] font-medium text-amber-400">
                 <Lock className="h-2.5 w-2.5" /> Private
@@ -101,9 +106,10 @@ export function GameLogTimelineEntry({
                 <Pencil className="h-3.5 w-3.5" />
               </button>
               <button
-                onClick={handleDelete}
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
                 disabled={deleting}
-                className="rounded p-1 text-gray-400 hover:bg-gray-800 hover:text-red-400"
+                className="rounded p-1 text-gray-400 hover:bg-gray-800 hover:text-red-400 cursor-pointer"
                 title="Delete note"
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -117,16 +123,16 @@ export function GameLogTimelineEntry({
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="w-full rounded-lg border border-gray-700 bg-gray-950 p-2.5 text-sm text-gray-200 focus:border-brand-500 focus:outline-none"
+              className="focus:border-brand-500 w-full rounded-lg border border-gray-700 bg-gray-950 p-2.5 text-sm text-gray-200 focus:outline-none"
               rows={3}
             />
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-1.5 text-xs text-gray-400 cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-1.5 text-xs text-gray-400">
                 <input
                   type="checkbox"
                   checked={!editPrivate}
                   onChange={(e) => setEditPrivate(!e.target.checked)}
-                  className="rounded border-gray-700 bg-gray-900 text-brand-600 focus:ring-brand-500"
+                  className="text-brand-600 focus:ring-brand-500 rounded border-gray-700 bg-gray-900"
                 />
                 <span>Public (Visible to anyone browsing this game)</span>
               </label>
@@ -136,7 +142,7 @@ export function GameLogTimelineEntry({
                   variant="gray"
                   onClick={() => setIsEditing(false)}
                 >
-                  <X className="h-3 w-3 mr-1" /> Cancel
+                  <X className="mr-1 h-3 w-3" /> Cancel
                 </Button>
                 <Button
                   size="xs"
@@ -144,16 +150,27 @@ export function GameLogTimelineEntry({
                   onClick={handleSave}
                   disabled={saving || !editContent.trim()}
                 >
-                  <Check className="h-3 w-3 mr-1" /> Save
+                  <Check className="mr-1 h-3 w-3" /> Save
                 </Button>
               </div>
             </div>
           </div>
         ) : (
-          <p className="whitespace-pre-wrap text-sm text-gray-200">
+          <p className="text-sm whitespace-pre-wrap text-gray-200">
             {entry.content}
           </p>
         )}
+
+        <ConfirmDialog
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          onConfirm={handleConfirmDelete}
+          title="Delete Journal Note"
+          description="Are you sure you want to delete this journal note? This cannot be undone."
+          confirmLabel="Delete Note"
+          variant="danger"
+          icon="trash"
+        />
       </div>
     );
   }
@@ -165,7 +182,11 @@ export function GameLogTimelineEntry({
           <>
             <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
             <span>
-              Added to library (<span className="text-gray-300 font-medium uppercase">{entry.metadata.platform}</span>) with status:
+              Added to library (
+              <span className="font-medium text-gray-300 uppercase">
+                {entry.metadata.platform}
+              </span>
+              ) with status:
             </span>
             <GameStatusBadge status={entry.metadata.initial_status} />
           </>
@@ -183,17 +204,11 @@ export function GameLogTimelineEntry({
 
         {entry.type === "priority_change" && (
           <>
-            <Zap className="h-3.5 w-3.5 text-amber-400" />
-            <span>
-              Priority score updated from{" "}
-              <span className="font-medium text-gray-300">
-                {entry.metadata.old_priority}
-              </span>{" "}
-              →{" "}
-              <span className="font-semibold text-brand-400">
-                {entry.metadata.new_priority}
-              </span>
-            </span>
+            <Zap className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+            <PriorityChangeContent
+              oldScore={entry.metadata.old_priority}
+              newScore={entry.metadata.new_priority}
+            />
           </>
         )}
 
@@ -203,7 +218,9 @@ export function GameLogTimelineEntry({
             <span>
               Rating updated to{" "}
               <span className="font-semibold text-yellow-300">
-                {entry.metadata.new_rating ? `${entry.metadata.new_rating} ★` : "None"}
+                {entry.metadata.new_rating
+                  ? `${entry.metadata.new_rating} ★`
+                  : "None"}
               </span>
             </span>
           </>
@@ -212,10 +229,48 @@ export function GameLogTimelineEntry({
 
       <span
         title={new Date(entry.createdAt).toLocaleString()}
-        className="text-[11px] text-gray-500 shrink-0"
+        className="shrink-0 text-[11px] text-gray-500"
       >
         {formatRelativeTime(entry.createdAt)}
       </span>
     </div>
+  );
+}
+
+function PriorityChangeContent({
+  oldScore,
+  newScore,
+}: {
+  oldScore: number;
+  newScore: number;
+}) {
+  const oldTier = scoreToTier(oldScore);
+  const newTier = scoreToTier(newScore);
+
+  if (oldTier.id === newTier.id) {
+    return (
+      <span>
+        Priority adjusted:{" "}
+        <span className={`font-semibold ${newTier.pillText}`}>
+          {newTier.label}
+        </span>{" "}
+        <span className="text-gray-400">
+          ({oldScore} → {newScore})
+        </span>
+      </span>
+    );
+  }
+
+  return (
+    <span>
+      Priority changed:{" "}
+      <span className={`font-medium ${oldTier.pillText}`}>
+        {oldTier.label} ({oldScore})
+      </span>{" "}
+      <span className="text-gray-500">→</span>{" "}
+      <span className={`font-semibold ${newTier.pillText}`}>
+        {newTier.label} ({newScore})
+      </span>
+    </span>
   );
 }

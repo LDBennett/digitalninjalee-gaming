@@ -27,7 +27,7 @@ export function GameModalFooter({
   submitLabel,
 }: GameModalFooterProps) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-800 p-4">
+    <div className="flex flex-wrap items-center justify-between gap-3">
       <div>
         {!isAddMode && onDelete && (
           <Button

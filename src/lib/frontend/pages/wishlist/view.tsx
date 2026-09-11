@@ -76,7 +76,9 @@ export function WishlistView() {
                 }
                 hint="Track games you want to buy."
                 actionLabel={isAuthenticated ? "+ Add Game" : undefined}
-                onAction={isAuthenticated ? () => openAdd("interested") : undefined}
+                onAction={
+                  isAuthenticated ? () => openAdd("interested") : undefined
+                }
               />
             }
             renderCard={(game, i) => (

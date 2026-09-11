@@ -30,7 +30,7 @@ export function GameEditorHeroPanel({
 
   return (
     <div className="flex flex-col items-center space-y-4 md:items-start">
-      <div className="relative aspect-[3/4] w-36 sm:w-44 shrink-0 overflow-hidden rounded-xl border border-gray-700 bg-gray-900 shadow-xl">
+      <div className="relative aspect-[3/4] w-36 shrink-0 overflow-hidden rounded-xl border border-gray-700 bg-gray-900 shadow-xl sm:w-44">
         {displayImage ? (
           <img
             src={displayImage}
@@ -39,7 +39,7 @@ export function GameEditorHeroPanel({
           />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center p-4 text-center text-gray-600">
-            <ImageIcon className="h-10 w-10 stroke-[1.5] mb-2" />
+            <ImageIcon className="mb-2 h-10 w-10 stroke-[1.5]" />
             <span className="text-xs">No cover image</span>
           </div>
         )}
@@ -74,10 +74,14 @@ export function GameEditorHeroPanel({
           <button
             type="button"
             onClick={() => setShowMediaUrls((prev) => !prev)}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+            className="flex items-center gap-1.5 text-xs text-gray-500 transition-colors hover:text-gray-300"
           >
             <span>Custom Media URLs</span>
-            {showMediaUrls ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {showMediaUrls ? (
+              <ChevronUp size={14} />
+            ) : (
+              <ChevronDown size={14} />
+            )}
           </button>
 
           {showMediaUrls && (

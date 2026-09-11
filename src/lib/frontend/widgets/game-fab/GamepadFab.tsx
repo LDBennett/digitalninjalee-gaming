@@ -223,7 +223,6 @@ export function GamepadFab() {
         )}
       </AnimatePresence>
 
-
       <RandomPicker
         isOpen={showPicker}
         onClose={() => setShowPicker(false)}

@@ -25,7 +25,9 @@ vi.mock("@/src/lib/frontend/features/game-actions", () => ({
 }));
 
 vi.mock("@/src/lib/frontend/features/game-logs", () => ({
-  GameLogTimeline: () => <div data-testid="mock-game-log-timeline">Timeline</div>,
+  GameLogTimeline: () => (
+    <div data-testid="mock-game-log-timeline">Timeline</div>
+  ),
 }));
 
 vi.mock("@/src/lib/frontend/shared/lib/useAuthFetch", () => ({
@@ -85,7 +87,9 @@ describe("GameModal State Machine", () => {
     });
 
     render(<GameModal />);
-    expect(screen.getByRole("heading", { name: "Add Game" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Add Game" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Find a Game")).toBeInTheDocument();
   });
 
@@ -108,7 +112,9 @@ describe("GameModal State Machine", () => {
     });
 
     render(<GameModal />);
-    expect(screen.getByRole("heading", { name: "Loading Game..." })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Loading Game..." }),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("game-modal-skeleton")).toBeInTheDocument();
   });
 
@@ -131,7 +137,9 @@ describe("GameModal State Machine", () => {
     });
 
     render(<GameModal />);
-    expect(screen.getByRole("heading", { name: "Error Loading Game" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Error Loading Game" }),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("game-modal-error")).toBeInTheDocument();
     expect(screen.getByText("Retry")).toBeInTheDocument();
   });
@@ -155,7 +163,9 @@ describe("GameModal State Machine", () => {
     });
 
     render(<GameModal />);
-    expect(screen.getByRole("heading", { name: "Game Not Found" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Game Not Found" }),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("game-modal-not-found")).toBeInTheDocument();
   });
 
@@ -198,7 +208,9 @@ describe("GameModal State Machine", () => {
     });
 
     render(<GameModal />);
-    expect(screen.getByRole("heading", { name: "Edit Chrono Trigger" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Edit Chrono Trigger" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Save Changes")).toBeInTheDocument();
   });
 });

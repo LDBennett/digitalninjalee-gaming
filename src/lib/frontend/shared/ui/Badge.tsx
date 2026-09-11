@@ -21,10 +21,10 @@ export function Badge({
   title,
 }: BadgeProps) {
   const baseClasses = cn(
-    "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium",
+    "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border border-transparent transition-all",
     bg,
     text,
-    onClick && "cursor-pointer transition-colors",
+    onClick && "cursor-pointer select-none active:scale-95 hover:brightness-110",
     className,
   );
 
@@ -33,7 +33,10 @@ export function Badge({
       <button
         type="button"
         className={baseClasses}
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
         role={role}
         title={title}
       >

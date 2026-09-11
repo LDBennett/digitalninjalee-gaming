@@ -45,7 +45,9 @@ export function GameLogTimeline({ gameId }: GameLogTimelineProps) {
     return (
       <div className="rounded-xl border border-gray-800 bg-gray-900/30 p-8 text-center text-gray-500">
         <BookOpen className="mx-auto mb-2 h-8 w-8 opacity-40" />
-        <p className="text-sm">Save this game first to start tracking activity and notes.</p>
+        <p className="text-sm">
+          Save this game first to start tracking activity and notes.
+        </p>
       </div>
     );
   }
@@ -53,22 +55,22 @@ export function GameLogTimeline({ gameId }: GameLogTimelineProps) {
   return (
     <div className="space-y-4">
       {/* Quick Add Composer */}
-      <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-3.5 space-y-2.5">
+      <div className="space-y-2.5 rounded-xl border border-gray-800 bg-gray-900/50 p-3.5">
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Record a journal note or play progress... (Ctrl+Enter to post)"
           rows={2}
-          className="w-full resize-none rounded-lg border border-gray-800 bg-gray-950 p-2.5 text-sm text-gray-200 placeholder-gray-500 focus:border-brand-500 focus:outline-none"
+          className="focus:border-brand-500 w-full resize-none rounded-lg border border-gray-800 bg-gray-950 p-2.5 text-sm text-gray-200 placeholder-gray-500 focus:outline-none"
         />
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <label className="flex items-center gap-1.5 text-xs text-gray-400 cursor-pointer select-none">
+          <label className="flex cursor-pointer items-center gap-1.5 text-xs text-gray-400 select-none">
             <input
               type="checkbox"
               checked={isPublic}
               onChange={(e) => setIsPublic(e.target.checked)}
-              className="rounded border-gray-700 bg-gray-900 text-brand-600 focus:ring-brand-500"
+              className="text-brand-600 focus:ring-brand-500 rounded border-gray-700 bg-gray-900"
             />
             <span>Public Note</span>
             <span className="text-[11px] text-gray-500">
@@ -124,7 +126,9 @@ export function GameLogTimeline({ gameId }: GameLogTimelineProps) {
                 disabled={isFetchingNextPage}
                 className="text-gray-400 hover:text-white"
               >
-                {isFetchingNextPage ? "Loading earlier logs..." : "Load earlier logs"}
+                {isFetchingNextPage
+                  ? "Loading earlier logs..."
+                  : "Load earlier logs"}
               </Button>
             </div>
           )}

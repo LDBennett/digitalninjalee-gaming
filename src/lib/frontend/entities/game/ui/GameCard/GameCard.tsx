@@ -1,19 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Pencil } from "lucide-react";
-import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { scoreToTier } from "@/src/lib/backend/backlog/domain/models";
-import { Button, GatedElement } from "@/src/lib/frontend/shared";
+import { GameDto, scoreToTier } from "@/src/lib/backend/backlog/domain/models";
+import { GatedElement } from "@/src/lib/frontend/shared";
 import { RatingStars } from "./GameCard.RatingStars";
 import { GameStatusBadge } from "../badges/GameStatusBadge";
 import { GameReplayBadge } from "./GameCard.ReplayBadge";
-import { MoodBadge } from "../badges/MoodBadge";
+import { GameCardMoodList } from "./GameCard.MoodList";
 import { PriorityPill } from "../badges/PriorityPill";
 import { GameCoverArt } from "./GameCard.CoverArt";
-import { GameCardActions } from "./GameCard.Actions";
-import { GameCardExpandable } from "./GameCard.Expandable";
 import { PlatformIcon } from "../badges/PlatformIcon";
 import { PlayGoals } from "../badges/PlayGoals";
 
@@ -40,12 +35,15 @@ export function GameCard({
   rank,
   index = 0,
 }: GameCardProps) {
-  const [showDesc, setShowDesc] = useState(false);
-  const [showNote, setShowNote] = useState(false);
-
   const moods = game.moods ?? [];
   const coverImage = game.background_url || game.cover_art_url;
   const tier = scoreToTier(game.priority_score);
+
+  const hasMetadata =
+    (game.rating !== null && game.rating !== undefined) ||
+    Boolean(game.replay_status) ||
+    (game.play_goals && game.play_goals.length > 0) ||
+    (showPriority && showStatusBadge);
 
   return (
     <motion.div
@@ -57,11 +55,20 @@ export function GameCard({
         ease: "circOut",
         delay: Math.min(index, 5) * 0.03,
       }}
-      className="hover:border-brand-800/70 relative min-h-35 overflow-hidden rounded-xl border border-gray-800 bg-gray-900 transition-all duration-200"
+      role="button"
+      tabIndex={0}
+      onClick={() => onEdit?.(game)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onEdit?.(game);
+        }
+      }}
+      className="group relative min-h-28 cursor-pointer overflow-hidden rounded-xl border border-white/8 bg-gray-900/90 select-none shadow-md transition-all duration-200 hover:border-brand-500/40 hover:shadow-lg hover:shadow-brand-950/20 active:scale-[0.985] active:brightness-105"
     >
       {showPriority && (
         <div
-          className={`absolute inset-y-0 left-0 z-10 w-1 rounded-l-xl ${tier.bar}`}
+          className={`absolute inset-y-0 left-0 z-10 w-1 rounded-l-xl ${tier.bar} shadow-sm`}
         />
       )}
       {coverImage && (
@@ -84,108 +91,56 @@ export function GameCard({
         </>
       )}
 
-      <div className="relative flex gap-4 p-4">
+      <div className="relative flex gap-3.5 p-3.5 sm:gap-4 sm:p-4">
         <GameCoverArt
           title={game.title}
           coverArtUrl={game.cover_art_url}
           rank={rank}
         />
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-1.5">
-              <PlatformIcon
-                platform={game.platform}
-                className="h-4 w-4 shrink-0"
-              />
-              <h3 className="truncate text-sm leading-snug font-semibold text-white">
-                {game.title}
-              </h3>
-            </div>
-            <div className="flex shrink-0 items-center gap-2">
-              {onEdit && (
-                <GatedElement
-                  isAuthenticated={isAuthenticated ?? true}
-                  onSignIn={onSignIn ?? (() => {})}
-                >
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    icon={<Pencil size={13} />}
-                    onClick={() => onEdit(game)}
-                    aria-label="Edit game"
-                    title="Edit game"
-                    className="hover:text-brand-400 p-0 text-gray-600"
-                  />
-                </GatedElement>
-              )}
-              {showPriority && onPriorityChange && (
-                <GatedElement
-                  isAuthenticated={isAuthenticated ?? true}
-                  onSignIn={onSignIn ?? (() => {})}
-                >
-                  <PriorityPill
-                    score={game.priority_score}
-                    gameId={game.id}
-                    onPriorityChange={onPriorityChange}
-                  />
-                </GatedElement>
-              )}
-            </div>
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+          {/* Line 1: HUD Telemetry Header */}
+          <div className="flex items-center justify-between gap-2">
+            <PlatformIcon
+              platform={game.platform}
+              className="h-4 w-4 shrink-0"
+            />
+            {showPriority ? (
+              <GatedElement
+                isAuthenticated={isAuthenticated ?? true}
+                onSignIn={onSignIn ?? (() => {})}
+              >
+                <PriorityPill
+                  score={game.priority_score}
+                  gameId={game.id}
+                  onPriorityChange={onPriorityChange}
+                />
+              </GatedElement>
+            ) : showStatusBadge ? (
+              <GameStatusBadge status={game.status} />
+            ) : null}
           </div>
 
-          <div className="mt-1 flex flex-wrap items-center gap-2">
-            {game.rating !== null && game.rating !== undefined && (
-              <RatingStars rating={game.rating} />
-            )}
-            <GameReplayBadge replayStatus={game.replay_status} />
-            <PlayGoals playGoals={game.play_goals} />
-            {showStatusBadge && <GameStatusBadge status={game.status} />}
-          </div>
+          {/* Line 2: Game Title (Full width, zero horizontal competition) */}
+          <h3 className="line-clamp-2 py-0.5 text-sm font-semibold leading-snug text-white transition-colors group-hover:text-brand-300">
+            {game.title}
+          </h3>
 
-          {moods.length > 0 && (
-            <>
-              <div className="mt-2 flex flex-wrap gap-1 sm:hidden">
-                {moods.slice(0, 2).map((mood) => (
-                  <MoodBadge key={mood.id} mood={mood.name} />
-                ))}
-                {moods.length > 2 && (
-                  <span className="inline-flex items-center rounded-full bg-gray-800 px-2 py-0.5 text-[11px] font-medium text-gray-400">
-                    +{moods.length - 2}
-                  </span>
-                )}
-              </div>
-              <div className="mt-2 hidden flex-wrap gap-1 sm:flex">
-                {moods.map((mood) => (
-                  <MoodBadge key={mood.id} mood={mood.name} />
-                ))}
-              </div>
-            </>
-          )}
+          {/* Line 3: Metadata Row & Mood Tags */}
+          {(hasMetadata || moods.length > 0) && (
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              {showPriority && showStatusBadge && (
+                <GameStatusBadge status={game.status} />
+              )}
+              {game.rating !== null && game.rating !== undefined && (
+                <RatingStars rating={game.rating} />
+              )}
+              <GameReplayBadge replayStatus={game.replay_status} />
+              <PlayGoals playGoals={game.play_goals} />
 
-          {!!game.game_description && (
-            <GameCardExpandable
-              text={game.game_description}
-              show={showDesc}
-              variant="description"
-            />
+              <GameCardMoodList moods={moods} />
+            </div>
           )}
-          {!!game.personal_note && (
-            <GameCardExpandable
-              text={game.personal_note}
-              show={showNote}
-              variant="note"
-            />
-          )}
-
-          <GameCardActions
-            hasDescription={!!game.game_description}
-            hasNote={!!game.personal_note}
-            showDesc={showDesc}
-            showNote={showNote}
-            onToggleDesc={() => setShowDesc((p) => !p)}
-            onToggleNote={() => setShowNote((p) => !p)}
-          />
         </div>
       </div>
     </motion.div>

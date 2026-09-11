@@ -24,8 +24,7 @@ export function useGameEditActions({
     onDeleteSuccess: invalidate,
   });
 
-  const handleDeleteConfirm = (id: string) => {
-    if (!confirm(deleteConfirmMessage)) return;
+  const handleDeleteGame = (id: string) => {
     handleDelete(id);
   };
 
@@ -39,6 +38,6 @@ export function useGameEditActions({
     setEditGame,
     handleAdd,
     handleEdit: handleEditSubmit,
-    handleDelete: handleDeleteConfirm,
+    handleDelete: handleDeleteGame,
   };
 }

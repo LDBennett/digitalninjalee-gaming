@@ -36,7 +36,12 @@ export interface GameLogRow {
   id: string;
   game_id: string;
   user_id: string | null;
-  type: "note" | "status_change" | "priority_change" | "rating_change" | "created";
+  type:
+    | "note"
+    | "status_change"
+    | "priority_change"
+    | "rating_change"
+    | "created";
   content: string | null;
   metadata: Record<string, unknown>;
   is_private: boolean;

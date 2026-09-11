@@ -102,7 +102,9 @@ export function createSupabaseGameLogRepository(
       if (error) return err(new Error(error.message));
       if (!data) {
         return err(
-          new Error("Log note not found or you do not have permission to edit it"),
+          new Error(
+            "Log note not found or you do not have permission to edit it",
+          ),
         );
       }
       return gameLogRowToDomain(data as GameLogRow);
@@ -124,7 +126,9 @@ export function createSupabaseGameLogRepository(
       if (error) return err(new Error(error.message));
       if (count === 0) {
         return err(
-          new Error("Log note not found or you do not have permission to delete it"),
+          new Error(
+            "Log note not found or you do not have permission to delete it",
+          ),
         );
       }
       return ok(undefined);

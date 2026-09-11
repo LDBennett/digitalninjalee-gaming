@@ -9,7 +9,7 @@ interface GameModalErrorProps {
 
 export function GameModalErrorState({ onRetry, onClose }: GameModalErrorProps) {
   return (
-    <div className="p-6 text-center space-y-4" data-testid="game-modal-error">
+    <div className="space-y-4 p-6 text-center" data-testid="game-modal-error">
       <p className="text-sm text-red-400">
         Unable to load game details from catalog.
       </p>
@@ -31,7 +31,10 @@ interface GameModalNotFoundProps {
 
 export function GameModalNotFoundState({ onClose }: GameModalNotFoundProps) {
   return (
-    <div className="p-6 text-center space-y-4" data-testid="game-modal-not-found">
+    <div
+      className="space-y-4 p-6 text-center"
+      data-testid="game-modal-not-found"
+    >
       <p className="text-sm text-gray-400">
         This game does not exist in your collection or was removed.
       </p>

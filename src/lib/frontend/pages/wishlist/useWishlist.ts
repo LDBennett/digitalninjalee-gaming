@@ -57,8 +57,7 @@ export function useWishlist() {
     onDeleteSuccess: invalidate,
   });
 
-  const handleDeleteConfirm = (id: string) => {
-    if (!confirm("Remove this game from your wishlist?")) return;
+  const handleDeleteGame = (id: string) => {
     handleDelete(id);
   };
 
@@ -84,7 +83,7 @@ export function useWishlist() {
     isAuthenticated,
     handleAdd,
     handleEdit: handleEditSubmit,
-    handleDelete: handleDeleteConfirm,
+    handleDelete: handleDeleteGame,
     handlePriorityChange: (id: string, delta: number) =>
       handlePriorityChange(id, delta, games),
   };

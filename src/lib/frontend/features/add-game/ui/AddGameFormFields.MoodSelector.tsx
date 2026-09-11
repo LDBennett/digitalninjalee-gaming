@@ -1,7 +1,7 @@
 "use client";
 
 import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
-import { MoodBadge } from "@/src/lib/frontend/entities/game";
+import { getMoodStyle } from "@/src/lib/frontend/entities/game";
 
 interface MoodSelectorProps {
   moods: MoodDto[];
@@ -20,20 +20,28 @@ export function MoodSelector({
         Mood Tags
       </label>
       <div className="flex flex-wrap gap-2">
-        {moods.map((mood) => (
-          <button
-            key={mood.id}
-            type="button"
-            onClick={() => onToggle(mood.id)}
-            className={`transition-all duration-150 ${
-              selectedIds.includes(mood.id)
-                ? "ring-brand-500/40 scale-105 ring-2"
-                : "opacity-40 hover:opacity-70"
-            }`}
-          >
-            <MoodBadge mood={mood.name} />
-          </button>
-        ))}
+        {moods.map((mood) => {
+          const isSelected = selectedIds.includes(mood.id);
+          const style = getMoodStyle(mood.name);
+          const bg = style?.bg ?? "bg-gray-800";
+          const text = style?.text ?? "text-gray-300";
+          const label = style?.label ?? mood.name;
+
+          return (
+            <button
+              key={mood.id}
+              type="button"
+              onClick={() => onToggle(mood.id)}
+              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors select-none ${
+                isSelected
+                  ? `${bg} ${text} border-current/50 shadow-xs shadow-black/20`
+                  : "border-gray-800 bg-gray-900/80 text-gray-400 hover:border-gray-700 hover:text-gray-200"
+              }`}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

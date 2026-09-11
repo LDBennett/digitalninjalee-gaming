@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ActiveGameModalTab = "details" | "goals" | "logs";
+export type ActiveGameModalTab = "details" | "focus" | "logs";
 
 export interface GameModalState {
   isOpen: boolean;

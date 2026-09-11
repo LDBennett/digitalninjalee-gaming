@@ -12,7 +12,7 @@ export function GameEditorScratchpad({
   return (
     <div className="space-y-2 rounded-xl border border-gray-800 bg-gray-900/50 p-4">
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <label className="block text-xs font-semibold tracking-wider text-gray-400 uppercase">
           Personal Scratchpad
         </label>
         <span className="text-[11px] text-gray-500">Private to you</span>
@@ -25,8 +25,8 @@ export function GameEditorScratchpad({
         value={personalNote}
         onChange={(e) => onChange(e.target.value)}
         placeholder="e.g. Paused right before Fire Giant. Using dex/bleed build. Remember to visit Smithing Master..."
-        rows={4}
-        className="focus:border-brand-600 w-full resize-none rounded-lg border border-gray-700 bg-gray-800/80 p-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        rows={3}
+        className="focus:border-brand-600 focus:ring-brand-500 w-full resize-none rounded-lg border border-gray-700 bg-gray-800/80 p-3 text-sm text-white placeholder-gray-600 focus:ring-1 focus:outline-none"
       />
     </div>
   );

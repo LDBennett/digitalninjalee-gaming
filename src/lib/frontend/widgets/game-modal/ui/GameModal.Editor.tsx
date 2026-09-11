@@ -38,18 +38,14 @@ export function GameModalEditor({
 
       {/* Right Column: Tabbed Sections */}
       <div className="space-y-4 md:col-span-8">
-        <GameModalTabs
-          activeTab={activeTab}
-          onChangeTab={onChangeTab}
-          isAddMode={isAddMode}
-        />
+        <GameModalTabs activeTab={activeTab} onChangeTab={onChangeTab} />
 
         <div className="pt-1">
           {activeTab === "details" && (
             <GameEditorDetailsPanel form={form} editGame={editGame} />
           )}
 
-          {activeTab === "goals" && (
+          {activeTab === "focus" && (
             <GameEditorGoalsPanel form={form} moods={moods} />
           )}
 
@@ -62,7 +58,7 @@ export function GameModalEditor({
 
               {editGame ? (
                 <div className="pt-2">
-                  <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  <h4 className="mb-2 text-xs font-semibold tracking-wider text-gray-400 uppercase">
                     Activity & Milestones
                   </h4>
                   <GameLogTimeline gameId={editGame.id} />

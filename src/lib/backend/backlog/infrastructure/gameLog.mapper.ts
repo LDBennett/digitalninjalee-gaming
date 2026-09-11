@@ -10,7 +10,9 @@ import {
 } from "@/src/lib/backend/backlog/domain/models/gameLog.types";
 import { GameLogRow } from "./db.types";
 
-export function gameLogRowToDomain(row: GameLogRow): Result<GameLogEntry, Error> {
+export function gameLogRowToDomain(
+  row: GameLogRow,
+): Result<GameLogEntry, Error> {
   const base = {
     id: row.id,
     gameId: row.game_id,
@@ -126,7 +128,11 @@ export function gameLogRowToDomain(row: GameLogRow): Result<GameLogEntry, Error>
       const platformRes = createPlatform(meta.platform as string);
       const initialPriority = Number(meta.initial_priority);
 
-      if (!statusRes.success || !platformRes.success || isNaN(initialPriority)) {
+      if (
+        !statusRes.success ||
+        !platformRes.success ||
+        isNaN(initialPriority)
+      ) {
         return err(
           new Error(
             `Invalid created metadata: status=${meta.initial_status}, platform=${meta.platform}, priority=${meta.initial_priority}`,
@@ -149,6 +155,8 @@ export function gameLogRowToDomain(row: GameLogRow): Result<GameLogEntry, Error>
     }
 
     default:
-      return err(new Error(`Unknown game log type: ${(row as { type: string }).type}`));
+      return err(
+        new Error(`Unknown game log type: ${(row as { type: string }).type}`),
+      );
   }
 }

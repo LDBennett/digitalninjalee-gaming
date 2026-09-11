@@ -17,16 +17,18 @@ export function GameModalSearchHero({
   form,
   onContinueToDetails,
 }: GameModalSearchHeroProps) {
-  const hasSelectedGame = Boolean(form.coverArtUrl || form.backgroundUrl || form.igdbId);
+  const hasSelectedGame = Boolean(
+    form.coverArtUrl || form.backgroundUrl || form.igdbId,
+  );
 
   return (
-    <div className="flex flex-col items-center justify-center py-6 px-4 text-center">
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-900/40 text-brand-400 ring-1 ring-brand-700/50">
+    <div className="flex flex-col items-center justify-center px-4 py-6 text-center">
+      <div className="bg-brand-900/40 text-brand-400 ring-brand-700/50 mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ring-1">
         <Sparkles size={28} />
       </div>
 
       <h3 className="text-lg font-bold text-white">Find a Game</h3>
-      <p className="mt-1 text-xs text-gray-400 max-w-sm">
+      <p className="mt-1 max-w-sm text-xs text-gray-400">
         Search the IGDB catalog to automatically import cover art, release year,
         descriptions, and genre tags.
       </p>
@@ -50,11 +52,11 @@ export function GameModalSearchHero({
       </div>
 
       {!hasSelectedGame && (
-        <div className="mt-6 border-t border-gray-800/80 pt-4 w-full max-w-md">
+        <div className="mt-6 w-full max-w-md border-t border-gray-800/80 pt-4">
           <button
             type="button"
             onClick={onContinueToDetails}
-            className="flex items-center justify-center gap-1.5 w-full text-xs text-gray-400 hover:text-white transition-colors"
+            className="flex w-full items-center justify-center gap-1.5 text-xs text-gray-400 transition-colors hover:text-white"
           >
             <PenLine size={13} />
             <span>Enter game details manually</span>

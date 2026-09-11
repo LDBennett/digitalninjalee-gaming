@@ -2,6 +2,8 @@ export { cn } from "./lib/cn";
 export { formatRelativeTime } from "./lib/formatRelativeTime";
 export { Modal } from "./ui/Modal";
 export type { ModalProps } from "./ui/Modal";
+export { ConfirmDialog } from "./ui/ConfirmDialog";
+export type { ConfirmDialogProps } from "./ui/ConfirmDialog";
 export { Button } from "./ui/Button";
 export type {
   ButtonProps,
@@ -29,4 +31,7 @@ export { useAuthFetch } from "./hooks/useAuthFetch";
 export { initAuth, signIn, signOut } from "./lib/auth.init";
 export { GatedElement } from "./ui/GatedElement";
 export { useGameModalStore } from "./store/gameModal.store";
-export type { ActiveGameModalTab, GameModalState } from "./store/gameModal.store";
+export type {
+  ActiveGameModalTab,
+  GameModalState,
+} from "./store/gameModal.store";
