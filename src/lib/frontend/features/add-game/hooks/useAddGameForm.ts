@@ -34,29 +34,16 @@ export function useAddGameForm({
   const state = useAddGameFormState(editGame, isOpen, defaultStatus);
 
   useIgdbSearch({
-    title: state.title,
-    igdbId: state.igdbId,
     editGame,
     isOpen,
     authHeaders,
-    setIgdbResults: state.setIgdbResults,
-    setShowDropdown: state.setShowDropdown,
-    setSearchLoading: state.setSearchLoading,
+    state,
   });
 
   const { handleIgdbSelect } = useGameDataFetch({
     allMoods: moods,
     authHeaders,
-    setTitle: state.setTitle,
-    setBackgroundUrl: state.setBackgroundUrl,
-    setCoverArtUrl: state.setCoverArtUrl,
-    setIgdbResults: state.setIgdbResults as (v: never[]) => void,
-    setShowDropdown: state.setShowDropdown,
-    setEnrichLoading: state.setEnrichLoading,
-    setEnrichLoaded: state.setEnrichLoaded,
-    setGameDescription: state.setGameDescription,
-    setIgdbId: state.setIgdbId,
-    setSelectedMoods: state.setSelectedMoods,
+    state,
   });
 
   const toggleMood = (id: string) =>

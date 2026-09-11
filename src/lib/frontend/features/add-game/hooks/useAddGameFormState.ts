@@ -113,3 +113,5 @@ export function useAddGameFormState(
     setEnrichLoaded,
   };
 }
+
+export type AddGameFormState = ReturnType<typeof useAddGameFormState>;

@@ -4,6 +4,7 @@ import { Smartphone } from "lucide-react";
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import { deriveStats } from "@/src/lib/backend/backlog/domain/services";
 import { useQuickGuideStore } from "@/src/lib/frontend/shared";
+import { requestShakePermission } from "../hooks/useShakeToOpen";
 
 interface QuickGuideFooterProps {
   games: GameDto[];
@@ -12,6 +13,14 @@ interface QuickGuideFooterProps {
 export function QuickGuideFooter({ games }: QuickGuideFooterProps) {
   const { shakeEnabled, toggleShake } = useQuickGuideStore();
   const stats = deriveStats(games);
+
+  const handleToggle = async () => {
+    if (!shakeEnabled) {
+      const granted = await requestShakePermission();
+      if (!granted) return;
+    }
+    toggleShake();
+  };
 
   return (
     <div className="space-y-3 border-t border-gray-800/80 pt-3">
@@ -37,7 +46,7 @@ export function QuickGuideFooter({ games }: QuickGuideFooterProps) {
           type="button"
           role="switch"
           aria-checked={shakeEnabled}
-          onClick={toggleShake}
+          onClick={handleToggle}
           className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-colors ${
             shakeEnabled ? "bg-brand-600" : "bg-gray-700"
           }`}

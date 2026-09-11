@@ -118,7 +118,7 @@ export function fetchDiscordPresence(
           // Temporary diagnostic: dump the raw activity to see whether Discord
           // exposes a platform hint (e.g. "platform": "xbox") for
           // console-linked Connections. Remove once confirmed either way.
-          if (game) {
+          if (game && process.env.DEBUG_DISCORD_PRESENCE === "true") {
             console.log("[discord-activity-raw]", JSON.stringify(game));
           }
           settle(ok({ gameName: game?.name ?? null }));

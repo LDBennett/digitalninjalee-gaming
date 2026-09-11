@@ -7,6 +7,34 @@ const SHAKE_THRESHOLD = 15; // m/s^2 acceleration delta threshold
 const SHAKE_TIMEOUT = 800; // ms window for rapid shake gestures
 const MIN_INTERVAL = 100; // ms minimum interval between samples
 
+/**
+ * Requests DeviceMotion permissions on platforms that require explicit user
+ * gesture activation (notably iOS Safari 13+).
+ */
+export async function requestShakePermission(): Promise<boolean> {
+  if (
+    typeof window !== "undefined" &&
+    "DeviceMotionEvent" in window &&
+    typeof (
+      DeviceMotionEvent as unknown as {
+        requestPermission?: () => Promise<string>;
+      }
+    ).requestPermission === "function"
+  ) {
+    try {
+      const state = await (
+        DeviceMotionEvent as unknown as {
+          requestPermission: () => Promise<string>;
+        }
+      ).requestPermission();
+      return state === "granted";
+    } catch {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function useShakeToOpen() {
   const { shakeEnabled, openGuide } = useQuickGuideStore();
   const lastShakeRef = useRef(0);

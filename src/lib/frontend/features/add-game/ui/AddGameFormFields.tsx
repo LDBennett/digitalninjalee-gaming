@@ -4,8 +4,8 @@ import { GameDto, MoodDto } from "@/src/lib/backend/backlog/domain/models";
 import { StarRating } from "@/src/lib/frontend/shared";
 import { useAddGameForm } from "../hooks/useAddGameForm";
 import { EditMediaFields } from "./AddGameFormFields.Media";
-import { GameEditorDetailsPanel } from "./GameEditor.DetailsPanel";
-import { GameEditorGoalsPanel } from "./GameEditor.GoalsPanel";
+import { GameEditorDetailsPanel } from "./GameEditorDetailsPanel";
+import { GameEditorGoalsPanel } from "./GameEditorGoalsPanel";
 
 interface AddGameFormFieldsProps {
   form: ReturnType<typeof useAddGameForm>;

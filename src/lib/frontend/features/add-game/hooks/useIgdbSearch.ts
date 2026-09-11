@@ -2,29 +2,24 @@
 
 import { useEffect } from "react";
 import { GameDto } from "@/src/lib/backend/backlog/domain/models";
-import { IgdbSearchResult } from "@/src/lib/frontend/features/add-game/types";
+import { AddGameFormState } from "./useAddGameFormState";
 
 interface UseIgdbSearchParams {
-  title: string;
-  igdbId: number | null;
   editGame: GameDto | null | undefined;
   isOpen: boolean;
   authHeaders: () => Record<string, string>;
-  setIgdbResults: (results: IgdbSearchResult[]) => void;
-  setShowDropdown: (show: boolean) => void;
-  setSearchLoading: (loading: boolean) => void;
+  state: AddGameFormState;
 }
 
 export function useIgdbSearch({
-  title,
-  igdbId,
   editGame,
   isOpen,
   authHeaders,
-  setIgdbResults,
-  setShowDropdown,
-  setSearchLoading,
+  state,
 }: UseIgdbSearchParams) {
+  const { title, igdbId, setIgdbResults, setShowDropdown, setSearchLoading } =
+    state;
+
   useEffect(() => {
     if (!isOpen || editGame || igdbId || title.trim().length < 2) {
       setIgdbResults([]);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@/src/lib/infrastructure/supabase/supabaseClient";
+import { optionalAuth } from "@/src/lib/backend/backlog/infrastructure";
 import { createSupabasePlaySessionRepository } from "@/src/lib/backend/activity/infrastructure";
 import { dedupeSessionsByGame } from "@/src/lib/backend/activity/domain/services";
 
@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
         ? Math.min(requestedLimit, MAX_LIMIT)
         : DEFAULT_LIMIT;
 
-    const client = createServerClient(null);
-    const repo = createSupabasePlaySessionRepository(client);
+    const auth = await optionalAuth(request);
+    const repo = createSupabasePlaySessionRepository(auth.client);
 
     const recent = await repo.findRecent(FETCH_WINDOW);
     if (!recent.success) {

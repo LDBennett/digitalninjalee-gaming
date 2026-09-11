@@ -81,6 +81,32 @@ export async function searchIgdbGames(
   });
 }
 
+function mapRawIgdbGameToData(game: Record<string, unknown>): IgdbGameData {
+  const cover = game.cover as { image_id: string } | null | undefined;
+  const artworks = game.artworks as Array<{ image_id: string }> | undefined;
+  const screenshots = game.screenshots as
+    | Array<{ image_id: string }>
+    | undefined;
+
+  const backgroundImageId =
+    artworks?.[0]?.image_id ?? screenshots?.[0]?.image_id ?? null;
+
+  return {
+    igdbId: game.id as number,
+    name: game.name as string,
+    summary: (game.summary as string) ?? null,
+    coverArtUrl: cover?.image_id
+      ? igdbImageUrl(cover.image_id, "t_cover_big")
+      : null,
+    backgroundUrl: backgroundImageId
+      ? igdbImageUrl(backgroundImageId, "t_screenshot_big")
+      : null,
+    genreIds: (game.genres as number[]) ?? [],
+    themeIds: (game.themes as number[]) ?? [],
+    gameModeIds: (game.game_modes as number[]) ?? [],
+  };
+}
+
 export async function fetchIgdbGameData(
   id: number,
   clientId: string,
@@ -108,30 +134,7 @@ export async function fetchIgdbGameData(
   const results = (await res.json()) as Array<Record<string, unknown>>;
   if (!results.length) return null;
 
-  const game = results[0];
-  const cover = game.cover as { image_id: string } | null | undefined;
-  const artworks = game.artworks as Array<{ image_id: string }> | undefined;
-  const screenshots = game.screenshots as
-    | Array<{ image_id: string }>
-    | undefined;
-
-  const backgroundImageId =
-    artworks?.[0]?.image_id ?? screenshots?.[0]?.image_id ?? null;
-
-  return {
-    igdbId: game.id as number,
-    name: game.name as string,
-    summary: (game.summary as string) ?? null,
-    coverArtUrl: cover?.image_id
-      ? igdbImageUrl(cover.image_id, "t_cover_big")
-      : null,
-    backgroundUrl: backgroundImageId
-      ? igdbImageUrl(backgroundImageId, "t_screenshot_big")
-      : null,
-    genreIds: (game.genres as number[]) ?? [],
-    themeIds: (game.themes as number[]) ?? [],
-    gameModeIds: (game.game_modes as number[]) ?? [],
-  };
+  return mapRawIgdbGameToData(results[0]);
 }
 
 export async function createIgdbClient(clientId: string, clientSecret: string) {
@@ -174,28 +177,6 @@ export async function fetchIgdbGameDataByTitle(
   const results = (await res.json()) as Array<Record<string, unknown>>;
   if (!results.length) return null;
 
-  const game = results[0];
-  const cover = game.cover as { image_id: string } | null | undefined;
-  const artworks = game.artworks as Array<{ image_id: string }> | undefined;
-  const screenshots = game.screenshots as
-    | Array<{ image_id: string }>
-    | undefined;
-
-  const backgroundImageId =
-    artworks?.[0]?.image_id ?? screenshots?.[0]?.image_id ?? null;
-
-  return {
-    igdbId: game.id as number,
-    name: game.name as string,
-    summary: (game.summary as string) ?? null,
-    coverArtUrl: cover?.image_id
-      ? igdbImageUrl(cover.image_id, "t_cover_big")
-      : null,
-    backgroundUrl: backgroundImageId
-      ? igdbImageUrl(backgroundImageId, "t_screenshot_big")
-      : null,
-    genreIds: (game.genres as number[]) ?? [],
-    themeIds: (game.themes as number[]) ?? [],
-    gameModeIds: (game.game_modes as number[]) ?? [],
-  };
+  return mapRawIgdbGameToData(results[0]);
 }
+
