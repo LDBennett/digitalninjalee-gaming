@@ -13,10 +13,16 @@ export function NavigationDesktopRail() {
   const { isOpen: isGuideOpen, toggleGuide } = useQuickGuideStore();
 
   return (
-    <nav className="sticky top-4 z-10 mt-4 mb-4 ml-4 hidden h-[90vh] w-14 shrink-0 flex-col self-start overflow-visible rounded-2xl border border-gray-800 bg-gray-900/95 py-4 shadow-2xl shadow-black/60 backdrop-blur-sm md:flex">
+    <nav className="sticky top-0 z-30 hidden h-dvh w-16 shrink-0 flex-col justify-between border-r border-gray-800/80 bg-gray-950/95 py-5 backdrop-blur-md md:flex">
       {/* Logo */}
       <div className="mb-6 flex justify-center">
-        <img src="/logos/dnl-logo--white.png" alt="DNL" className="h-6 w-8" />
+        <Link
+          href="/"
+          className="rounded-md p-1 transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+          aria-label="Backlog Bunker Home"
+        >
+          <img src="/logos/dnl-logo--white.png" alt="DNL" className="h-6 w-8" />
+        </Link>
       </div>
 
       {/* Nav items */}
@@ -91,7 +97,7 @@ export function NavigationDesktopRail() {
       </div>
 
       {/* Auth status at bottom */}
-      <div className="mt-4 flex justify-center">
+      <div className="mt-auto flex justify-center">
         <NavigationAuthStatus />
       </div>
     </nav>

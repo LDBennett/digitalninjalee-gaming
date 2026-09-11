@@ -98,6 +98,7 @@ export function PlayingView() {
           plays={recentPaginated}
           heading="Recently Played"
           games={allGames}
+          variant="default"
           pagination={{
             page: recentPage,
             totalPages: recentTotalPages,

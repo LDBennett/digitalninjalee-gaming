@@ -1,10 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import { useDashboard } from "./useDashboard";
 import { GameStatsGrid } from "@/src/lib/frontend/entities/game";
-import { RecentPlaysList } from "@/src/lib/frontend/features/recent-activity";
-import { PageHeader } from "@/src/lib/frontend/shared";
+import { LogPlayModal } from "@/src/lib/frontend/features/recent-activity";
+import {
+  Button,
+  PageHeader,
+  formatRelativeTime,
+  useGameModalStore,
+  useQuickGuideStore,
+  useAuthStore,
+} from "@/src/lib/frontend/shared";
 import { DashboardHeroCard } from "./ui/HeroCard/HeroCard";
 import { DashboardListQueue } from "./ui/Dashboard.ListQueue";
 
@@ -24,6 +32,10 @@ const QUEUE_CONFIG: Record<
 
 export function DashboardView() {
   const [activeFilter, setActiveFilter] = useState<StatFilter>("playing");
+  const [showLogModal, setShowLogModal] = useState(false);
+  const { session } = useAuthStore();
+  const openEdit = useGameModalStore((s) => s.openEdit);
+  const openGuide = useQuickGuideStore((s) => s.openGuide);
 
   const {
     stats,
@@ -60,23 +72,67 @@ export function DashboardView() {
       />
       <div className="mt-6 grid grid-cols-1 items-stretch gap-6 lg:grid-cols-5">
         <div className="order-2 h-full lg:order-1 lg:col-span-3">
-          <DashboardHeroCard playingGames={playingGames} />
+          <DashboardHeroCard
+            playingGames={playingGames}
+            onManageGame={(id) => openEdit(id, "details")}
+            onViewLogs={(id) => openEdit(id, "logs")}
+            isAuthenticated={Boolean(session)}
+            onEmptyRoll={openGuide}
+          />
         </div>
         <div className="order-1 h-full lg:order-2 lg:col-span-2">
           {queue === null ? (
-            <RecentPlaysList
-              plays={recentPlays}
+            <DashboardListQueue
               heading="Recently Played"
-              games={allGames}
+              items={recentPlays.map((play) => {
+                const isInteractive = Boolean(play.game_id);
+                return {
+                  id: play.id,
+                  gameId: play.game_id,
+                  title: play.game?.title ?? play.game_name,
+                  coverUrl: play.game?.cover_art_url,
+                  platform: play.platform ?? play.game?.platform,
+                  trailing: (
+                    <span className="flex shrink-0 items-center font-mono text-xs text-gray-400">
+                      {formatRelativeTime(play.last_seen_at)}
+                    </span>
+                  ),
+                  onClick: isInteractive
+                    ? () => openEdit(play.game_id!, "details")
+                    : undefined,
+                };
+              })}
+              action={
+                session && (
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    icon={<Plus size={13} />}
+                    onClick={() => setShowLogModal(true)}
+                    className="border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:border-emerald-500/50 hover:bg-emerald-500/20"
+                  >
+                    Log
+                  </Button>
+                )
+              }
+              emptyHeading="No play activity yet"
+              filterTheme={activeFilter}
             />
           ) : (
             <DashboardListQueue
               games={queueData[queue.dataKey]}
               heading={queue.heading}
+              onSelectGame={(id) => openEdit(id, "details")}
+              filterTheme={activeFilter}
             />
           )}
         </div>
       </div>
+      <LogPlayModal
+        isOpen={showLogModal}
+        onClose={() => setShowLogModal(false)}
+        games={allGames}
+      />
     </div>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { NotebookText } from "lucide-react";
+import { Gamepad2, ScrollText } from "lucide-react";
+import type { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import {
   GameStatusBadge,
   MoodBadge,
@@ -10,156 +10,195 @@ import {
   PlayGoals,
   RatingStars,
 } from "@/src/lib/frontend/entities/game";
-import { Button, EmptyState } from "@/src/lib/frontend/shared";
-import type { useDashboard } from "../../useDashboard";
+import {
+  Button,
+  EmptyState,
+  GatedElement,
+  useAuthStore,
+} from "@/src/lib/frontend/shared";
+import { useHeroCarouselController } from "./useHeroCarouselController";
 import { HeroCardControls } from "./HeroCard.Controls";
-import { HeroCardNotesOverlay } from "./HeroCard.NotesOverlay";
+import { HeroCardBackdrop } from "./HeroCard.Backdrop";
+import { HeroCardLatestLog } from "./HeroCard.LatestLog";
 
-type Props = Pick<ReturnType<typeof useDashboard>, "playingGames">;
+interface DashboardHeroCardProps {
+  playingGames: GameDto[];
+  onManageGame?: (id: string) => void;
+  onViewLogs?: (id: string) => void;
+  isAuthenticated?: boolean;
+  onSignIn?: () => void;
+  onEmptyRoll?: () => void;
+}
 
-export function DashboardHeroCard({ playingGames }: Props) {
-  const [idx, setIdx] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const [notesOpen, setNotesOpen] = useState(false);
-
+export function DashboardHeroCard({
+  playingGames,
+  onManageGame,
+  onViewLogs,
+  isAuthenticated = false,
+  onSignIn,
+  onEmptyRoll,
+}: DashboardHeroCardProps) {
+  const { openLoginModal } = useAuthStore();
+  const handleSignIn = onSignIn ?? openLoginModal;
   const total = playingGames.length;
-  const game = playingGames[Math.min(idx, total - 1)] ?? null;
+  const {
+    idx,
+    direction,
+    isPaused,
+    isManuallyPaused,
+    progress,
+    prefersReducedMotion,
+    go,
+    goTo,
+    toggleManualPause,
+    containerProps,
+    dragProps,
+  } = useHeroCarouselController({ total });
 
-  const go = (delta: number) => {
-    setDirection(delta);
-    setIdx((i) => (i + delta + total) % total);
-  };
-
-  const goTo = (i: number) => {
-    setDirection(i > idx ? 1 : -1);
-    setIdx(i);
-  };
-
-  useEffect(() => {
-    if (total <= 1 || notesOpen) return;
-    const id = setInterval(() => {
-      setDirection(1);
-      setIdx((i) => (i + 1) % total);
-    }, 8000);
-    return () => clearInterval(id);
-  }, [idx, total, notesOpen]);
-
-  // Close notes panel when the carousel moves to a different game
-  useEffect(() => {
-    setNotesOpen(false);
-  }, [idx]);
-
+  const game = playingGames[Math.min(idx, Math.max(0, total - 1))] ?? null;
   const coverImage = game ? game.background_url || game.cover_art_url : null;
 
+  if (!game) {
+    return (
+      <div className="flex h-[460px] min-h-[460px] items-center justify-center rounded-2xl border border-gray-800 bg-gray-900/60 p-6 sm:h-[460px] sm:min-h-[460px] lg:h-[460px] lg:min-h-[460px]">
+        <EmptyState
+          heading="Nothing playing right now"
+          hint="Pick a title from your backlog or spin the wheel to start playing."
+          actionLabel={onEmptyRoll ? "Roll Random Game" : undefined}
+          onAction={onEmptyRoll}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="relative h-100 overflow-hidden rounded-2xl border border-gray-800 lg:h-full lg:min-h-90">
-      {!game ? (
-        <div className="flex h-full items-center justify-center bg-gray-900">
-          <EmptyState heading="Nothing playing right now" />
-        </div>
-      ) : (
-        <>
-          {/* Background layer */}
-          <AnimatePresence initial={false} mode="sync">
-            <motion.div
-              key={`bg-${idx}`}
-              className="absolute inset-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              {coverImage ? (
-                <>
-                  <img
-                    src={coverImage}
-                    alt=""
-                    aria-hidden
-                    className="absolute inset-0 h-full w-full scale-105 object-cover object-top"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        "linear-gradient(to right, rgba(3,7,18,0.95) 0%, rgba(3,7,18,0.78) 50%, rgba(3,7,18,0.35) 100%)",
-                    }}
-                  />
-                </>
-              ) : (
-                <div className="absolute inset-0 bg-gray-900" />
-              )}
-            </motion.div>
-          </AnimatePresence>
+    <section
+      aria-label="Currently Playing Carousel"
+      {...containerProps}
+      className="relative h-[460px] min-h-[460px] overflow-hidden rounded-2xl border border-gray-800 bg-gray-950 select-none sm:h-[460px] sm:min-h-[460px] lg:h-[460px] lg:min-h-[460px]"
+    >
+      {/* Screen Reader Announcer */}
+      <div className="sr-only" aria-live="polite">
+        Showing game {idx + 1} of {total}: {game.title}
+      </div>
 
-          {/* Content layer */}
-          <AnimatePresence initial={false} mode="wait" custom={direction}>
-            <motion.div
-              key={`content-${idx}`}
-              custom={direction}
-              initial={{ opacity: 0, x: direction * 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction * -40 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="relative flex h-full flex-col justify-between p-6 md:p-8"
-            >
-              <div>
-                <span className="mb-4 inline-block rounded-full border border-gray-700 bg-gray-900/70 px-3 py-1 text-[11px] font-semibold tracking-widest text-gray-400 uppercase">
-                  Currently Playing
-                </span>
+      {/* Persistent Carousel Navigation Controls in Top Right */}
+      <HeroCardControls
+        total={total}
+        idx={idx}
+        isManuallyPaused={isManuallyPaused}
+        onDot={goTo}
+        onGo={go}
+        onTogglePause={toggleManualPause}
+      />
 
-                <h2 className="mb-3 text-2xl leading-tight font-bold text-white md:text-3xl">
-                  {game.title}
-                </h2>
+      {/* Background Atmosphere Layer */}
+      <HeroCardBackdrop
+        gameId={game.id}
+        coverImage={coverImage}
+        prefersReducedMotion={prefersReducedMotion}
+      />
 
-                <div className="mb-3 flex flex-wrap items-center gap-2">
-                  <PlatformIcon platform={game.platform} className="h-5 w-5" />
-                  <GameStatusBadge status={game.status} />
-                  {game.rating != null && <RatingStars rating={game.rating} />}
-                </div>
+      {/* Interactive Content Slide Layer - Absolute Inset to eliminate transition expansion */}
+      <AnimatePresence initial={false} mode="sync" custom={direction}>
+        <motion.div
+          key={`content-${game.id}`}
+          custom={direction}
+          initial={
+            prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: direction * 35 }
+          }
+          animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+          exit={
+            prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: direction * -35 }
+          }
+          transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: "easeOut" }}
+          {...dragProps}
+          className="absolute inset-0 flex cursor-grab flex-col justify-between p-6 active:cursor-grabbing md:p-8"
+        >
+          {/* Slide Body */}
+          <div className="min-w-0 pr-28 sm:pr-36">
+            {/* Aero Emerald Live Beacon */}
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold tracking-wider text-emerald-400 uppercase shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              Currently Playing
+            </div>
 
-                {game.moods && game.moods.length > 0 && (
-                  <div className="mb-4 flex flex-wrap gap-1.5">
-                    {game.moods.map((mood) => (
-                      <MoodBadge key={mood.id} mood={mood.name} />
-                    ))}
-                  </div>
-                )}
+            <h2 className="mb-2 text-2xl leading-tight font-bold text-white md:text-3xl">
+              {game.title}
+            </h2>
 
-                {game.play_goals && game.play_goals.length > 0 && (
-                  <div className="mb-4">
-                    <PlayGoals playGoals={game.play_goals} showLabels />
-                  </div>
-                )}
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <PlatformIcon platform={game.platform} className="h-5 w-5" />
+              <GameStatusBadge status={game.status} />
+              {game.rating != null && <RatingStars rating={game.rating} />}
+            </div>
 
-                {game.game_description && (
-                  <p className="line-clamp-3 max-w-sm text-sm leading-relaxed text-gray-300/80">
-                    {game.game_description}
-                  </p>
-                )}
+            {game.moods && game.moods.length > 0 && (
+              <div className="mb-3 flex flex-wrap gap-1.5">
+                {game.moods.map((mood) => (
+                  <MoodBadge key={mood.id} mood={mood.name} />
+                ))}
               </div>
+            )}
 
-              <div className="mt-6">
-                <Button
-                  variant="gray-dark"
-                  size="sm"
-                  icon={<NotebookText size={14} />}
-                  onClick={() => setNotesOpen(true)}
-                >
-                  View Notes
-                </Button>
+            {game.play_goals && game.play_goals.length > 0 && (
+              <div className="mb-3">
+                <PlayGoals playGoals={game.play_goals} showLabels />
               </div>
-            </motion.div>
-          </AnimatePresence>
+            )}
 
-          <HeroCardNotesOverlay
-            open={notesOpen}
-            note={game.personal_note}
-            onClose={() => setNotesOpen(false)}
-          />
+            {/* Dynamic Activity: Latest Log -> Personal Note -> Game Description */}
+            <div className="mb-3">
+              <HeroCardLatestLog
+                gameId={game.id}
+                personalNote={game.personal_note}
+                gameDescription={game.game_description}
+                isAuthenticated={isAuthenticated}
+              />
+            </div>
+          </div>
 
-          <HeroCardControls total={total} idx={idx} onDot={goTo} onGo={go} />
-        </>
+          {/* Tactical Action Suite - Full width at bottom, zero overlap */}
+          <div className="mt-auto flex flex-wrap items-center gap-3 pt-4">
+            <GatedElement
+              isAuthenticated={isAuthenticated}
+              onSignIn={handleSignIn}
+            >
+              <Button
+                variant="brand-gradient"
+                size="sm"
+                icon={<Gamepad2 size={15} />}
+                onClick={() => onManageGame?.(game.id)}
+              >
+                Manage Game
+              </Button>
+            </GatedElement>
+
+            <GatedElement
+              isAuthenticated={isAuthenticated}
+              onSignIn={handleSignIn}
+            >
+              <Button
+                variant="gray-dark"
+                size="sm"
+                icon={<ScrollText size={15} />}
+                onClick={() => onViewLogs?.(game.id)}
+              >
+                Timeline & Notes
+              </Button>
+            </GatedElement>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Autoplay Progress Hairline along bottom */}
+      {!isPaused && !prefersReducedMotion && (
+        <div
+          className="absolute bottom-0 left-0 h-0.5 bg-emerald-400/80 shadow-[0_0_8px_rgba(52,211,153,0.8)] transition-all duration-100 ease-linear"
+          style={{ width: `${progress}%` }}
+          aria-hidden="true"
+        />
       )}
-    </div>
+    </section>
   );
 }

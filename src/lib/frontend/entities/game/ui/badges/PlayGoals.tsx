@@ -45,6 +45,7 @@ export function PlayGoals({ playGoals, showLabels = false }: PlayGoalsProps) {
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
         {playGoals.map((goal) => {
           const Icon = PLAY_GOAL_ICONS[goal];
+          if (!Icon) return null;
           return (
             <span
               key={goal}
@@ -63,6 +64,7 @@ export function PlayGoals({ playGoals, showLabels = false }: PlayGoalsProps) {
     <div className="flex items-center gap-1.5">
       {playGoals.map((goal) => {
         const Icon = PLAY_GOAL_ICONS[goal];
+        if (!Icon) return null;
         return (
           <span
             key={goal}
