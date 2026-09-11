@@ -21,7 +21,9 @@ interface GatewayPayload {
     guilds?: Array<{ id: string }>;
     presences?: Array<{
       user: { id: string };
-      activities?: Array<Record<string, unknown> & { type: number; name: string }>;
+      activities?: Array<
+        Record<string, unknown> & { type: number; name: string }
+      >;
     }>;
   };
 }

@@ -3,5 +3,4 @@ export type { GameActionsOptions } from "./hooks/useGameActions";
 export { useGameEditActions } from "./hooks/useGameEditActions";
 export type { UseGameEditActionsOptions } from "./hooks/useGameEditActions";
 export { useGamePriority } from "./hooks/useGamePriority";
-export { useGameQuery } from "./hooks/useGameQuery";
 export { useMoods } from "./hooks/useMoods";

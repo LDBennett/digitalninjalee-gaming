@@ -6,12 +6,12 @@ import {
   GameCardList,
   GameCardSkeleton,
 } from "@/src/lib/frontend/entities/game";
-import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import {
   EmptyState,
   PageHeader,
   TabBar,
   useAuthStore,
+  useGameModalStore,
   useScrollToTop,
 } from "@/src/lib/frontend/shared";
 
@@ -29,22 +29,15 @@ export function WishlistView() {
     page,
     setPage,
     totalPages,
-    moods,
     tab,
     setTab,
-    editGame,
-    setEditGame,
-    showAdd,
-    setShowAdd,
     gamesLoading,
     isAuthenticated,
-    handleAdd,
-    handleEdit,
-    handleDelete,
     handlePriorityChange,
   } = useWishlist();
 
   const { openLoginModal } = useAuthStore();
+  const { openAdd, openEdit } = useGameModalStore();
   const topRef = useScrollToTop(page);
 
   return (
@@ -83,7 +76,7 @@ export function WishlistView() {
                 }
                 hint="Track games you want to buy."
                 actionLabel={isAuthenticated ? "+ Add Game" : undefined}
-                onAction={isAuthenticated ? () => setShowAdd(true) : undefined}
+                onAction={isAuthenticated ? () => openAdd("interested") : undefined}
               />
             }
             renderCard={(game, i) => (
@@ -91,7 +84,7 @@ export function WishlistView() {
                 key={game.id}
                 game={game}
                 index={i}
-                onEdit={setEditGame}
+                onEdit={() => openEdit(game.id)}
                 onPriorityChange={handlePriorityChange}
                 isAuthenticated={isAuthenticated}
                 onSignIn={openLoginModal}
@@ -104,19 +97,6 @@ export function WishlistView() {
           />
         </>
       )}
-
-      <AddGameModal
-        isOpen={showAdd || !!editGame}
-        onClose={() => {
-          setShowAdd(false);
-          setEditGame(null);
-        }}
-        onSave={editGame ? handleEdit : handleAdd}
-        onDelete={isAuthenticated ? handleDelete : undefined}
-        editGame={editGame}
-        moods={moods}
-        defaultStatus="interested"
-      />
     </div>
   );
 }

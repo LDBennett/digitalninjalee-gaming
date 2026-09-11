@@ -57,8 +57,7 @@ const EDITION_SUFFIX_WORDS = [
 
 function isEditionSuffix(words: string[]): boolean {
   return (
-    words.length > 0 &&
-    words.every((w) => EDITION_SUFFIX_WORDS.includes(w))
+    words.length > 0 && words.every((w) => EDITION_SUFFIX_WORDS.includes(w))
   );
 }
 

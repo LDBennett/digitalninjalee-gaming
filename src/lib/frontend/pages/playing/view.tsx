@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { usePlaying, PlayingTab } from "./usePlaying";
+import { usePlaying } from "./usePlaying";
+import { TAB_VALUES, TAB_LABELS, EMPTY_STATE } from "./playing.constants";
 import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
-import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
 import { RecentPlaysList } from "@/src/lib/frontend/features/recent-activity";
 import {
@@ -12,36 +12,10 @@ import {
   SearchInput,
   TabBar,
   useAuthStore,
+  useGameModalStore,
   useScrollToTop,
 } from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
-
-const TAB_VALUES: PlayingTab[] = [
-  "playing",
-  "ongoing",
-  "replaying",
-  "recently-played",
-];
-const TAB_LABELS: Record<PlayingTab, string> = {
-  playing: "Playing",
-  ongoing: "Ongoing",
-  replaying: "Replaying",
-  "recently-played": "Recently Played",
-};
-const EMPTY_STATE = {
-  playing: {
-    heading: "Nothing in progress",
-    hint: "Head to your Backlog to start a game.",
-  },
-  ongoing: {
-    heading: "No ongoing games",
-    hint: "Move a game to Ongoing from the playing page.",
-  },
-  replaying: {
-    heading: "No games being replayed",
-    hint: "Mark a completed game as 'Replaying' to see it here.",
-  },
-} as const;
 
 export function PlayingView() {
   const {
@@ -68,15 +42,12 @@ export function PlayingView() {
     setPlayGoalFilter,
     searchQuery,
     setSearchQuery,
-    editGame,
-    setEditGame,
     loading,
     isAuthenticated,
-    handleEdit,
-    handleDelete,
   } = usePlaying();
 
   const { openLoginModal } = useAuthStore();
+  const { openEdit } = useGameModalStore();
   const topRef = useScrollToTop(page);
   const [showFilters, setShowFilters] = useState(false);
   const activeFilterCount = [
@@ -86,7 +57,9 @@ export function PlayingView() {
     sortBy !== "priority-desc",
   ].filter(Boolean).length;
   const isRecentlyPlayed = activeTab === "recently-played";
-  const emptyState = isRecentlyPlayed ? EMPTY_STATE.playing : EMPTY_STATE[activeTab];
+  const emptyState = isRecentlyPlayed
+    ? EMPTY_STATE.playing
+    : EMPTY_STATE[activeTab];
   const countLabel = isRecentlyPlayed
     ? null
     : activeTab === "playing"
@@ -183,7 +156,7 @@ export function PlayingView() {
                 key={game.id}
                 game={game}
                 index={i}
-                onEdit={setEditGame}
+                onEdit={() => openEdit(game.id)}
                 isAuthenticated={isAuthenticated}
                 onSignIn={openLoginModal}
               />
@@ -191,17 +164,6 @@ export function PlayingView() {
             pagination={{ page, totalPages, onPageChange: setPage }}
           />
         </>
-      )}
-
-      {editGame && (
-        <AddGameModal
-          isOpen
-          onClose={() => setEditGame(null)}
-          onSave={handleEdit}
-          onDelete={isAuthenticated ? handleDelete : undefined}
-          editGame={editGame}
-          moods={moods}
-        />
       )}
     </div>
   );

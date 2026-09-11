@@ -6,7 +6,11 @@ import { GameDto } from "@/src/lib/backend/backlog/domain/models";
 import { gameKeys } from "@/src/lib/backend/backlog/repository";
 import { useAuthFetch, useAuthStore } from "@/src/lib/frontend/shared";
 
-export function useGameQuery() {
+export interface UseGameQueryOptions {
+  enabled?: boolean;
+}
+
+export function useGameQuery(options?: UseGameQueryOptions) {
   const queryClient = useQueryClient();
   const { authHeaders } = useAuthFetch();
   const { session, authLoading } = useAuthStore();
@@ -15,18 +19,34 @@ export function useGameQuery() {
     [session?.user?.id],
   );
 
-  const { data: games = [], isPending: gamesLoading } = useQuery<GameDto[]>({
+  const {
+    data: games = [],
+    isPending: gamesLoading,
+    isError,
+    refetch,
+  } = useQuery<GameDto[]>({
     queryKey,
     queryFn: () =>
       fetch("/api/games", { headers: authHeaders() }).then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       }),
-    enabled: !authLoading,
+    enabled: !authLoading && (options?.enabled ?? true),
   });
+
+  const isPending = authLoading || gamesLoading;
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: gameKeys.all });
 
-  return { games, gamesLoading, invalidate, queryKey };
+  return {
+    games,
+    gamesLoading,
+    authLoading,
+    isPending,
+    isError,
+    refetch,
+    invalidate,
+    queryKey,
+  };
 }

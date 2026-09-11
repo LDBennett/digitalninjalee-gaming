@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createPlatform, type Platform } from "@/src/lib/backend/backlog/domain/models";
+import {
+  createPlatform,
+  type Platform,
+} from "@/src/lib/backend/backlog/domain/models";
 import { requireAuth } from "@/src/lib/backend/backlog/infrastructure";
 import { createServiceClient } from "@/src/lib/infrastructure/supabase/supabaseClient";
 import { createSupabasePlaySessionRepository } from "@/src/lib/backend/activity/infrastructure";

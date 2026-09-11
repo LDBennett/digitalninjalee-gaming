@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { scoreToTier, nextTierScore, PRIORITY_TIERS } from "@/src/lib/backend/backlog/domain/models/priority.constants";
+import {
+  scoreToTier,
+  nextTierScore,
+  PRIORITY_TIERS,
+} from "@/src/lib/backend/backlog/domain/models/priority.constants";
 
 describe("scoreToTier", () => {
   it("maps 1 to low", () => expect(scoreToTier(1).id).toBe("low"));
@@ -9,7 +13,8 @@ describe("scoreToTier", () => {
   it("maps 51 to high", () => expect(scoreToTier(51).id).toBe("high"));
   it("maps 75 to high", () => expect(scoreToTier(75).id).toBe("high"));
   it("maps 76 to critical", () => expect(scoreToTier(76).id).toBe("critical"));
-  it("maps 100 to critical", () => expect(scoreToTier(100).id).toBe("critical"));
+  it("maps 100 to critical", () =>
+    expect(scoreToTier(100).id).toBe("critical"));
 
   it("returns the correct label", () => {
     expect(scoreToTier(13).label).toBe("Low");

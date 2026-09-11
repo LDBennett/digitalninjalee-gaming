@@ -37,7 +37,9 @@ export async function fetchSteamPresence(
     const player = body.response?.players?.[0];
     if (!player) {
       return err(
-        new Error("Steam API returned no player — check the SteamID and profile privacy"),
+        new Error(
+          "Steam API returned no player — check the SteamID and profile privacy",
+        ),
       );
     }
 

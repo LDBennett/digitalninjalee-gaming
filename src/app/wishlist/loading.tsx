@@ -12,7 +12,10 @@ export default function WishlistLoading() {
       {/* Tabs: All / Interested / Pre-Ordered / Keep-an-Eye-On */}
       <div className="mb-5 flex gap-1">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-9 w-28 animate-pulse rounded-lg bg-gray-800" />
+          <div
+            key={i}
+            className="h-9 w-28 animate-pulse rounded-lg bg-gray-800"
+          />
         ))}
       </div>
 

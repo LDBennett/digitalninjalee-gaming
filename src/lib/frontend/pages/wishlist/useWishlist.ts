@@ -10,9 +10,9 @@ import {
 import {
   useMoods,
   useGameActions,
-  useGameQuery,
   useGamePriority,
 } from "@/src/lib/frontend/features";
+import { useGameQuery } from "@/src/lib/frontend/entities/game";
 import { useAuthStore, useClientPagination } from "@/src/lib/frontend/shared";
 
 export type { WishlistTab };
@@ -48,15 +48,14 @@ export function useWishlist() {
     setPage(1);
   }, [tab, setPage]);
 
-  const { handleAdd, handleEdit, handleDelete } =
-    useGameActions({
-      onAddSuccess: invalidate,
-      onEditSuccess: () => {
-        setEditGame(null);
-        invalidate();
-      },
-      onDeleteSuccess: invalidate,
-    });
+  const { handleAdd, handleEdit, handleDelete } = useGameActions({
+    onAddSuccess: invalidate,
+    onEditSuccess: () => {
+      setEditGame(null);
+      invalidate();
+    },
+    onDeleteSuccess: invalidate,
+  });
 
   const handleDeleteConfirm = (id: string) => {
     if (!confirm("Remove this game from your wishlist?")) return;

@@ -2,13 +2,13 @@
 import { useState } from "react";
 import { useBacklog } from "./useBacklog";
 import { GameCard, GameCardList } from "@/src/lib/frontend/entities/game";
-import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
 import {
   EmptyState,
   PageHeader,
   SearchInput,
   useAuthStore,
+  useGameModalStore,
   useScrollToTop,
 } from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
@@ -31,15 +31,8 @@ export function BacklogView() {
     setPlayGoalFilter,
     searchQuery,
     setSearchQuery,
-    showAdd,
-    setShowAdd,
-    editGame,
-    setEditGame,
     loading,
     isAuthenticated,
-    handleAdd,
-    handleEdit,
-    handleDelete,
     handlePriorityChange,
     replayOnly,
     setReplayOnly,
@@ -47,6 +40,7 @@ export function BacklogView() {
   } = useBacklog();
 
   const { openLoginModal } = useAuthStore();
+  const { openAdd, openEdit } = useGameModalStore();
   const topRef = useScrollToTop(page);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -149,7 +143,7 @@ export function BacklogView() {
             }
             onAction={
               isAuthenticated && !moodFilter
-                ? () => setShowAdd(true)
+                ? () => openAdd("backlog")
                 : undefined
             }
           />
@@ -160,7 +154,7 @@ export function BacklogView() {
             game={game}
             index={i}
             rank={(page - 1) * 20 + i + 1}
-            onEdit={setEditGame}
+            onEdit={() => openEdit(game.id)}
             onPriorityChange={handlePriorityChange}
             isAuthenticated={isAuthenticated}
             onSignIn={openLoginModal}
@@ -168,19 +162,6 @@ export function BacklogView() {
           />
         )}
         pagination={{ page, totalPages, onPageChange: setPage }}
-      />
-
-      <AddGameModal
-        isOpen={showAdd || !!editGame}
-        onClose={() => {
-          setShowAdd(false);
-          setEditGame(null);
-        }}
-        onSave={editGame ? handleEdit : handleAdd}
-        onDelete={isAuthenticated ? handleDelete : undefined}
-        editGame={editGame}
-        moods={moods}
-        defaultStatus="backlog"
       />
     </div>
   );

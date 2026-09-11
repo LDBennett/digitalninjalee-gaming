@@ -7,7 +7,6 @@ import {
   GameCardList,
   GameCardSkeleton,
 } from "@/src/lib/frontend/entities/game";
-import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { GameFiltersPanel } from "@/src/lib/frontend/features/game-filters";
 import {
   EmptyState,
@@ -15,6 +14,7 @@ import {
   SearchInput,
   TabBar,
   useAuthStore,
+  useGameModalStore,
   useScrollToTop,
 } from "@/src/lib/frontend/shared";
 import { SlidersHorizontal } from "lucide-react";
@@ -46,18 +46,12 @@ export function LibraryView() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
-    editGame,
-    setEditGame,
     gamesLoading,
     isAuthenticated,
-    handleEdit,
-    handleDelete,
-    handleAdd,
-    showAdd,
-    setShowAdd,
   } = useLibrary();
 
   const { openLoginModal } = useAuthStore();
+  const { openEdit } = useGameModalStore();
   const topRef = useScrollToTop(page);
   const [showFilters, setShowFilters] = useState(false);
   const activeFilterCount = [
@@ -98,7 +92,14 @@ export function LibraryView() {
         </div>
         {showFilters && (
           <GameFiltersPanel
-            filters={{ moodFilter, setMoodFilter, sortBy, setSortBy, platformFilter, setPlatformFilter }}
+            filters={{
+              moodFilter,
+              setMoodFilter,
+              sortBy,
+              setSortBy,
+              platformFilter,
+              setPlatformFilter,
+            }}
             moods={moods}
             className="mb-5"
           />
@@ -139,7 +140,7 @@ export function LibraryView() {
                 key={game.id}
                 game={game}
                 index={i}
-                onEdit={setEditGame}
+                onEdit={() => openEdit(game.id)}
                 isAuthenticated={isAuthenticated}
                 onSignIn={openLoginModal}
                 showStatusBadge={tab === "all" || tab === "completed"}
@@ -149,25 +150,6 @@ export function LibraryView() {
             pagination={{ page, totalPages, onPageChange: setPage }}
           />
         </>
-      )}
-
-      {editGame && (
-        <AddGameModal
-          isOpen
-          onClose={() => setEditGame(null)}
-          onSave={handleEdit}
-          onDelete={isAuthenticated ? handleDelete : undefined}
-          editGame={editGame}
-          moods={moods}
-        />
-      )}
-      {showAdd && (
-        <AddGameModal
-          isOpen
-          onClose={() => setShowAdd(false)}
-          onSave={handleAdd}
-          moods={moods}
-        />
       )}
     </div>
   );

@@ -3,7 +3,13 @@
 import { ReactNode, ButtonHTMLAttributes } from "react";
 import { cn } from "../lib/cn";
 
-export type ButtonVariant = "brand" | "brand-gradient" | "gray" | "gray-dark" | "danger" | "ghost";
+export type ButtonVariant =
+  | "brand"
+  | "brand-gradient"
+  | "gray"
+  | "gray-dark"
+  | "danger"
+  | "ghost";
 export type ButtonSize = "xs" | "sm" | "md" | "lg";
 export type ButtonShape = "rounded" | "pill";
 

@@ -31,3 +31,15 @@ export interface ExternalIdRow {
 export interface GameRowWithMoods extends GameRow {
   game_moods: Array<{ moods: MoodRow }>;
 }
+
+export interface GameLogRow {
+  id: string;
+  game_id: string;
+  user_id: string | null;
+  type: "note" | "status_change" | "priority_change" | "rating_change" | "created";
+  content: string | null;
+  metadata: Record<string, unknown>;
+  is_private: boolean;
+  updated_at: string;
+  created_at: string;
+}

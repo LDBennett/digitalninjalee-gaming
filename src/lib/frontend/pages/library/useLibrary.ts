@@ -9,9 +9,9 @@ import {
 import {
   useMoods,
   useGameEditActions,
-  useGameQuery,
   useGameFilters,
 } from "@/src/lib/frontend/features";
+import { useGameQuery } from "@/src/lib/frontend/entities/game";
 import { useAuthStore, useClientPagination } from "@/src/lib/frontend/shared";
 
 export type { LibraryTab };
@@ -29,9 +29,7 @@ export function useLibrary() {
   const { games: allGames, gamesLoading, invalidate } = useGameQuery();
   const games = useMemo(
     () =>
-      statusParam
-        ? allGames.filter((g) => g.status === statusParam)
-        : allGames,
+      statusParam ? allGames.filter((g) => g.status === statusParam) : allGames,
     [allGames, statusParam],
   );
   const {

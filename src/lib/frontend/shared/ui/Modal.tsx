@@ -27,7 +27,9 @@ export function Modal({
   useEffect(() => {
     if (!isOpen) return;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -43,7 +45,12 @@ export function Modal({
       >
         {overlay}
 
-        <div className={cn("relative", scrollable && "max-h-[90vh] overflow-y-auto")}>
+        <div
+          className={cn(
+            "relative",
+            scrollable && "max-h-[90vh] overflow-y-auto",
+          )}
+        >
           <div className="flex items-center justify-between border-b border-gray-800 p-5">
             <h2 className="text-base font-semibold text-white">{title}</h2>
             <button

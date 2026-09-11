@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useDashboard } from "./useDashboard";
 import { GameStatsGrid } from "@/src/lib/frontend/entities/game";
-import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { RecentPlaysList } from "@/src/lib/frontend/features/recent-activity";
 import { PageHeader } from "@/src/lib/frontend/shared";
 import { DashboardHeroCard } from "./ui/HeroCard/HeroCard";
@@ -34,11 +33,7 @@ export function DashboardView() {
     playingGames,
     topWishlist,
     lastCompleted,
-    moods,
-    showAdd,
-    setShowAdd,
     loading,
-    handleAdd,
   } = useDashboard();
 
   const queueData = {
@@ -46,8 +41,7 @@ export function DashboardView() {
     lastCompleted,
     topWishlist,
   };
-  const queue =
-    activeFilter === "playing" ? null : QUEUE_CONFIG[activeFilter];
+  const queue = activeFilter === "playing" ? null : QUEUE_CONFIG[activeFilter];
 
   if (loading)
     return (
@@ -83,12 +77,6 @@ export function DashboardView() {
           )}
         </div>
       </div>
-      <AddGameModal
-        isOpen={showAdd}
-        onClose={() => setShowAdd(false)}
-        onSave={handleAdd}
-        moods={moods}
-      />
     </div>
   );
 }

@@ -8,11 +8,21 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   fullWidth?: boolean;
 }
 
-export function Select({ label, fullWidth, className, id, children, ...rest }: SelectProps) {
+export function Select({
+  label,
+  fullWidth,
+  className,
+  id,
+  children,
+  ...rest
+}: SelectProps) {
   return (
     <div className={cn(fullWidth && "w-full")}>
       {label && (
-        <label htmlFor={id} className="mb-1 block text-xs font-medium text-gray-400">
+        <label
+          htmlFor={id}
+          className="mb-1 block text-xs font-medium text-gray-400"
+        >
           {label}
         </label>
       )}

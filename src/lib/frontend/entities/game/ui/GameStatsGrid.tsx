@@ -20,8 +20,34 @@ interface GameStatsGridProps {
 }
 
 type StatCard =
-  | { label: string; color: string; activeColor: string; accentBorder: string; activeBorder: string; ambient: string; activeAmbient: string; Icon: LucideIcon; filterKey?: string; kind: "single"; getValue: (s: Stats) => number }
-  | { label: string; color: string; activeColor: string; accentBorder: string; activeBorder: string; ambient: string; activeAmbient: string; Icon: LucideIcon; filterKey?: string; kind: "split"; getPrimary: (s: Stats) => number; getSecondary: (s: Stats) => number; subLabel: string };
+  | {
+      label: string;
+      color: string;
+      activeColor: string;
+      accentBorder: string;
+      activeBorder: string;
+      ambient: string;
+      activeAmbient: string;
+      Icon: LucideIcon;
+      filterKey?: string;
+      kind: "single";
+      getValue: (s: Stats) => number;
+    }
+  | {
+      label: string;
+      color: string;
+      activeColor: string;
+      accentBorder: string;
+      activeBorder: string;
+      ambient: string;
+      activeAmbient: string;
+      Icon: LucideIcon;
+      filterKey?: string;
+      kind: "split";
+      getPrimary: (s: Stats) => number;
+      getSecondary: (s: Stats) => number;
+      subLabel: string;
+    };
 
 const STAT_CARDS: StatCard[] = [
   {
@@ -80,12 +106,18 @@ const STAT_CARDS: StatCard[] = [
   },
 ];
 
-export function GameStatsGrid({ stats, activeFilter, onFilter }: GameStatsGridProps) {
+export function GameStatsGrid({
+  stats,
+  activeFilter,
+  onFilter,
+}: GameStatsGridProps) {
   return (
     <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
       {STAT_CARDS.map((card) => {
-        const isActive = card.filterKey !== undefined && card.filterKey === activeFilter;
-        const isClickable = card.filterKey !== undefined && onFilter !== undefined;
+        const isActive =
+          card.filterKey !== undefined && card.filterKey === activeFilter;
+        const isClickable =
+          card.filterKey !== undefined && onFilter !== undefined;
 
         return (
           <div
@@ -94,7 +126,11 @@ export function GameStatsGrid({ stats, activeFilter, onFilter }: GameStatsGridPr
             className={cn(
               "relative overflow-hidden rounded-xl border border-l-2 bg-linear-to-br to-gray-900 p-4 transition-all duration-150",
               isActive
-                ? cn("border-gray-700 to-gray-800", card.activeAmbient, card.activeBorder)
+                ? cn(
+                    "border-gray-700 to-gray-800",
+                    card.activeAmbient,
+                    card.activeBorder,
+                  )
                 : cn("border-gray-800", card.ambient, card.accentBorder),
               isClickable && "cursor-pointer hover:border-gray-700",
             )}
@@ -111,16 +147,29 @@ export function GameStatsGrid({ stats, activeFilter, onFilter }: GameStatsGridPr
 
             {card.kind === "split" ? (
               <>
-                <p className={cn("text-3xl font-bold leading-none", isActive ? card.activeColor : card.color)}>
+                <p
+                  className={cn(
+                    "text-3xl leading-none font-bold",
+                    isActive ? card.activeColor : card.color,
+                  )}
+                >
                   {card.getPrimary(stats)}
                   <span className="text-lg font-semibold text-gray-600">
-                    {" "}/ {card.getSecondary(stats)}
+                    {" "}
+                    / {card.getSecondary(stats)}
                   </span>
                 </p>
-                <p className="mt-1.5 text-[10px] text-gray-600">{card.subLabel}</p>
+                <p className="mt-1.5 text-[10px] text-gray-600">
+                  {card.subLabel}
+                </p>
               </>
             ) : (
-              <p className={cn("text-3xl font-bold leading-none", isActive ? card.activeColor : card.color)}>
+              <p
+                className={cn(
+                  "text-3xl leading-none font-bold",
+                  isActive ? card.activeColor : card.color,
+                )}
+              >
                 {card.getValue(stats)}
               </p>
             )}

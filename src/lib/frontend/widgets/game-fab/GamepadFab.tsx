@@ -13,11 +13,9 @@ import {
   X,
 } from "lucide-react";
 import { GameStatus } from "@/src/lib/backend/backlog/domain/models";
-import { AddGameModal } from "@/src/lib/frontend/features/add-game";
 import { RandomPicker } from "@/src/lib/frontend/features/roll-random";
 import { useMoods } from "@/src/lib/frontend/features/game-actions";
-import { useGameActions } from "@/src/lib/frontend/features/game-actions";
-import { useAuthStore } from "@/src/lib/frontend/shared";
+import { useAuthStore, useGameModalStore } from "@/src/lib/frontend/shared";
 
 type Pool = "backlog" | "playing";
 
@@ -28,14 +26,13 @@ const SAT_HALF = 28; // h-14 (56px) / 2
 
 export function GamepadFab() {
   const [open, setOpen] = useState(false);
-  const [showAdd, setShowAdd] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [pickerPool, setPickerPool] = useState<Pool>("backlog");
 
   const pathname = usePathname();
   const { moods } = useMoods();
   const { user, openLoginModal } = useAuthStore();
-  const queryClient = useQueryClient();
+  const { openAdd } = useGameModalStore();
 
   const defaultAddStatus = useMemo((): GameStatus => {
     if (pathname === "/wishlist") return "interested";
@@ -43,13 +40,6 @@ export function GamepadFab() {
     if (pathname === "/playing") return "playing";
     return "backlog";
   }, [pathname]);
-
-  const { handleAdd } = useGameActions({
-    onAddSuccess: () => {
-      queryClient.invalidateQueries();
-      setShowAdd(false);
-    },
-  });
 
   const openPicker = (pool: Pool) => {
     setPickerPool(pool);
@@ -59,7 +49,7 @@ export function GamepadFab() {
 
   const handleAddClick = () => {
     if (user) {
-      setShowAdd(true);
+      openAdd(defaultAddStatus);
     } else {
       openLoginModal();
     }
@@ -233,13 +223,6 @@ export function GamepadFab() {
         )}
       </AnimatePresence>
 
-      <AddGameModal
-        isOpen={showAdd}
-        onClose={() => setShowAdd(false)}
-        onSave={handleAdd}
-        moods={moods}
-        defaultStatus={defaultAddStatus}
-      />
 
       <RandomPicker
         isOpen={showPicker}

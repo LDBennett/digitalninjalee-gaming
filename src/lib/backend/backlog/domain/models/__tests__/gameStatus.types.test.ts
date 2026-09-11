@@ -20,12 +20,18 @@ describe("createGameStatus", () => {
 });
 
 describe("canTransitionTo", () => {
-  it("allows backlog → playing", () => expect(canTransitionTo("backlog", "playing")).toBe(true));
-  it("allows playing → completed", () => expect(canTransitionTo("playing", "completed")).toBe(true));
-  it("blocks completed → backlog", () => expect(canTransitionTo("completed", "backlog")).toBe(false));
-  it("blocks completed → playing", () => expect(canTransitionTo("completed", "playing")).toBe(false));
-  it("allows dropped → backlog", () => expect(canTransitionTo("dropped", "backlog")).toBe(true));
-  it("allows main-complete → playing", () => expect(canTransitionTo("main-complete", "playing")).toBe(true));
+  it("allows backlog → playing", () =>
+    expect(canTransitionTo("backlog", "playing")).toBe(true));
+  it("allows playing → completed", () =>
+    expect(canTransitionTo("playing", "completed")).toBe(true));
+  it("blocks completed → backlog", () =>
+    expect(canTransitionTo("completed", "backlog")).toBe(false));
+  it("blocks completed → playing", () =>
+    expect(canTransitionTo("completed", "playing")).toBe(false));
+  it("allows dropped → backlog", () =>
+    expect(canTransitionTo("dropped", "backlog")).toBe(true));
+  it("allows main-complete → playing", () =>
+    expect(canTransitionTo("main-complete", "playing")).toBe(true));
 
   it("all declared transitions are actually allowed", () => {
     for (const [from, targets] of Object.entries(VALID_TRANSITIONS)) {

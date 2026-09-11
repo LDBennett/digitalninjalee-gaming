@@ -9,11 +9,21 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   fullWidth?: boolean;
 }
 
-export function Input({ label, error, fullWidth, className, id, ...rest }: InputProps) {
+export function Input({
+  label,
+  error,
+  fullWidth,
+  className,
+  id,
+  ...rest
+}: InputProps) {
   return (
     <div className={cn(fullWidth && "w-full")}>
       {label && (
-        <label htmlFor={id} className="mb-1 block text-xs font-medium text-gray-400">
+        <label
+          htmlFor={id}
+          className="mb-1 block text-xs font-medium text-gray-400"
+        >
           {label}
         </label>
       )}
@@ -21,7 +31,7 @@ export function Input({ label, error, fullWidth, className, id, ...rest }: Input
         id={id}
         className={cn(
           "rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white",
-          "placeholder-gray-500 focus:border-brand-600 focus:outline-none",
+          "focus:border-brand-600 placeholder-gray-500 focus:outline-none",
           fullWidth && "w-full",
           error && "border-red-600",
           className,

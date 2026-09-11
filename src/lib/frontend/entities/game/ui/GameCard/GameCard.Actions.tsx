@@ -1,6 +1,10 @@
 "use client";
 
-import { ListChevronsDownUp, ListChevronsUpDown, NotebookPen } from "lucide-react";
+import {
+  ListChevronsDownUp,
+  ListChevronsUpDown,
+  NotebookPen,
+} from "lucide-react";
 
 interface Props {
   hasDescription: boolean;
@@ -28,7 +32,11 @@ export function GameCardActions({
           onClick={onToggleDesc}
           className="flex items-center gap-2 rounded bg-gray-800/90 px-2 py-1 text-xs text-white transition-colors hover:text-gray-300"
         >
-          {showDesc ? <ListChevronsDownUp size={16} /> : <ListChevronsUpDown size={16} />}
+          {showDesc ? (
+            <ListChevronsDownUp size={16} />
+          ) : (
+            <ListChevronsUpDown size={16} />
+          )}
           Description
         </button>
       )}

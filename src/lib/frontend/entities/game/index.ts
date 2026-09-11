@@ -8,3 +8,5 @@ export { PlatformIcon } from "./ui/badges/PlatformIcon";
 export { PlayGoals } from "./ui/badges/PlayGoals";
 export { PriorityPill } from "./ui/badges/PriorityPill";
 export { GameStatsGrid } from "./ui/GameStatsGrid";
+export { useGameQuery } from "./hooks/useGameQuery";
+export type { UseGameQueryOptions } from "./hooks/useGameQuery";

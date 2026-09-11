@@ -49,7 +49,10 @@ export function DashboardListQueue({ games, heading }: Props) {
                     {game.title}
                   </p>
                   <div className="mt-0.5">
-                    <PlatformIcon platform={game.platform} className="h-4 w-4" />
+                    <PlatformIcon
+                      platform={game.platform}
+                      className="h-4 w-4"
+                    />
                   </div>
                 </div>
 

@@ -13,7 +13,8 @@ describe("createPriorityScore", () => {
 
   it("rejects 0", () => expect(createPriorityScore(0).success).toBe(false));
   it("rejects 101", () => expect(createPriorityScore(101).success).toBe(false));
-  it("rejects non-integer", () => expect(createPriorityScore(1.5).success).toBe(false));
+  it("rejects non-integer", () =>
+    expect(createPriorityScore(1.5).success).toBe(false));
 });
 
 describe("adjustPriorityScore", () => {

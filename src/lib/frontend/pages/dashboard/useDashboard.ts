@@ -4,9 +4,9 @@ import { useState, useMemo } from "react";
 import {
   useMoods,
   useGameActions,
-  useGameQuery,
   useRecentActivity,
 } from "@/src/lib/frontend/features";
+import { useGameQuery } from "@/src/lib/frontend/entities/game";
 import { useAuthStore } from "@/src/lib/frontend/shared";
 import {
   deriveStats,

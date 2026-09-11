@@ -32,10 +32,12 @@ describe("err", () => {
 
 describe("isOk", () => {
   it("returns true for an ok result", () => expect(isOk(ok(1))).toBe(true));
-  it("returns false for an err result", () => expect(isOk(err("e"))).toBe(false));
+  it("returns false for an err result", () =>
+    expect(isOk(err("e"))).toBe(false));
 });
 
 describe("isErr", () => {
-  it("returns true for an err result", () => expect(isErr(err("e"))).toBe(true));
+  it("returns true for an err result", () =>
+    expect(isErr(err("e"))).toBe(true));
   it("returns false for an ok result", () => expect(isErr(ok(1))).toBe(false));
 });

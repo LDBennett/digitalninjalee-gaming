@@ -24,7 +24,9 @@ describe("GatedElement", () => {
     // Children still appear (behind the overlay)
     expect(screen.getByRole("button", { name: "Edit" })).toBeInTheDocument();
     // Popover is not open yet
-    expect(screen.queryByText("This action requires you to be signed in")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("This action requires you to be signed in"),
+    ).not.toBeInTheDocument();
   });
 
   it("shows the sign-in popover when the overlay is clicked", async () => {

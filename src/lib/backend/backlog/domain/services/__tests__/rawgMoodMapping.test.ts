@@ -18,12 +18,18 @@ describe("mapRawgToMoods", () => {
   });
 
   it("maps role-playing-games-rpg to rpg", () => {
-    const moods = mapRawgToMoods({ genreSlugs: ["role-playing-games-rpg"], tagSlugs: [] });
+    const moods = mapRawgToMoods({
+      genreSlugs: ["role-playing-games-rpg"],
+      tagSlugs: [],
+    });
     expect(moods).toContain("rpg");
   });
 
   it("maps massively-multiplayer genre to online and multiplayer", () => {
-    const moods = mapRawgToMoods({ genreSlugs: ["massively-multiplayer"], tagSlugs: [] });
+    const moods = mapRawgToMoods({
+      genreSlugs: ["massively-multiplayer"],
+      tagSlugs: [],
+    });
     expect(moods).toContain("online");
     expect(moods).toContain("multiplayer");
   });
@@ -45,7 +51,10 @@ describe("mapRawgToMoods", () => {
   });
 
   it("ignores unknown genre slugs", () => {
-    const moods = mapRawgToMoods({ genreSlugs: ["unknown-genre"], tagSlugs: [] });
+    const moods = mapRawgToMoods({
+      genreSlugs: ["unknown-genre"],
+      tagSlugs: [],
+    });
     expect(moods).toHaveLength(0);
   });
 

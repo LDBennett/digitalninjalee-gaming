@@ -33,7 +33,12 @@ export function LoginModal() {
   };
 
   return (
-    <Modal isOpen={showLoginModal} onClose={closeLoginModal} title="Sign in" maxWidth="max-w-xs">
+    <Modal
+      isOpen={showLoginModal}
+      onClose={closeLoginModal}
+      title="Sign in"
+      maxWidth="max-w-xs"
+    >
       <div className="p-5">
         <p className="mb-4 text-xs text-gray-500">
           Game Vault is personal — sign in to make changes.

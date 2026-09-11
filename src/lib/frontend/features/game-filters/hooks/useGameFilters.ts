@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { GameDto, Platform, PlayGoal } from "@/src/lib/backend/backlog/domain/models";
+import {
+  GameDto,
+  Platform,
+  PlayGoal,
+} from "@/src/lib/backend/backlog/domain/models";
 import {
   filterByMood,
   filterByPlayGoal,

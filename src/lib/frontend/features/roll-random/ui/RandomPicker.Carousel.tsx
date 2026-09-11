@@ -133,7 +133,10 @@ export function GameCarousel({
               {displayGame.title}
             </p>
             <div className="mt-1">
-              <PlatformIcon platform={displayGame.platform} className="h-4 w-4" />
+              <PlatformIcon
+                platform={displayGame.platform}
+                className="h-4 w-4"
+              />
             </div>
           </div>
         </motion.div>

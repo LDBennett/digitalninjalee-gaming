@@ -84,7 +84,9 @@ describe("matchGameByTitle", () => {
   });
 
   it("does not match a different game with a longer shared word prefix", () => {
-    expect(matchGameByTitle(games, "The Witcher 3: Wild Hunt Photo Mode")).toBeNull();
+    expect(
+      matchGameByTitle(games, "The Witcher 3: Wild Hunt Photo Mode"),
+    ).toBeNull();
   });
 
   it("returns null when nothing matches", () => {
@@ -134,14 +136,22 @@ describe("collectDistinctGameNames", () => {
 describe("findExtendableSession", () => {
   it("finds an open session under a variant spelling", () => {
     const sessions = [
-      makeSession({ id: "a", game_name: "ELDEN RING™", last_seen_at: minutesAgo(5) }),
+      makeSession({
+        id: "a",
+        game_name: "ELDEN RING™",
+        last_seen_at: minutesAgo(5),
+      }),
     ];
     expect(findExtendableSession(sessions, "ELDEN RING", NOW)?.id).toBe("a");
   });
 
   it("ignores sessions outside the merge gap", () => {
     const sessions = [
-      makeSession({ id: "a", game_name: "ELDEN RING™", last_seen_at: minutesAgo(45) }),
+      makeSession({
+        id: "a",
+        game_name: "ELDEN RING™",
+        last_seen_at: minutesAgo(45),
+      }),
     ];
     expect(findExtendableSession(sessions, "ELDEN RING", NOW)).toBeNull();
   });
@@ -163,8 +173,16 @@ describe("dedupeSessionsByGame", () => {
   it("keeps only the latest session per game", () => {
     const sessions = [
       makeSession({ id: "a", game_name: "Hades", last_seen_at: minutesAgo(5) }),
-      makeSession({ id: "b", game_name: "Elden Ring", last_seen_at: minutesAgo(30) }),
-      makeSession({ id: "c", game_name: "Hades", last_seen_at: minutesAgo(90) }),
+      makeSession({
+        id: "b",
+        game_name: "Elden Ring",
+        last_seen_at: minutesAgo(30),
+      }),
+      makeSession({
+        id: "c",
+        game_name: "Hades",
+        last_seen_at: minutesAgo(90),
+      }),
     ];
     const result = dedupeSessionsByGame(sessions);
     expect(result.map((s) => s.id)).toEqual(["a", "b"]);

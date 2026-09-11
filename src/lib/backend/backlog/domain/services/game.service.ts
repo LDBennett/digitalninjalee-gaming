@@ -6,7 +6,10 @@ import {
   ReplayStatus,
   canTransitionTo,
 } from "@/src/lib/backend/backlog/domain/models/gameStatus.types";
-import { PriorityScore, adjustPriorityScore } from "@/src/lib/backend/backlog/domain/models/priorityScore.types";
+import {
+  PriorityScore,
+  adjustPriorityScore,
+} from "@/src/lib/backend/backlog/domain/models/priorityScore.types";
 import { PlayGoal } from "@/src/lib/backend/backlog/domain/models/playGoal.types";
 import { MoodState } from "@/src/lib/backend/backlog/domain/models/mood.types";
 

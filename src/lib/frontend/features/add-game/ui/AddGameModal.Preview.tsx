@@ -7,7 +7,13 @@ interface SelectedGamePreviewProps {
 }
 
 export function SelectedGamePreview({ form }: SelectedGamePreviewProps) {
-  const { backgroundUrl, coverArtUrl, enrichLoading, enrichLoaded, clearCoverArt: onClear } = form;
+  const {
+    backgroundUrl,
+    coverArtUrl,
+    enrichLoading,
+    enrichLoaded,
+    clearCoverArt: onClear,
+  } = form;
   return (
     <div className="flex items-center gap-3 rounded-lg bg-gray-800 p-2">
       <img

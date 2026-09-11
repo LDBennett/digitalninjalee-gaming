@@ -24,12 +24,7 @@ interface Props {
   };
 }
 
-export function RecentPlaysList({
-  plays,
-  heading,
-  games,
-  pagination,
-}: Props) {
+export function RecentPlaysList({ plays, heading, games, pagination }: Props) {
   const { session } = useAuthStore();
   const [showLog, setShowLog] = useState(false);
 

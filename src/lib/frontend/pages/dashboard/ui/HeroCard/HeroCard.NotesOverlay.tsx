@@ -42,7 +42,7 @@ export function HeroCardNotesOverlay({
           {note ? (
             <p className="text-sm leading-relaxed text-gray-300">{note}</p>
           ) : (
-            <p className="text-sm italic text-gray-500">
+            <p className="text-sm text-gray-500 italic">
               No notes for this game.
             </p>
           )}

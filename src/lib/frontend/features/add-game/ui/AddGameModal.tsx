@@ -117,7 +117,7 @@ export function AddGameModal({
               variant="brand"
               size="md"
               disabled={form.saving || !form.title.trim()}
-              className="font-medium px-5"
+              className="px-5 font-medium"
             >
               {form.saving ? "Saving…" : editGame ? "Update" : "Add Game"}
             </Button>

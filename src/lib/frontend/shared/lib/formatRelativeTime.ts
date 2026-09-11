@@ -7,7 +7,10 @@ const WEEK = 7 * DAY;
  * Compact relative time for activity displays: "just now", "34m ago",
  * "2h ago", "3d ago", "2w ago". Falls back to a short date beyond ~8 weeks.
  */
-export function formatRelativeTime(iso: string, now: Date = new Date()): string {
+export function formatRelativeTime(
+  iso: string,
+  now: Date = new Date(),
+): string {
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return "";
 

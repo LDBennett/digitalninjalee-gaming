@@ -49,7 +49,7 @@ export function DashboardHeroCard({ playingGames }: Props) {
     setNotesOpen(false);
   }, [idx]);
 
-  const coverImage = game ? (game.background_url || game.cover_art_url) : null;
+  const coverImage = game ? game.background_url || game.cover_art_url : null;
 
   return (
     <div className="relative h-100 overflow-hidden rounded-2xl border border-gray-800 lg:h-full lg:min-h-90">

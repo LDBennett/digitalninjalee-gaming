@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { LoginModal, SignOutConfirmModal } from "@/src/lib/frontend/features/auth";
+import {
+  LoginModal,
+  SignOutConfirmModal,
+} from "@/src/lib/frontend/features/auth";
+import { GameModal } from "@/src/lib/frontend/widgets/game-modal";
 import { initAuth } from "@/src/lib/frontend/shared";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -27,6 +31,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
       {children}
       <LoginModal />
       <SignOutConfirmModal />
+      <GameModal />
     </QueryClientProvider>
   );
 }

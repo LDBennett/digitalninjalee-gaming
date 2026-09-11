@@ -46,7 +46,12 @@ interface GameFiltersPanelProps {
   children?: React.ReactNode;
 }
 
-export function GameFiltersPanel({ filters, moods, className, children }: GameFiltersPanelProps) {
+export function GameFiltersPanel({
+  filters,
+  moods,
+  className,
+  children,
+}: GameFiltersPanelProps) {
   const {
     moodFilter,
     setMoodFilter,
@@ -58,13 +63,16 @@ export function GameFiltersPanel({ filters, moods, className, children }: GameFi
     setPlayGoalFilter,
   } = filters;
 
-  const showPlayGoal = playGoalFilter !== undefined && setPlayGoalFilter !== undefined;
+  const showPlayGoal =
+    playGoalFilter !== undefined && setPlayGoalFilter !== undefined;
 
   return (
     <div
       className={`space-y-4 rounded-xl border border-gray-800 bg-gray-900/60 p-4 ${className ?? ""}`}
     >
-      <div className={`grid grid-cols-1 gap-3 ${showPlayGoal ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+      <div
+        className={`grid grid-cols-1 gap-3 ${showPlayGoal ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}
+      >
         <div>
           <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
             Sort By
@@ -122,7 +130,9 @@ export function GameFiltersPanel({ filters, moods, className, children }: GameFi
             </label>
             <Select
               value={playGoalFilter ?? ""}
-              onChange={(e) => setPlayGoalFilter((e.target.value as PlayGoal) || null)}
+              onChange={(e) =>
+                setPlayGoalFilter((e.target.value as PlayGoal) || null)
+              }
               fullWidth
             >
               <option value="">All Play Goals</option>

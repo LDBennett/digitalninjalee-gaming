@@ -90,7 +90,7 @@ export function Navigation() {
       </header>
 
       {/* Desktop sidebar — fixed icon rail */}
-      <nav className="sticky top-4 z-10 ml-4 mt-4 mb-4 hidden h-[90vh] w-14 shrink-0 flex-col self-start overflow-visible rounded-2xl border border-gray-800 bg-gray-900/95 py-4 shadow-2xl shadow-black/60 backdrop-blur-sm md:flex">
+      <nav className="sticky top-4 z-10 mt-4 mb-4 ml-4 hidden h-[90vh] w-14 shrink-0 flex-col self-start overflow-visible rounded-2xl border border-gray-800 bg-gray-900/95 py-4 shadow-2xl shadow-black/60 backdrop-blur-sm md:flex">
         {/* Logo */}
         <div className="mb-6 flex justify-center">
           <img src="/logos/dnl-logo--white.png" alt="DNL" className="h-6 w-8" />
@@ -101,7 +101,10 @@ export function Navigation() {
           {NAV_ITEMS.map(({ href, label, Icon }) => {
             const active = isActivePath(href, pathname);
             return (
-              <div key={href} className="group relative flex w-full justify-center">
+              <div
+                key={href}
+                className="group relative flex w-full justify-center"
+              >
                 <Link
                   href={href}
                   className="relative flex items-center justify-center rounded-lg p-2.5"
@@ -110,8 +113,15 @@ export function Navigation() {
                     <motion.div
                       layoutId="desktop-pill"
                       className="bg-brand-900/50 border-brand-800/50 absolute inset-0 rounded-lg border"
-                      style={{ boxShadow: "0 0 12px 0 rgba(var(--color-brand-800), 0.35)" }}
-                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      style={{
+                        boxShadow:
+                          "0 0 12px 0 rgba(var(--color-brand-800), 0.35)",
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 32,
+                      }}
                     />
                   )}
                   <motion.span
@@ -123,7 +133,7 @@ export function Navigation() {
                   </motion.span>
                 </Link>
                 {/* Tooltip */}
-                <span className="pointer-events-none absolute top-1/2 left-full z-999999 ml-3 -translate-y-1/2 whitespace-nowrap rounded-md border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+                <span className="pointer-events-none absolute top-1/2 left-full z-999999 ml-3 -translate-y-1/2 rounded-md border border-gray-700 bg-gray-800 px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100">
                   {label}
                 </span>
               </div>

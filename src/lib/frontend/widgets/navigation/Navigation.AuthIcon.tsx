@@ -12,7 +12,10 @@ export function NavigationAuthIcon() {
   useEffect(() => {
     if (!showPanel) return;
     const handler = (e: PointerEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
         setShowPanel(false);
       }
     };
@@ -50,13 +53,18 @@ export function NavigationAuthIcon() {
 
       {showPanel && (
         <button
-          onClick={() => { openLoginModal(); setShowPanel(false); }}
+          onClick={() => {
+            openLoginModal();
+            setShowPanel(false);
+          }}
           className="absolute top-12 right-0 z-50 flex cursor-pointer items-center gap-3 rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 text-left shadow-xl transition-colors hover:bg-gray-700"
         >
           <Ghost size={18} className="shrink-0 text-gray-400" />
           <div>
-            <p className="whitespace-nowrap text-sm font-semibold text-white">Ghost Mode</p>
-            <p className="flex items-center gap-1 whitespace-nowrap text-xs text-brand-400">
+            <p className="text-sm font-semibold whitespace-nowrap text-white">
+              Ghost Mode
+            </p>
+            <p className="text-brand-400 flex items-center gap-1 text-xs whitespace-nowrap">
               <LogIn size={11} /> Click to Sign In
             </p>
           </div>

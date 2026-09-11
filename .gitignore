@@ -72,10 +72,15 @@ Desktop.ini
 # Optional next-env
 .next-env.d.ts
 
-.claude
 
+# Agents
 CLAUDE.md
 docs
 session_summary.md
+AGENTS.md
+.agents
+.claude
+scratch
+scripts/peer-review.js
 
 *.tsbuildinfo

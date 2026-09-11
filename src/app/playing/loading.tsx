@@ -12,7 +12,10 @@ export default function PlayingLoading() {
       {/* Tabs: Playing / Ongoing / Replaying */}
       <div className="mb-5 flex gap-1">
         {["Playing", "Ongoing", "Replaying"].map((label) => (
-          <div key={label} className="h-9 w-24 animate-pulse rounded-lg bg-gray-800" />
+          <div
+            key={label}
+            className="h-9 w-24 animate-pulse rounded-lg bg-gray-800"
+          />
         ))}
       </div>
 

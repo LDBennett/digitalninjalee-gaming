@@ -65,7 +65,9 @@ export function filterByTitle(games: GameDto[], query: string): GameDto[] {
 
 export function getTopWishlist(games: GameDto[], limit = 5): GameDto[] {
   return games
-    .filter((g) => ["interested", "pre-ordered", "keep-an-eye-on"].includes(g.status))
+    .filter((g) =>
+      ["interested", "pre-ordered", "keep-an-eye-on"].includes(g.status),
+    )
     .sort((a, b) => b.priority_score - a.priority_score)
     .slice(0, limit);
 }

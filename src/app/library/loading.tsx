@@ -11,7 +11,10 @@ export default function LibraryLoading() {
       {/* Tabs: All / Completed / Main-Complete / Ongoing / Dropped */}
       <div className="mb-5 flex gap-1">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-9 w-20 animate-pulse rounded-lg bg-gray-800" />
+          <div
+            key={i}
+            className="h-9 w-20 animate-pulse rounded-lg bg-gray-800"
+          />
         ))}
       </div>
 

@@ -37,7 +37,12 @@ export function LogPlayModal({ isOpen, onClose, games }: Props) {
     : [];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Log play" maxWidth="max-w-md">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Log play"
+      maxWidth="max-w-md"
+    >
       <div className="p-5">
         <div className="mb-3 flex flex-wrap gap-1.5">
           {PLATFORMS.map((p) => (

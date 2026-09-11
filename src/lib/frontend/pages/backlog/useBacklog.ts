@@ -4,10 +4,10 @@ import { useState, useEffect, useMemo } from "react";
 import {
   useMoods,
   useGameEditActions,
-  useGameQuery,
   useGameFilters,
   useGamePriority,
 } from "@/src/lib/frontend/features";
+import { useGameQuery } from "@/src/lib/frontend/entities/game";
 import { useAuthStore, useClientPagination } from "@/src/lib/frontend/shared";
 
 export function useBacklog() {

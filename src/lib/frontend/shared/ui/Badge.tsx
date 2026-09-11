@@ -11,7 +11,15 @@ export interface BadgeProps {
   title?: string;
 }
 
-export function Badge({ bg, text, children, className, onClick, role, title }: BadgeProps) {
+export function Badge({
+  bg,
+  text,
+  children,
+  className,
+  onClick,
+  role,
+  title,
+}: BadgeProps) {
   const baseClasses = cn(
     "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium",
     bg,
@@ -22,7 +30,13 @@ export function Badge({ bg, text, children, className, onClick, role, title }: B
 
   if (onClick) {
     return (
-      <button type="button" className={baseClasses} onClick={onClick} role={role} title={title}>
+      <button
+        type="button"
+        className={baseClasses}
+        onClick={onClick}
+        role={role}
+        title={title}
+      >
         {children}
       </button>
     );
