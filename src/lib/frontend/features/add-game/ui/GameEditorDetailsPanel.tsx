@@ -14,6 +14,7 @@ import {
 } from "@/src/lib/backend/backlog/domain/models";
 import { Select } from "@/src/lib/frontend/shared";
 import { useAddGameForm } from "../hooks/useAddGameForm";
+import { GameEditorDetailsPanelPacingSection } from "./GameEditorDetailsPanel.PacingSection";
 
 interface GameEditorDetailsPanelProps {
   form: ReturnType<typeof useAddGameForm>;
@@ -109,6 +110,9 @@ export function GameEditorDetailsPanel({
         </Select>
       )}
 
+      {/* Pacing & Time to Beat */}
+      <GameEditorDetailsPanelPacingSection form={form} />
+
       <div>
         <label className="mb-1 block text-xs font-medium text-gray-400">
           Description
@@ -117,7 +121,7 @@ export function GameEditorDetailsPanel({
           value={gameDescription}
           onChange={(e) => setGameDescription(e.target.value)}
           placeholder="Game overview or summary..."
-          rows={7}
+          rows={5}
           className="focus:border-brand-600 w-full resize-none rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none"
         />
       </div>

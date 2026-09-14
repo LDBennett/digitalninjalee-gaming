@@ -61,10 +61,10 @@ export function useGameActions(options: GameActionsOptions = {}) {
   });
 
   return {
-    handleAdd: (data: object) => addMutation.mutate(data),
+    handleAdd: (data: object) => addMutation.mutateAsync(data),
     handleStatusChange: (id: string, status: GameStatus) =>
       statusMutation.mutate({ id, status }),
-    handleEdit: (id: string, data: object) => editMutation.mutate({ id, data }),
+    handleEdit: (id: string, data: object) => editMutation.mutateAsync({ id, data }),
     handleDelete: (id: string) => deleteMutation.mutate(id),
     handlePriorityChange: (id: string, newScore: number) =>
       priorityMutation.mutate({ id, newScore }),

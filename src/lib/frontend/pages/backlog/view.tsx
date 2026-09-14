@@ -17,9 +17,7 @@ export function BacklogView() {
   const {
     filtered,
     paginated,
-    page,
-    setPage,
-    totalPages,
+    page, setPage, totalPages,
     moods,
     moodFilter,
     setMoodFilter,
@@ -29,6 +27,8 @@ export function BacklogView() {
     setPlatformFilter,
     playGoalFilter,
     setPlayGoalFilter,
+    durationFilter,
+    setDurationFilter,
     searchQuery,
     setSearchQuery,
     loading,
@@ -48,6 +48,7 @@ export function BacklogView() {
     moodFilter !== null,
     platformFilter !== null,
     playGoalFilter !== null,
+    durationFilter !== null,
     sortBy !== "priority-desc",
     replayOnly,
   ].filter(Boolean).length;
@@ -104,6 +105,8 @@ export function BacklogView() {
             setPlatformFilter,
             playGoalFilter,
             setPlayGoalFilter,
+            durationFilter,
+            setDurationFilter,
           }}
           moods={moods}
           className="mb-5"

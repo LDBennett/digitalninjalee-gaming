@@ -9,6 +9,7 @@ import {
 import { useAddGameForm } from "../hooks/useAddGameForm";
 import { MoodSelector } from "./AddGameFormFields.MoodSelector";
 import { PlayGoalsField } from "./AddGameFormFields.PlayGoals";
+import { GameEditorGoalsPanelRoadmapSection } from "./GameEditorGoalsPanel.RoadmapSection";
 
 interface GameEditorGoalsPanelProps {
   form: ReturnType<typeof useAddGameForm>;
@@ -103,7 +104,15 @@ export function GameEditorGoalsPanel({
         </div>
       </div>
 
-      {showPlayGoals && <PlayGoalsField form={form} />}
+      {showPlayGoals && (
+        <>
+          <PlayGoalsField form={form} />
+          {(form.selectedPlayGoals.includes("completionist") ||
+            Boolean(form.completionRoadmap)) && (
+            <GameEditorGoalsPanelRoadmapSection form={form} />
+          )}
+        </>
+      )}
 
       <MoodSelector
         moods={moods}

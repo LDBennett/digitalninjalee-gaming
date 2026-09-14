@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Clock, Trophy } from "lucide-react";
 import { GameDto, scoreToTier } from "@/src/lib/backend/backlog/domain/models";
 import { GatedElement } from "@/src/lib/frontend/shared";
 import { RatingStars } from "./GameCard.RatingStars";
@@ -43,6 +44,8 @@ export function GameCard({
     (game.rating !== null && game.rating !== undefined) ||
     Boolean(game.replay_status) ||
     (game.play_goals && game.play_goals.length > 0) ||
+    Boolean(game.time_to_beat?.main) ||
+    Boolean(game.completion_roadmap?.difficulty) ||
     (showPriority && showStatusBadge);
 
   return (
@@ -137,6 +140,20 @@ export function GameCard({
               )}
               <GameReplayBadge replayStatus={game.replay_status} />
               <PlayGoals playGoals={game.play_goals} />
+
+              {game.time_to_beat?.main && (
+                <span className="flex items-center gap-1 rounded-full border border-sky-500/25 bg-sky-950/40 px-2 py-0.5 text-[11px] font-medium text-sky-300">
+                  <Clock size={10} className="shrink-0 text-sky-400" />
+                  <span>{game.time_to_beat.main}h</span>
+                </span>
+              )}
+
+              {game.completion_roadmap?.difficulty && (
+                <span className="flex items-center gap-1 rounded-full border border-amber-500/25 bg-amber-950/40 px-2 py-0.5 text-[11px] font-medium text-amber-300">
+                  <Trophy size={10} className="shrink-0 text-amber-400" />
+                  <span>{game.completion_roadmap.difficulty}</span>
+                </span>
+              )}
 
               <GameCardMoodList moods={moods} />
             </div>

@@ -82,3 +82,29 @@ export function getLastCompleted(games: GameDto[], limit = 5): GameDto[] {
     })
     .slice(0, limit);
 }
+
+export type DurationFilter = "short" | "medium" | "long" | "epic";
+
+export function filterByDuration(
+  games: GameDto[],
+  durationFilter: DurationFilter | null,
+): GameDto[] {
+  if (!durationFilter) return games;
+  return games.filter((g) => {
+    const hours = g.time_to_beat?.main;
+    if (hours === null || hours === undefined) return false;
+    switch (durationFilter) {
+      case "short":
+        return hours < 10;
+      case "medium":
+        return hours >= 10 && hours <= 25;
+      case "long":
+        return hours > 25 && hours <= 50;
+      case "epic":
+        return hours > 50;
+      default:
+        return true;
+    }
+  });
+}
+

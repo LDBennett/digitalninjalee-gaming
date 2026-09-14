@@ -1,23 +1,17 @@
 "use client";
 
 import {
-  Platform,
-  PLATFORM_LABELS,
   PlayGoal,
   PLAY_GOALS,
   PLAY_GOAL_LABELS,
+  MoodDto,
 } from "@/src/lib/backend/backlog/domain/models";
-import { MoodDto } from "@/src/lib/backend/backlog/domain/models";
+import { type DurationFilter } from "@/src/lib/backend/backlog/domain/services";
 import { Select } from "@/src/lib/frontend/shared";
 import { MoodFilter } from "./MoodFilter";
 import { useGameFilters } from "../hooks/useGameFilters";
-
-const PLATFORM_FILTER_OPTIONS: { value: Platform; label: string }[] = [
-  { value: "pc", label: PLATFORM_LABELS.pc },
-  { value: "xbox", label: PLATFORM_LABELS.xbox },
-  { value: "playstation", label: PLATFORM_LABELS.playstation },
-  { value: "switch", label: PLATFORM_LABELS.switch },
-];
+import { GameFiltersPanelDurationSelect } from "./GameFiltersPanel.DurationSelect";
+import { GameFiltersPanelPlatformButtons } from "./GameFiltersPanel.PlatformButtons";
 
 type SortOption = ReturnType<typeof useGameFilters>["sortBy"];
 
@@ -40,6 +34,8 @@ interface GameFiltersPanelProps {
   > & {
     playGoalFilter?: PlayGoal | null;
     setPlayGoalFilter?: (val: PlayGoal | null) => void;
+    durationFilter?: DurationFilter | null;
+    setDurationFilter?: (val: DurationFilter | null) => void;
   };
   moods: MoodDto[];
   className?: string;
@@ -61,18 +57,20 @@ export function GameFiltersPanel({
     setPlatformFilter,
     playGoalFilter,
     setPlayGoalFilter,
+    durationFilter,
+    setDurationFilter,
   } = filters;
 
   const showPlayGoal =
     playGoalFilter !== undefined && setPlayGoalFilter !== undefined;
+  const showDuration =
+    durationFilter !== undefined && setDurationFilter !== undefined;
 
   return (
     <div
       className={`space-y-4 rounded-xl border border-gray-800 bg-gray-900/60 p-4 ${className ?? ""}`}
     >
-      <div
-        className={`grid grid-cols-1 gap-3 ${showPlayGoal ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}
-      >
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
             Sort By
@@ -90,38 +88,10 @@ export function GameFiltersPanel({
           </Select>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-xs font-medium tracking-wide text-gray-400 uppercase">
-            Platform
-          </label>
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              onClick={() => setPlatformFilter(null)}
-              className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
-                platformFilter === null
-                  ? "bg-brand-700 text-white"
-                  : "bg-gray-800 text-gray-400 hover:text-white"
-              }`}
-            >
-              All
-            </button>
-            {PLATFORM_FILTER_OPTIONS.map((p) => (
-              <button
-                key={p.value}
-                onClick={() =>
-                  setPlatformFilter(platformFilter === p.value ? null : p.value)
-                }
-                className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
-                  platformFilter === p.value
-                    ? "bg-brand-700 text-white"
-                    : "bg-gray-800 text-gray-400 hover:text-white"
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <GameFiltersPanelPlatformButtons
+          platformFilter={platformFilter}
+          onSelectPlatform={setPlatformFilter}
+        />
 
         {showPlayGoal && (
           <div>
@@ -143,6 +113,13 @@ export function GameFiltersPanel({
               ))}
             </Select>
           </div>
+        )}
+
+        {showDuration && (
+          <GameFiltersPanelDurationSelect
+            value={durationFilter}
+            onChange={setDurationFilter}
+          />
         )}
       </div>
 

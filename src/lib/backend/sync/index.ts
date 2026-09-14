@@ -15,3 +15,6 @@ export {
   fetchIgdbGameDataByTitle,
   createIgdbClient,
 } from "./igdb.adapter";
+export { fetchHltbPlaytimes } from "./hltb.adapter";
+export { extractGuideRoadmap } from "./guideExtractor.adapter";
+

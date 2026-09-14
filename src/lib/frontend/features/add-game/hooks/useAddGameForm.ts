@@ -79,35 +79,74 @@ export function useAddGameForm({
   const doSave = async () => {
     if (!state.title.trim()) return false;
     state.setSaving(true);
-    await onSave({
-      title: state.title.trim(),
-      platform: state.platform,
-      status: state.status,
-      priority_score: state.priorityScore,
-      background_url: state.backgroundUrl.trim() || null,
-      cover_art_url: state.coverArtUrl.trim() || null,
-      game_description: state.gameDescription.trim() || null,
-      personal_note: state.personalNote.trim() || null,
-      rating: state.rating,
-      rawg_id: null,
-      igdb_id: state.igdbId,
-      mood_ids: state.selectedMoods,
-      replay_status: state.replayStatus,
-      play_goals: state.selectedPlayGoals,
-    });
-    state.setSaving(false);
-    return true;
+    try {
+      await onSave({
+        title: state.title.trim(),
+        platform: state.platform,
+        status: state.status,
+        priority_score: state.priorityScore,
+        background_url: state.backgroundUrl.trim() || null,
+        cover_art_url: state.coverArtUrl.trim() || null,
+        game_description: state.gameDescription.trim() || null,
+        personal_note: state.personalNote.trim() || null,
+        rating: state.rating,
+        rawg_id: null,
+        igdb_id: state.igdbId,
+        mood_ids: state.selectedMoods,
+        replay_status: state.replayStatus,
+        play_goals: state.selectedPlayGoals,
+        time_to_beat: state.timeToBeat,
+        completion_roadmap: state.completionRoadmap,
+      });
+      return true;
+    } catch {
+      return false;
+    } finally {
+      state.setSaving(false);
+    }
+  };
+
+  const handleExtractGuide = async (url: string) => {
+    if (!url.trim()) return;
+    state.setIsExtractingGuide(true);
+    state.setExtractError(null);
+
+    try {
+      const res = await fetch("/api/guides/extract", {
+        method: "POST",
+        headers: {
+          ...authHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url: url.trim() }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        state.setExtractError(data.error || "Failed to extract guide");
+        return;
+      }
+
+      if (data.roadmap) {
+        state.setCompletionRoadmap(data.roadmap);
+        state.setIsManualRoadmapDirty(true);
+      }
+    } catch (err) {
+      state.setExtractError(
+        err instanceof Error ? err.message : "Failed to extract guide",
+      );
+    } finally {
+      state.setIsExtractingGuide(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const saved = await doSave();
-    if (saved && !editGame) onClose();
+    if ((await doSave()) && !editGame) onClose();
   };
 
   const handleSubmitAndAdd = async () => {
-    const saved = await doSave();
-    if (saved) resetForm();
+    if (await doSave()) resetForm();
   };
 
   const clearCoverArt = () => {
@@ -121,6 +160,7 @@ export function useAddGameForm({
   return {
     ...state,
     handleIgdbSelect,
+    handleExtractGuide,
     toggleMood,
     togglePlayGoal,
     handleSubmit,

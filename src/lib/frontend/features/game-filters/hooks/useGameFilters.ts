@@ -10,6 +10,8 @@ import {
   filterByMood,
   filterByPlayGoal,
   filterByTitle,
+  filterByDuration,
+  type DurationFilter,
 } from "@/src/lib/backend/backlog/domain/services";
 
 export type SortOption =
@@ -24,11 +26,14 @@ export function useGameFilters(games: GameDto[]) {
   const [sortBy, setSortBy] = useState<SortOption>("priority-desc");
   const [platformFilter, setPlatformFilter] = useState<Platform | null>(null);
   const [playGoalFilter, setPlayGoalFilter] = useState<PlayGoal | null>(null);
+  const [durationFilter, setDurationFilter] =
+    useState<DurationFilter | null>(null);
 
   const filtered = useMemo(() => {
     let result = filterByMood(games, moodFilter);
     result = filterByPlayGoal(result, playGoalFilter);
     result = filterByTitle(result, searchQuery);
+    result = filterByDuration(result, durationFilter);
     if (platformFilter)
       result = result.filter((g) => g.platform === platformFilter);
     return [...result].sort((a, b) => {
@@ -43,7 +48,15 @@ export function useGameFilters(games: GameDto[]) {
           return b.priority_score - a.priority_score;
       }
     });
-  }, [games, moodFilter, playGoalFilter, searchQuery, platformFilter, sortBy]);
+  }, [
+    games,
+    moodFilter,
+    playGoalFilter,
+    searchQuery,
+    platformFilter,
+    durationFilter,
+    sortBy,
+  ]);
 
   return {
     searchQuery,
@@ -56,6 +69,8 @@ export function useGameFilters(games: GameDto[]) {
     setPlatformFilter,
     playGoalFilter,
     setPlayGoalFilter,
+    durationFilter,
+    setDurationFilter,
     filtered,
   };
 }

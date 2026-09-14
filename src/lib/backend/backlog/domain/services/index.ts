@@ -12,6 +12,7 @@ export {
   selectRandomGame,
   buildStatusPayload,
 } from "./game.service";
+export type { DurationFilter } from "./game.queries";
 export {
   getTopPriority,
   getBacklogGames,
@@ -22,6 +23,7 @@ export {
   filterByMood,
   filterByPlayGoal,
   filterByTitle,
+  filterByDuration,
 } from "./game.queries";
 export { mapIgdbToMoods } from "./igdbMoodMapping";
 export { mapRawgToMoods } from "./rawgMoodMapping";

@@ -9,6 +9,7 @@
     "format": "prettier --write .",
     "enrich:igdb": "tsx --env-file=.env.local scripts/igdb-enrich.ts",
     "enrich:rawg": "tsx --env-file=.env.local scripts/rawg-enrich.ts",
+    "enrich:hltb": "tsx --env-file=.env.local scripts/hltb-enrich.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "review": "node scripts/peer-review.js",

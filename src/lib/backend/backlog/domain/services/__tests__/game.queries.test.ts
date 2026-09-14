@@ -3,6 +3,7 @@ import {
   filterByMood,
   filterByPlayGoal,
   filterByTitle,
+  filterByDuration,
   getTopPriority,
   getPlayingGames,
   getRecentlyPlayed,
@@ -192,5 +193,88 @@ describe("getRecentlyPlayed", () => {
       makeGame({ last_played_at: `2024-0${(i % 9) + 1}-01T00:00:00Z` }),
     );
     expect(getRecentlyPlayed(games, 3)).toHaveLength(3);
+  });
+});
+
+describe("filterByDuration", () => {
+  const shortGame = makeGame({
+    title: "Short",
+    time_to_beat: {
+      schema_version: 1,
+      main: 8,
+      extra: 12,
+      completionist: 15,
+      hltb_id: 1,
+      last_synced_at: new Date().toISOString(),
+    },
+  });
+  const mediumGame = makeGame({
+    title: "Medium",
+    time_to_beat: {
+      schema_version: 1,
+      main: 15,
+      extra: 20,
+      completionist: 30,
+      hltb_id: 2,
+      last_synced_at: new Date().toISOString(),
+    },
+  });
+  const longGame = makeGame({
+    title: "Long",
+    time_to_beat: {
+      schema_version: 1,
+      main: 40,
+      extra: 60,
+      completionist: 80,
+      hltb_id: 3,
+      last_synced_at: new Date().toISOString(),
+    },
+  });
+  const epicGame = makeGame({
+    title: "Epic",
+    time_to_beat: {
+      schema_version: 1,
+      main: 90,
+      extra: 120,
+      completionist: 180,
+      hltb_id: 4,
+      last_synced_at: new Date().toISOString(),
+    },
+  });
+  const noTimeGame = makeGame({ title: "NoTime", time_to_beat: null });
+
+  const all = [shortGame, mediumGame, longGame, epicGame, noTimeGame];
+
+  it("returns all games when durationFilter is null", () => {
+    expect(filterByDuration(all, null)).toHaveLength(5);
+  });
+
+  it("filters short games (< 10h)", () => {
+    const res = filterByDuration(all, "short");
+    expect(res).toHaveLength(1);
+    expect(res[0].title).toBe("Short");
+  });
+
+  it("filters medium games (10-25h)", () => {
+    const res = filterByDuration(all, "medium");
+    expect(res).toHaveLength(1);
+    expect(res[0].title).toBe("Medium");
+  });
+
+  it("filters long games (25-50h)", () => {
+    const res = filterByDuration(all, "long");
+    expect(res).toHaveLength(1);
+    expect(res[0].title).toBe("Long");
+  });
+
+  it("filters epic games (> 50h)", () => {
+    const res = filterByDuration(all, "epic");
+    expect(res).toHaveLength(1);
+    expect(res[0].title).toBe("Epic");
+  });
+
+  it("excludes games with null time_to_beat when filter is active", () => {
+    expect(filterByDuration([noTimeGame], "short")).toHaveLength(0);
+    expect(filterByDuration([noTimeGame], "epic")).toHaveLength(0);
   });
 });
