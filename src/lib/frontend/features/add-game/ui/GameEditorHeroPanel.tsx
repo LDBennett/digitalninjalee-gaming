@@ -70,6 +70,27 @@ export function GameEditorHeroPanel({
           </div>
         </div>
 
+        {/* Telemetry Summary Pill */}
+        {(form.timeToBeat?.main || form.completionRoadmap?.difficulty) && (
+          <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+            {form.timeToBeat?.main && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/30 bg-sky-950/40 px-2.5 py-0.5 text-[11px] font-medium text-sky-300">
+                <span>⏱️ {form.timeToBeat.main}h</span>
+                {form.timeToBeat.completionist && (
+                  <span className="opacity-60">
+                    · 100%: {form.timeToBeat.completionist}h
+                  </span>
+                )}
+              </span>
+            )}
+            {form.completionRoadmap?.difficulty && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-950/40 px-2.5 py-0.5 text-[11px] font-medium text-amber-300">
+                <span>🏆 {form.completionRoadmap.difficulty}</span>
+              </span>
+            )}
+          </div>
+        )}
+
         <div className="pt-1">
           <button
             type="button"

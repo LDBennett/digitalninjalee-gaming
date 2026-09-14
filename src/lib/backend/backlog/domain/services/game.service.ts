@@ -1,6 +1,10 @@
 import { Result, ok, err } from "@/src/lib/backend/shared/result";
 import type { Platform } from "@/src/lib/backend/shared/platform";
-import { GameState } from "@/src/lib/backend/backlog/domain/models/game.types";
+import {
+  GameState,
+  TimeToBeat,
+  CompletionRoadmap,
+} from "@/src/lib/backend/backlog/domain/models/game.types";
 import {
   GameStatus,
   ReplayStatus,
@@ -27,6 +31,8 @@ export interface NewGameProps {
   personalNote?: string | null;
   rating?: number | null;
   playGoals?: ReadonlyArray<PlayGoal>;
+  timeToBeat?: TimeToBeat | null;
+  completionRoadmap?: CompletionRoadmap | null;
 }
 
 export function newGame(props: NewGameProps): Result<GameState, string> {
@@ -47,6 +53,8 @@ export function newGame(props: NewGameProps): Result<GameState, string> {
     personalNote: props.personalNote ?? null,
     rating: props.rating ?? null,
     playGoals: [...(props.playGoals ?? [])],
+    timeToBeat: props.timeToBeat ?? null,
+    completionRoadmap: props.completionRoadmap ?? null,
   });
 }
 
@@ -87,6 +95,8 @@ export function updateGameDetails(
   gameDescription?: string | null,
   personalNote?: string | null,
   rating?: number | null,
+  timeToBeat?: TimeToBeat | null,
+  completionRoadmap?: CompletionRoadmap | null,
 ): Result<GameState, string> {
   if (!title.trim()) return err("Game title cannot be empty");
   return ok({
@@ -98,6 +108,8 @@ export function updateGameDetails(
     ...(gameDescription !== undefined && { gameDescription }),
     ...(personalNote !== undefined && { personalNote }),
     ...(rating !== undefined && { rating }),
+    ...(timeToBeat !== undefined && { timeToBeat }),
+    ...(completionRoadmap !== undefined && { completionRoadmap }),
   });
 }
 

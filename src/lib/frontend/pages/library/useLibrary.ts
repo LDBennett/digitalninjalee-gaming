@@ -41,6 +41,8 @@ export function useLibrary() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
+    durationFilter,
+    setDurationFilter,
     filtered,
   } = useGameFilters(games);
   const { page, setPage, totalPages, paginated } =
@@ -61,6 +63,9 @@ export function useLibrary() {
   useEffect(() => {
     setPage(1);
   }, [platformFilter, setPage]);
+  useEffect(() => {
+    setPage(1);
+  }, [durationFilter, setPage]);
 
   const { editGame, setEditGame, handleAdd, handleEdit, handleDelete } =
     useGameEditActions({ invalidate });
@@ -83,6 +88,8 @@ export function useLibrary() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
+    durationFilter,
+    setDurationFilter,
     editGame,
     setEditGame,
     gamesLoading: authLoading || gamesLoading,

@@ -46,6 +46,8 @@ export function gameRowToDomain(row: GameRowWithMoods): GameState {
     personalNote: row.personal_note ?? null,
     rating: row.rating ?? null,
     playGoals: playGoalsResult.value,
+    timeToBeat: row.time_to_beat ?? null,
+    completionRoadmap: row.completion_roadmap ?? null,
   };
 }
 
@@ -67,6 +69,8 @@ export function gameStateToRow(
     personal_note: game.personalNote,
     rating: game.rating,
     play_goals: [...game.playGoals],
+    time_to_beat: game.timeToBeat ?? null,
+    completion_roadmap: game.completionRoadmap ?? null,
   };
 }
 

@@ -2,6 +2,8 @@ import {
   Platform,
   GameStatus,
   ReplayStatus,
+  TimeToBeat,
+  CompletionRoadmap,
 } from "@/src/lib/backend/backlog/domain/models";
 import type { IgdbSearchResult } from "@/src/lib/backend/sync";
 
@@ -22,4 +24,7 @@ export interface AddGamePayload {
   mood_ids: string[];
   replay_status: ReplayStatus;
   play_goals: string[];
+  time_to_beat?: TimeToBeat | null;
+  completion_roadmap?: CompletionRoadmap | null;
 }
+

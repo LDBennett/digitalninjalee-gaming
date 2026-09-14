@@ -146,6 +146,73 @@ describe("updateGameDetails", () => {
     const r = updateGameDetails(game, "  ", "pc", null);
     expect(r.success).toBe(false);
   });
+
+  it("updates and preserves timeToBeat and completionRoadmap", () => {
+    const game = makeGame();
+    const ttb = {
+      schema_version: 1 as const,
+      main: 25,
+      extra: 40,
+      completionist: 80,
+      source: "hltb" as const,
+    };
+    const roadmap = {
+      schema_version: 1 as const,
+      difficulty: "3/10",
+      time_estimate: "30-40h",
+      playthroughs: 1,
+      missables: 0,
+      guide_url: "https://example.com/guide",
+      source_name: "PowerPyx",
+    };
+
+    const updated = updateGameDetails(
+      game,
+      "Updated",
+      "pc",
+      null,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ttb,
+      roadmap,
+    );
+    expect(updated.success).toBe(true);
+    if (!updated.success) return;
+    expect(updated.value.timeToBeat).toEqual(ttb);
+    expect(updated.value.completionRoadmap).toEqual(roadmap);
+
+    // Pass undefined to preserve
+    const preserved = updateGameDetails(
+      updated.value,
+      "Updated Again",
+      "pc",
+      null,
+    );
+    expect(preserved.success).toBe(true);
+    if (!preserved.success) return;
+    expect(preserved.value.timeToBeat).toEqual(ttb);
+    expect(preserved.value.completionRoadmap).toEqual(roadmap);
+
+    // Pass null to clear
+    const cleared = updateGameDetails(
+      updated.value,
+      "Cleared",
+      "pc",
+      null,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      null,
+      null,
+    );
+    expect(cleared.success).toBe(true);
+    if (!cleared.success) return;
+    expect(cleared.value.timeToBeat).toBeNull();
+    expect(cleared.value.completionRoadmap).toBeNull();
+  });
 });
 
 describe("adjustPriority", () => {

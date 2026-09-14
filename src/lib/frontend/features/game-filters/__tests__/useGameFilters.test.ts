@@ -153,4 +153,43 @@ describe("useGameFilters", () => {
     expect(result.current.filtered).toHaveLength(1);
     expect(result.current.filtered[0].title).toBe("Elden Ring");
   });
+
+  it("filters by duration and clears when set to null", () => {
+    const games = [
+      makeGame({
+        title: "Short Game",
+        time_to_beat: {
+          schema_version: 1,
+          main: 5,
+          extra: 8,
+          completionist: 10,
+          hltb_id: 1,
+          last_synced_at: new Date().toISOString(),
+        },
+      }),
+      makeGame({
+        title: "Epic Game",
+        time_to_beat: {
+          schema_version: 1,
+          main: 100,
+          extra: 150,
+          completionist: 200,
+          hltb_id: 2,
+          last_synced_at: new Date().toISOString(),
+        },
+      }),
+      makeGame({ title: "No Time Game", time_to_beat: null }),
+    ];
+    const { result } = renderHook(() => useGameFilters(games));
+    act(() => result.current.setDurationFilter("short"));
+    expect(result.current.filtered).toHaveLength(1);
+    expect(result.current.filtered[0].title).toBe("Short Game");
+
+    act(() => result.current.setDurationFilter("epic"));
+    expect(result.current.filtered).toHaveLength(1);
+    expect(result.current.filtered[0].title).toBe("Epic Game");
+
+    act(() => result.current.setDurationFilter(null));
+    expect(result.current.filtered).toHaveLength(3);
+  });
 });

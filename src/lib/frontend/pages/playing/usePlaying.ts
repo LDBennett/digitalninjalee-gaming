@@ -57,6 +57,8 @@ export function usePlaying() {
     setPlatformFilter,
     playGoalFilter,
     setPlayGoalFilter,
+    durationFilter,
+    setDurationFilter,
     filtered,
   } = useGameFilters(games);
   const { page, setPage, totalPages, paginated } =
@@ -78,6 +80,7 @@ export function usePlaying() {
     setRecentPage(1);
     setMoodFilter(null);
     setPlayGoalFilter(null);
+    setDurationFilter(null);
     setSearchQuery("");
   };
 
@@ -96,6 +99,9 @@ export function usePlaying() {
   useEffect(() => {
     setPage(1);
   }, [playGoalFilter, setPage]);
+  useEffect(() => {
+    setPage(1);
+  }, [durationFilter, setPage]);
 
   const { editGame, setEditGame, handleEdit, handleDelete } =
     useGameEditActions({ invalidate });
@@ -131,6 +137,8 @@ export function usePlaying() {
     setPlatformFilter,
     playGoalFilter,
     setPlayGoalFilter,
+    durationFilter,
+    setDurationFilter,
     handleEdit,
     handleDelete,
   };

@@ -7,6 +7,8 @@ import {
   Platform,
   ReplayStatus,
   PlayGoal,
+  TimeToBeat,
+  CompletionRoadmap,
 } from "@/src/lib/backend/backlog/domain/models";
 import { IgdbSearchResult } from "@/src/lib/frontend/features/add-game/types";
 
@@ -28,6 +30,12 @@ export function useAddGameFormState(
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [replayStatus, setReplayStatus] = useState<ReplayStatus>(null);
   const [selectedPlayGoals, setSelectedPlayGoals] = useState<PlayGoal[]>([]);
+  const [timeToBeat, setTimeToBeat] = useState<TimeToBeat | null>(null);
+  const [completionRoadmap, setCompletionRoadmap] = useState<CompletionRoadmap | null>(null);
+  const [isManualPlaytimeDirty, setIsManualPlaytimeDirty] = useState(false);
+  const [isManualRoadmapDirty, setIsManualRoadmapDirty] = useState(false);
+  const [isExtractingGuide, setIsExtractingGuide] = useState(false);
+  const [extractError, setExtractError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [igdbResults, setIgdbResults] = useState<IgdbSearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -51,6 +59,8 @@ export function useAddGameFormState(
       setSelectedMoods(editGame.moods?.map((m) => m.id) ?? []);
       setReplayStatus(editGame.replay_status ?? null);
       setSelectedPlayGoals(editGame.play_goals ?? []);
+      setTimeToBeat(editGame.time_to_beat ?? null);
+      setCompletionRoadmap(editGame.completion_roadmap ?? null);
     } else {
       setTitle("");
       setPlatform("pc");
@@ -65,7 +75,13 @@ export function useAddGameFormState(
       setSelectedMoods([]);
       setReplayStatus(null);
       setSelectedPlayGoals([]);
+      setTimeToBeat(null);
+      setCompletionRoadmap(null);
     }
+    setIsManualPlaytimeDirty(false);
+    setIsManualRoadmapDirty(false);
+    setIsExtractingGuide(false);
+    setExtractError(null);
     setIgdbResults([]);
     setShowDropdown(false);
     setEnrichLoading(false);
@@ -99,6 +115,18 @@ export function useAddGameFormState(
     setReplayStatus,
     selectedPlayGoals,
     setSelectedPlayGoals,
+    timeToBeat,
+    setTimeToBeat,
+    completionRoadmap,
+    setCompletionRoadmap,
+    isManualPlaytimeDirty,
+    setIsManualPlaytimeDirty,
+    isManualRoadmapDirty,
+    setIsManualRoadmapDirty,
+    isExtractingGuide,
+    setIsExtractingGuide,
+    extractError,
+    setExtractError,
     saving,
     setSaving,
     igdbResults,

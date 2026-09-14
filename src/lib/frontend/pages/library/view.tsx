@@ -46,6 +46,8 @@ export function LibraryView() {
     setSortBy,
     platformFilter,
     setPlatformFilter,
+    durationFilter,
+    setDurationFilter,
     gamesLoading,
     isAuthenticated,
   } = useLibrary();
@@ -57,6 +59,7 @@ export function LibraryView() {
   const activeFilterCount = [
     moodFilter !== null,
     platformFilter !== null,
+    durationFilter !== null,
     sortBy !== "priority-desc",
   ].filter(Boolean).length;
 
@@ -99,6 +102,8 @@ export function LibraryView() {
               setSortBy,
               platformFilter,
               setPlatformFilter,
+              durationFilter,
+              setDurationFilter,
             }}
             moods={moods}
             className="mb-5"

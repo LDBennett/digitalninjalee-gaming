@@ -14,6 +14,7 @@ import {
   createPlayGoals,
   DEFAULT_PRIORITY_SCORE,
 } from "@/src/lib/backend/backlog/domain/models";
+import type { CreateGameDto } from "@/src/lib/backend/backlog/domain/models";
 
 export async function GET(req: NextRequest) {
   const auth = await optionalAuth(req);
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
   const auth = await requireAuth(req);
   if (!auth.ok) return auth.response;
 
-  const body = await req.json();
+  const body: CreateGameDto = await req.json();
   const gameRepo = createSupabaseGameRepository(auth.client);
   const moodRepo = createSupabaseMoodRepository(auth.client);
 
@@ -81,6 +82,8 @@ export async function POST(req: NextRequest) {
     personalNote: body.personal_note ?? null,
     rating: body.rating ?? null,
     playGoals: playGoalsResult.value,
+    timeToBeat: body.time_to_beat ?? null,
+    completionRoadmap: body.completion_roadmap ?? null,
   });
   if (!gameResult.success)
     return NextResponse.json({ error: gameResult.error }, { status: 400 });
@@ -92,24 +95,10 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
 
-  // Write external IDs to game_external_ids if provided
-  const externalIdRows: Array<{
-    game_id: string;
-    source: string;
-    external_id: string;
-  }> = [];
-  if (body.rawg_id)
-    externalIdRows.push({
-      game_id: gameResult.value.id,
-      source: "rawg",
-      external_id: String(body.rawg_id),
-    });
-  if (body.igdb_id)
-    externalIdRows.push({
-      game_id: gameResult.value.id,
-      source: "igdb",
-      external_id: String(body.igdb_id),
-    });
+  const externalIdRows = [
+    ...(body.rawg_id ? [{ game_id: gameResult.value.id, source: "rawg", external_id: String(body.rawg_id) }] : []),
+    ...(body.igdb_id ? [{ game_id: gameResult.value.id, source: "igdb", external_id: String(body.igdb_id) }] : []),
+  ];
   if (externalIdRows.length > 0) {
     await auth.client
       .from("game_external_ids")

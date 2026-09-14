@@ -19,18 +19,13 @@ import { SlidersHorizontal } from "lucide-react";
 
 export function PlayingView() {
   const {
-    activeTab,
-    setActiveTab,
+    activeTab, setActiveTab,
     filtered,
     paginated,
-    page,
-    setPage,
-    totalPages,
+    page, setPage, totalPages,
     allGames,
     recentPaginated,
-    recentPage,
-    setRecentPage,
-    recentTotalPages,
+    recentPage, setRecentPage, recentTotalPages,
     moods,
     moodFilter,
     setMoodFilter,
@@ -40,6 +35,8 @@ export function PlayingView() {
     setPlatformFilter,
     playGoalFilter,
     setPlayGoalFilter,
+    durationFilter,
+    setDurationFilter,
     searchQuery,
     setSearchQuery,
     loading,
@@ -54,6 +51,7 @@ export function PlayingView() {
     moodFilter !== null,
     platformFilter !== null,
     playGoalFilter !== null,
+    durationFilter !== null,
     sortBy !== "priority-desc",
   ].filter(Boolean).length;
   const isRecentlyPlayed = activeTab === "recently-played";
@@ -138,6 +136,8 @@ export function PlayingView() {
                 setPlatformFilter,
                 playGoalFilter,
                 setPlayGoalFilter,
+                durationFilter,
+                setDurationFilter,
               }}
               moods={moods}
               className="mb-5"

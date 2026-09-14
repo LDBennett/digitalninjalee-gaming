@@ -1,3 +1,5 @@
+import { TimeToBeat, CompletionRoadmap } from "@/src/lib/backend/backlog/domain/models";
+
 export interface GameRow {
   id: string;
   title: string;
@@ -13,6 +15,8 @@ export interface GameRow {
   personal_note: string | null;
   rating: number | null;
   play_goals: string[];
+  time_to_beat?: TimeToBeat | null;
+  completion_roadmap?: CompletionRoadmap | null;
 }
 
 export interface MoodRow {

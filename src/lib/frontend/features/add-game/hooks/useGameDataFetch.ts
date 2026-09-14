@@ -48,6 +48,24 @@ export function useGameDataFetch({
             ...new Set([...prev, ...newMoodIds]),
           ]);
         }
+
+        // Concurrency-safe auto-fetch for HowLongToBeat pacing
+        if (!state.isManualPlaytimeDirty) {
+          try {
+            const hltbRes = await fetch(
+              `/api/hltb/search?title=${encodeURIComponent(game.name)}`,
+              { headers: authHeaders() },
+            );
+            if (hltbRes.ok) {
+              const hltbData = await hltbRes.json();
+              if (hltbData?.time_to_beat) {
+                state.setTimeToBeat(hltbData.time_to_beat);
+              }
+            }
+          } catch {
+            // Non-blocking: failure to reach HLTB does not disrupt IGDB enrichment
+          }
+        }
       }
     } finally {
       state.setEnrichLoaded(true);

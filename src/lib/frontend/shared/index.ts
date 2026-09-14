@@ -15,6 +15,8 @@ export { Badge } from "./ui/Badge";
 export type { BadgeProps } from "./ui/Badge";
 export { Input } from "./ui/Input";
 export type { InputProps } from "./ui/Input";
+export { NumberInput } from "./ui/NumberInput";
+export type { NumberInputProps } from "./ui/NumberInput";
 export { Select } from "./ui/Select";
 export type { SelectProps } from "./ui/Select";
 export { EmptyState } from "./ui/EmptyState";

@@ -43,7 +43,14 @@ export {
 } from "./playGoal.types";
 export type { PlayGoal } from "./playGoal.types";
 export { gameStateToDto } from "./game.types";
-export type { GameState, GameDto } from "./game.types";
+export type {
+  GameState,
+  GameDto,
+  TimeToBeat,
+  CompletionRoadmap,
+  CreateGameDto,
+  UpdateGameDto,
+} from "./game.types";
 export type {
   GameLogType,
   StatusChangeMetadata,

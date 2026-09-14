@@ -7,6 +7,31 @@ import { PriorityScore } from "./priorityScore.types";
 import { GameStatus, ReplayStatus } from "./gameStatus.types";
 import { PlayGoal } from "./playGoal.types";
 
+// ── Value Objects ────────────────────────────────────────────────────────────
+
+export interface TimeToBeat {
+  schema_version: 1;
+  main: number | null;
+  extra: number | null;
+  completionist: number | null;
+  source: "hltb" | "igdb" | "manual";
+  hltb_id?: number | null;
+  url?: string | null;
+  synced_at?: string;
+}
+
+export interface CompletionRoadmap {
+  schema_version: 1;
+  difficulty: string | null;
+  time_estimate: string | null;
+  playthroughs: number | null;
+  missables: number | null;
+  difficulty_matters?: boolean;
+  guide_url: string;
+  source_name: string;
+  updated_at?: string;
+}
+
 // ── Domain Model ──────────────────────────────────────────────────────────────
 
 export interface GameState {
@@ -25,6 +50,8 @@ export interface GameState {
   readonly personalNote: string | null;
   readonly rating: number | null;
   readonly playGoals: ReadonlyArray<PlayGoal>;
+  readonly timeToBeat: TimeToBeat | null;
+  readonly completionRoadmap: CompletionRoadmap | null;
 }
 
 // ── DTO (serialized shape returned by API) ────────────────────────────────────
@@ -45,6 +72,8 @@ export interface GameDto {
   personal_note: string | null;
   rating: number | null;
   play_goals: PlayGoal[];
+  time_to_beat?: TimeToBeat | null;
+  completion_roadmap?: CompletionRoadmap | null;
 }
 
 export function gameStateToDto(game: GameState): GameDto {
@@ -64,5 +93,46 @@ export function gameStateToDto(game: GameState): GameDto {
     personal_note: game.personalNote,
     rating: game.rating,
     play_goals: [...game.playGoals],
+    time_to_beat: game.timeToBeat,
+    completion_roadmap: game.completionRoadmap,
   };
 }
+
+export interface CreateGameDto {
+  title: string;
+  platform: string;
+  status?: string;
+  priority_score?: number;
+  background_url?: string | null;
+  cover_art_url?: string | null;
+  game_description?: string | null;
+  mood_ids?: string[];
+  replay_status?: ReplayStatus;
+  personal_note?: string | null;
+  rating?: number | null;
+  play_goals?: string[];
+  time_to_beat?: TimeToBeat | null;
+  completion_roadmap?: CompletionRoadmap | null;
+  rawg_id?: string | number | null;
+  igdb_id?: string | number | null;
+}
+
+export interface UpdateGameDto {
+  status?: string;
+  title?: string;
+  platform?: string;
+  background_url?: string | null;
+  cover_art_url?: string | null;
+  game_description?: string | null;
+  personal_note?: string | null;
+  rating?: number | null;
+  priority_score?: number;
+  mood_ids?: string[];
+  replay_status?: ReplayStatus;
+  play_goals?: string[];
+  time_to_beat?: TimeToBeat | null;
+  completion_roadmap?: CompletionRoadmap | null;
+  rawg_id?: string | number | null;
+  igdb_id?: string | number | null;
+}
+
