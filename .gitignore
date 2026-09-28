@@ -84,3 +84,9 @@ scratch
 scripts/peer-review.js
 
 *.tsbuildinfo
+.devin/config.local.json
+scripts/peer-review-old.js
+scripts/README-OLD.md
+scripts/README.md
+scripts/scaffold-agents.js
+scripts/scaffold-agents-old.js
