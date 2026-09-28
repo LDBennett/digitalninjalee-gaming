@@ -2,4 +2,5 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
-  minimumReleaseAge: 1440
+
+minimumReleaseAge: 1440
