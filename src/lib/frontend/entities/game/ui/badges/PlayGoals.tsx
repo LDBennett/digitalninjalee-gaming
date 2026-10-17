@@ -49,10 +49,12 @@ export function PlayGoals({ playGoals, showLabels = false }: PlayGoalsProps) {
           return (
             <span
               key={goal}
-              className="inline-flex items-center gap-1 text-xs text-gray-300"
+              title={PLAY_GOAL_LABELS[goal]}
+              className="inline-flex items-center gap-1.5 text-xs text-gray-300"
             >
               <Icon size={14} className={PLAY_GOAL_COLORS[goal]} aria-hidden />
-              {PLAY_GOAL_LABELS[goal]}
+              <span className="hidden sm:inline">{PLAY_GOAL_LABELS[goal]}</span>
+              <span className="sr-only sm:hidden">{PLAY_GOAL_LABELS[goal]}</span>
             </span>
           );
         })}

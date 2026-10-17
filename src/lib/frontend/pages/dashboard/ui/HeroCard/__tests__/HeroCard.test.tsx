@@ -143,4 +143,26 @@ describe("DashboardHeroCard", () => {
 
     expect(screen.getByRole("heading", { name: "Metroid Prime" })).toBeInTheDocument();
   });
+
+  it("caps mood tags to 4 on mobile and renders +N indicator chip", () => {
+    const gameWith7Moods = createMockGame({
+      moods: [
+        { id: "1", name: "action" },
+        { id: "2", name: "online" },
+        { id: "3", name: "multiplayer" },
+        { id: "4", name: "co-op" },
+        { id: "5", name: "quick-session" },
+        { id: "6", name: "new-release" },
+        { id: "7", name: "fighting" },
+      ],
+    });
+
+    renderWithQueryClient(<DashboardHeroCard playingGames={[gameWith7Moods]} />);
+
+    expect(screen.getByText("Action")).toBeInTheDocument();
+    expect(screen.getByText("Online")).toBeInTheDocument();
+    expect(screen.getByText("Multiplayer")).toBeInTheDocument();
+    expect(screen.getByText("Co-op")).toBeInTheDocument();
+    expect(screen.getByText("+3")).toBeInTheDocument();
+  });
 });

@@ -142,14 +142,14 @@ export function GameCard({
               <PlayGoals playGoals={game.play_goals} />
 
               {game.time_to_beat?.main && (
-                <span className="flex items-center gap-1 rounded-full border border-sky-500/25 bg-sky-950/40 px-2 py-0.5 text-[11px] font-medium text-sky-300">
+                <span className="flex items-center gap-1 rounded-md border border-sky-500/25 bg-sky-950/40 px-1.5 py-0.5 font-mono text-[11px] font-medium text-sky-300">
                   <Clock size={10} className="shrink-0 text-sky-400" />
                   <span>{game.time_to_beat.main}h</span>
                 </span>
               )}
 
               {game.completion_roadmap?.difficulty && (
-                <span className="flex items-center gap-1 rounded-full border border-amber-500/25 bg-amber-950/40 px-2 py-0.5 text-[11px] font-medium text-amber-300">
+                <span className="flex items-center gap-1 rounded-md border border-amber-500/25 bg-amber-950/40 px-1.5 py-0.5 font-mono text-[11px] font-medium text-amber-300">
                   <Trophy size={10} className="shrink-0 text-amber-400" />
                   <span>{game.completion_roadmap.difficulty}</span>
                 </span>

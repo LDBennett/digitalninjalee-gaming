@@ -42,12 +42,31 @@ const STATUS_BADGE: Record<GameStatus, { bg: string; text: string }> = {
   },
 };
 
-export { STATUS_BADGE };
+const STATUS_DOT: Record<GameStatus, string> = {
+  backlog: "bg-slate-400",
+  playing: "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]",
+  completed: "bg-blue-400",
+  dropped: "bg-gray-500",
+  "main-complete": "bg-teal-400",
+  ongoing: "bg-cyan-400",
+  interested: "bg-pink-400",
+  "pre-ordered": "bg-amber-400",
+  "keep-an-eye-on": "bg-purple-400",
+};
+
+export { STATUS_BADGE, STATUS_DOT };
 
 export function GameStatusBadge({ status }: { status: GameStatus }) {
   const badge = STATUS_BADGE[status];
+  const dot = STATUS_DOT[status];
   return (
-    <Badge bg={badge.bg} text={badge.text}>
+    <Badge
+      bg={badge.bg}
+      text={badge.text}
+      variant="chip"
+      className="gap-1.5 font-medium tracking-wide"
+    >
+      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${dot}`} aria-hidden="true" />
       {STATUS_LABELS[status]}
     </Badge>
   );

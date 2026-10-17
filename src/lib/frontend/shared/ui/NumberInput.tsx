@@ -21,29 +21,28 @@ export interface NumberInputProps {
 
 const ACCENT_STYLES = {
   brand: {
-    container:
-      "focus-within:border-brand-500/80 focus-within:ring-1 focus-within:ring-brand-500/30",
+    container: "focus-within:border-brand-500/80 focus-within:ring-1 focus-within:ring-brand-500/30",
     button: "hover:bg-brand-950/40 hover:text-brand-300 active:bg-brand-900/50",
     suffix: "text-brand-400/80",
   },
   sky: {
-    container:
-      "focus-within:border-sky-500/80 focus-within:ring-1 focus-within:ring-sky-500/30",
+    container: "focus-within:border-sky-500/80 focus-within:ring-1 focus-within:ring-sky-500/30",
     button: "hover:bg-sky-950/40 hover:text-sky-300 active:bg-sky-900/50",
     suffix: "text-sky-400/80",
   },
   amber: {
-    container:
-      "focus-within:border-amber-500/80 focus-within:ring-1 focus-within:ring-amber-500/30",
+    container: "focus-within:border-amber-500/80 focus-within:ring-1 focus-within:ring-amber-500/30",
     button: "hover:bg-amber-950/40 hover:text-amber-300 active:bg-amber-900/50",
     suffix: "text-amber-400/80",
   },
 };
 
-function roundToStep(val: number, stepVal: number): number {
-  const decimals = stepVal.toString().split(".")[1]?.length ?? 0;
+function stepValue(val: number, delta: number, stepVal: number): number {
+  const valDec = val.toString().split(".")[1]?.length ?? 0;
+  const stepDec = stepVal.toString().split(".")[1]?.length ?? 0;
+  const decimals = Math.min(4, Math.max(valDec, stepDec));
   const factor = 10 ** decimals;
-  return Math.round(val * factor) / factor;
+  return Math.round((val + delta) * factor) / factor;
 }
 
 export function NumberInput({
@@ -66,7 +65,7 @@ export function NumberInput({
   const handleIncrement = () => {
     if (disabled) return;
     const current = value ?? min ?? 0;
-    const next = roundToStep(current + step, step);
+    const next = stepValue(current, step, step);
     if (max !== undefined && next > max) return;
     onChange(next);
   };
@@ -74,17 +73,13 @@ export function NumberInput({
   const handleDecrement = () => {
     if (disabled) return;
     const current = value ?? min ?? 0;
-    const next = roundToStep(current - step, step);
+    const next = stepValue(current, -step, step);
     if (min !== undefined && next < min) return;
     onChange(next);
   };
 
-  const isDecDisabled =
-    disabled ||
-    (min !== undefined && value !== null && value !== undefined && value <= min);
-  const isIncDisabled =
-    disabled ||
-    (max !== undefined && value !== null && value !== undefined && value >= max);
+  const isDecDisabled = disabled || (min !== undefined && value !== null && value !== undefined && value <= min);
+  const isIncDisabled = disabled || (max !== undefined && value !== null && value !== undefined && value >= max);
 
   return (
     <div className={cn("w-full", className)}>
@@ -126,18 +121,15 @@ export function NumberInput({
             value={value ?? ""}
             min={min}
             max={max}
-            step={step}
+            step="any"
             placeholder={placeholder}
             disabled={disabled}
             aria-label={ariaLabel ?? label}
             onChange={(e) => {
               const raw = e.target.value;
-              if (raw === "") {
-                onChange(null);
-              } else {
-                const parsed = parseFloat(raw);
-                onChange(isNaN(parsed) ? null : parsed);
-              }
+              if (raw === "") return onChange(null);
+              const parsed = parseFloat(raw);
+              onChange(isNaN(parsed) ? null : parsed);
             }}
             onKeyDown={(e) => {
               if (e.key === "ArrowUp") {

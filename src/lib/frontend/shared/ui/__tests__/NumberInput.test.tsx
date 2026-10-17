@@ -128,4 +128,40 @@ describe("NumberInput", () => {
     fireEvent.click(plusBtn);
     expect(handleChange).toHaveBeenCalledWith(6);
   });
+
+  it("preserves off-grid decimal values when incrementing and decrementing", () => {
+    const handleIncrement = vi.fn();
+    const { rerender } = render(
+      <NumberInput
+        label="Main Story"
+        value={13.3}
+        step={0.5}
+        onChange={handleIncrement}
+      />,
+    );
+
+    const plusBtn = screen.getByRole("button", { name: /Increase Main Story/i });
+    fireEvent.click(plusBtn);
+    expect(handleIncrement).toHaveBeenCalledWith(13.8);
+
+    const handleDecrement = vi.fn();
+    rerender(
+      <NumberInput
+        label="Main Story"
+        value={13.3}
+        step={0.5}
+        onChange={handleDecrement}
+      />,
+    );
+
+    const minusBtn = screen.getByRole("button", { name: /Decrease Main Story/i });
+    fireEvent.click(minusBtn);
+    expect(handleDecrement).toHaveBeenCalledWith(12.8);
+  });
+
+  it("has step=any on the native input to permit arbitrary decimals", () => {
+    render(<NumberInput value={13.3} onChange={() => {}} />);
+    const input = screen.getByDisplayValue("13.3");
+    expect(input).toHaveAttribute("step", "any");
+  });
 });
